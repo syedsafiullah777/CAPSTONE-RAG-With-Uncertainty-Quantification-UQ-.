@@ -77,16 +77,22 @@ model:
   # Final inference must not require local Mac GPU.
 
 embeddings:
-  # NEEDS_VERIFICATION: confirm after KB pilot.
   model: "BAAI/bge-small-en-v1.5"
-  version: null
+  version: null  # Hugging Face revision pin NEEDS VERIFICATION if required for paper
 
 retrieval:
-  # NEEDS_VERIFICATION: top_k / chunk settings after pilot.
   vector_store: "chroma"
+  collection_name: "finqa_source_pdfs"
   top_k: 4
   chunk_size: 900
   chunk_overlap: 150
+  # Phase 6 verified build:
+  phase6_built: true
+  phase6_docs_indexed: 230
+  phase6_chunks: 1239
+  phase6_distractors: 50
+  phase6_download_failed: 0
+  index_manifest: "knowledge_base/index/index_manifest.json"
 
 uncertainty:
   # Threshold MUST be locked on DEV/calibration only (Phase 15). Never tune on test.

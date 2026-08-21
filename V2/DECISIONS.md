@@ -82,3 +82,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Add Cursor rule `.cursor/rules/05-project-master-record.mdc` and authoritative chronology at `V2/project_record/PROJECT_MASTER_RECORD.md`.
 
 **Rule:** After every completed phase, update the master record before declaring the phase complete. Do not overwrite historical phase summaries.
+
+## 2026-08-21 — Phase 6 knowledge base
+
+**Decision:** Index FinQA source page PDFs (test 140 + calibration 40 + 50 train distractors) with `BAAI/bge-small-en-v1.5` into Chroma; never ingest gold `context` as KB documents.
+
+**Verified build:** 230 docs indexed, 1239 chunks, 0 download failures. Manifest: `knowledge_base/index/index_manifest.json`.

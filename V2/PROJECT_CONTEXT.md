@@ -49,8 +49,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 5 complete — FinQA DEV calibration set frozen (40 questions; threshold not locked).**  
-Next approved step: Phase 6 (knowledge base from source PDFs).
+**Phase 6 complete — source-PDF knowledge base built (230 docs / 1239 chunks).**  
+Next approved step: Phase 7 (Qwen3-8B Colab backend).
 
 ## Key paths
 
@@ -67,4 +67,7 @@ Next approved step: Phase 6 (knowledge base from source PDFs).
 - Phase 5 calibration: `V2/data/calibration/calibration_questions.csv`
 - Phase 5 manifest: `V2/data/calibration/calibration_manifest.json`
 - Phase 5 notes: `V2/docs/phase5_calibration.md`
+- Phase 6 KB docs: `V2/knowledge_base/documents/`
+- Phase 6 index: `V2/knowledge_base/index/`
+- Phase 6 notes: `V2/docs/phase6_knowledge_base.md`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

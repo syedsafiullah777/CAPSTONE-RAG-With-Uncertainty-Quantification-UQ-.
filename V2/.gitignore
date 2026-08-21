@@ -59,6 +59,9 @@ knowledge_base/documents/**
 !knowledge_base/documents/.gitkeep
 knowledge_base/index/**
 !knowledge_base/index/.gitkeep
+!knowledge_base/index/index_manifest.json
+!knowledge_base/index/retrieval_demo.json
+!results/config/phase6_index_manifest.json
 
 # Results (never silently commit large/raw experiment dumps by default)
 results/raw/**

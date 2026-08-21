@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-21 |
-| Current completed phase | **Phase 5** |
-| Next phase (not started) | Phase 6 — Knowledge base |
+| Current completed phase | **Phase 6** |
+| Next phase (not started) | Phase 7 — Qwen3-8B Colab backend |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -34,6 +34,10 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Calibration set | **40** DEV questions, seed **42** | `data/calibration/calibration_questions.csv` |
 | Calibration id SHA-256 | `b229d45331fc18dd7c784175abd37cee3550775f268c843b2417d3f9d2e3aeca` | `data/calibration/calibration_manifest.json` |
 | Threshold lock | **Not created** (`threshold_locked: false`) | calibration manifest |
+| Knowledge base | **230** source PDFs indexed → **1239** chunks | `knowledge_base/index/index_manifest.json` |
+| Embedding model | `BAAI/bge-small-en-v1.5` | index manifest |
+| Chunking | size 900 / overlap 150 | index manifest / `experiment.yaml` |
+| Distractors | 50 train PDFs | index manifest `roles.distractor` |
 
 ### Model / compute (planned; not yet executed)
 
@@ -41,7 +45,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | --- | --- |
 | LLM | Qwen3-8B — **NEEDS VERIFICATION** (quant / VRAM on actual Colab GPU) |
 | Primary compute | Google Colab GPU / Colab CLI — **not run yet** |
-| Local Mac | Development/control only |
+| Local Mac | Development/control only (KB embed ran on local CPU for Phase 6) |
 | Paid LLM API | Not used / not required |
 
 ### Architectures (not implemented yet)
@@ -55,7 +59,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **21 passed** (Phases 1–5 tests)
+- Result: **25 passed** (Phases 1–6 tests)
 
 ---
 
@@ -69,6 +73,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 4. **Sampling seeds frozen:** test seed 42; calibration seed 42. Do not change freezes for result-driven reasons.
 5. **Threshold not locked in Phase 5.** Lock before final test evaluation (later phase).
 6. **Master record rule added 2026-08-21:** `.cursor/rules/05-project-master-record.mdc` — update this file after every completed phase.
+7. **Phase 6 KB:** Source PDFs only (not gold context); Chroma + bge-small-en-v1.5; 230 docs / 1239 chunks verified.
 
 ---
 
@@ -224,11 +229,43 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 6 — Knowledge base (source PDFs)
+
+- **Date:** 2026-08-21
+- **Objective:** Build a persistent vector knowledge base from FinQA source page PDFs for retrieval (not gold context).
+- **Why required:** Live RAG and the 420-case benchmark need a real shared corpus with provenance; V1’s gold-context-as-document approach is invalid.
+- **Work completed:**
+  - Download 230 PDFs (test 140 + calibration 40 + 50 train distractors) via Hugging Face
+  - Extract text (PyMuPDF), chunk (900/150), embed (`BAAI/bge-small-en-v1.5`), persist Chroma
+  - Retrieval demo on a frozen test question with provenance metadata
+- **Technical decisions:**
+  - Corpus = frozen evaluation/calibration PDFs + 50 distractors (seed 42)
+  - Collection `finqa_source_pdfs`, cosine space
+  - Explicitly exclude gold `context` ingestion
+- **Files created/modified:**
+  - `V2/src/retrieval/*.py`, `V2/scripts/build_index.py`
+  - `V2/knowledge_base/documents/**`, `V2/knowledge_base/index/**`
+  - `V2/knowledge_base/index/index_manifest.json`, `retrieval_demo.json`
+  - `V2/docs/phase6_knowledge_base.md`, `V2/tests/test_phase6_knowledge_base.py`
+  - `V2/requirements.txt` (+ pymupdf, sentence-transformers, chromadb)
+- **Tests/validation:**
+  - Unit: chunking provenance
+  - Integration: manifest + demo hits with `source_type=pdf`
+  - Guardrail: no V1-style gold `.txt` KB dumps
+  - Build: docs_indexed=230, chunks=1239, download_failed=0
+- **Actual outcome:** Retrieval works from source PDFs; demo top hit matched the gold file for the smoke question (`pdf/SNA/2013/page_34.pdf`).
+- **Problems encountered:** None blocking; local embed took ~minutes on CPU.
+- **Problems resolved:** N/A
+- **Remaining issues:** Embedding model revision pin **NEEDS VERIFICATION** if required for paper; Qwen backend and RAG arches not started; top-k/chunk settings may be revisited after pilot (**NEEDS VERIFICATION** against latency/quality).
+- **Dissertation relevance:** Corpus construction, anti-leakage design, provenance for examiner demo.
+- **Evidence:** `V2/knowledge_base/index/index_manifest.json`, `V2/knowledge_base/index/retrieval_demo.json`, `V2/docs/phase6_knowledge_base.md`
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 6 | Knowledge base (source PDFs → index) | Not started |
 | 7 | Qwen3-8B Colab backend | Not started |
 | 8–10 | Baseline / Multi-Agent / UQ RAG | Not started |
 | 11+ | Schema logging, Streamlit, pilot, calibration lock, 420 benchmark, stats | Not started |
