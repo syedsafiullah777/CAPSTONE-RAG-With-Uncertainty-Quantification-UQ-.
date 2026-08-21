@@ -1,0 +1,4 @@
+# Phase 1–2 foundation. Heavy ML / Colab inference deps are added in later phases.
+PyYAML>=6.0.1
+pytest>=8.0.0
+datasets>=2.20.0

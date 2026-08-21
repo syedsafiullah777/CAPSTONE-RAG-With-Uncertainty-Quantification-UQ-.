@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.venv/
+venv/
+env/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Hugging Face / model caches (local)
+.cache/
+hf_cache/
+models_cache/
+*.gguf
+*.bin
+*.safetensors
+
+# Data caches (keep .gitkeep; ignore downloaded/generated content)
+data/raw/**
+!data/raw/.gitkeep
+data/processed/**
+!data/processed/.gitkeep
+!data/processed/finqa_profile.json
+# Calibration and final freeze files may be committed later when ready.
+# Ignore large intermediate dumps by default:
+data/calibration/*.parquet
+data/calibration/*.jsonl
+data/final/*.parquet
+data/final/*.jsonl
+
+# Knowledge-base artefacts (documents/index are large; keep structure)
+knowledge_base/documents/**
+!knowledge_base/documents/.gitkeep
+knowledge_base/index/**
+!knowledge_base/index/.gitkeep
+
+# Results (never silently commit large/raw experiment dumps by default)
+results/raw/**
+!results/raw/.gitkeep
+results/processed/**
+!results/processed/.gitkeep
+results/final/**
+!results/final/.gitkeep
+results/checkpoints/**
+!results/checkpoints/.gitkeep
+results/logs/**
+!results/logs/.gitkeep
+# Config snapshots may be committed selectively later
+results/config/**
+!results/config/.gitkeep
+
+# Notebooks checkpoints
+.ipynb_checkpoints/

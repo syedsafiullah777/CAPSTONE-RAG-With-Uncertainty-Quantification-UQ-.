@@ -1,0 +1,90 @@
+# V2 experiment configuration — Phase 1 foundation.
+# Values marked NEEDS_VERIFICATION must be confirmed before the full benchmark.
+# Do not treat placeholders as scientifically locked.
+
+project:
+  name: "msc-rag-v2"
+  title: "Multi-Agent RAG with Uncertainty Quantification for Financial Document QA"
+  version: "0.1.0-phase1"
+
+paths:
+  # Relative to V2 project root unless overridden at runtime.
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_calibration: "data/calibration"
+  data_final: "data/final"
+  knowledge_base: "knowledge_base"
+  kb_documents: "knowledge_base/documents"
+  kb_index: "knowledge_base/index"
+  results_raw: "results/raw"
+  results_processed: "results/processed"
+  results_final: "results/final"
+  results_checkpoints: "results/checkpoints"
+  results_logs: "results/logs"
+  results_config: "results/config"
+
+dataset:
+  # NEEDS_VERIFICATION: confirm via load_dataset in Phase 3.
+  family: "T2-RAGBench"
+  huggingface_id: "G4KMU/t2-ragbench"
+  subset: "FinQA"
+  test_split: "test"
+  calibration_split: "dev"
+  prototype_split: "train"
+  frozen_test_size: 140
+  architectures: 3
+  total_cases: 420
+  sampling_seed: 42  # proposed; freeze only after Phase 4 sampling succeeds
+  # Phase 2 verified live load (see docs/dataset_profile.md):
+  verified_split_counts:
+    train: 6251
+    dev: 883
+    test: 1147
+    total: 8281
+
+model:
+  # NEEDS_VERIFICATION: GGUF quant / VRAM fit on actual Colab GPU.
+  name: "Qwen3-8B"
+  backend: "colab"  # colab | ollama_dev (optional local only)
+  quantisation: "Q4_K_M"  # placeholder default
+  model_path: null
+  temperature: 0.1
+  top_p: null
+  top_k: null
+  max_new_tokens: 512
+  # Final inference must not require local Mac GPU.
+
+embeddings:
+  # NEEDS_VERIFICATION: confirm after KB pilot.
+  model: "BAAI/bge-small-en-v1.5"
+  version: null
+
+retrieval:
+  # NEEDS_VERIFICATION: top_k / chunk settings after pilot.
+  vector_store: "chroma"
+  top_k: 4
+  chunk_size: 900
+  chunk_overlap: 150
+
+uncertainty:
+  # Threshold MUST be locked on DEV/calibration only (Phase 15). Never tune on test.
+  confidence_threshold: null  # set via results/config/threshold.lock.json later
+  method: null  # chosen during calibration phase
+
+evaluation:
+  # Metrics wiring begins in later phases; keep placeholders only.
+  primary_answer_field: "program_answer"
+  secondary_answer_field: "original_answer"
+  judge_model: null
+  judge_temperature: 0.0
+
+execution:
+  # Detected at runtime; do not hard-code a Colab GPU SKU.
+  device: "auto"
+  random_seed: 42
+  run_id: null  # generated per run if unset
+
+logging:
+  level: "INFO"
+  console: true
+  file: true
