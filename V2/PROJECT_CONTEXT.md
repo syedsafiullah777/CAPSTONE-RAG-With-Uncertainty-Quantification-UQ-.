@@ -49,7 +49,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 2 complete (V1 audit + FinQA profile).** Phase 1 foundation remains. Later phases require explicit approval. Frozen 140 **not** selected yet.
+**Phase 3 complete (FinQA dataset verification + PDF resolvability).**  
+Phases 1–2 remain. **Frozen 140 not selected.** Next approved step is Phase 4.
 
 ## Key paths
 
@@ -59,3 +60,4 @@ Streamlit app that runs live pipelines on a new question through all three archi
 - Decisions log: `V2/DECISIONS.md`
 - V1 audit: `V2/docs/v1_audit.md`
 - Dataset profile: `V2/docs/dataset_profile.md`
+- Phase 3 checkpoint: `V2/docs/phase3_dataset_verification.md`

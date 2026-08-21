@@ -35,12 +35,15 @@ dataset:
   architectures: 3
   total_cases: 420
   sampling_seed: 42  # proposed; freeze only after Phase 4 sampling succeeds
-  # Phase 2 verified live load (see docs/dataset_profile.md):
+  # Phase 2–3 verified live load (see docs/phase3_dataset_verification.md):
   verified_split_counts:
     train: 6251
     dev: 883
     test: 1147
     total: 8281
+  source_pdf_path_template: "data/FinQA/{split}/{file_name}"
+  test_pdfs_resolved: 380
+  test_pdfs_missing: 0
 
 model:
   # NEEDS_VERIFICATION: GGUF quant / VRAM fit on actual Colab GPU.

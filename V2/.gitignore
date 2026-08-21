@@ -41,6 +41,7 @@ data/raw/**
 data/processed/**
 !data/processed/.gitkeep
 !data/processed/finqa_profile.json
+!data/processed/finqa_pdf_probe.json
 # Calibration and final freeze files may be committed later when ready.
 # Ignore large intermediate dumps by default:
 data/calibration/*.parquet

@@ -1,0 +1,31 @@
+{
+  "dataset_id": "G4KMU/t2-ragbench",
+  "subset": "FinQA",
+  "phase": 3,
+  "repo_file_count": 13187,
+  "repo_pdf_count": 7353,
+  "finqa_repo_paths": {
+    "data_FinQA_entries": 2792,
+    "finqa_pdf_count": 2789,
+    "split_prefixes": ["data/FinQA/train", "data/FinQA/dev", "data/FinQA/test"]
+  },
+  "path_mapping_rule": "repo_path = data/FinQA/{split}/{file_name}",
+  "example": {
+    "file_name": "pdf/AAL/2010/page_72.pdf",
+    "repo_path_test": "data/FinQA/test/pdf/AAL/2010/page_72.pdf"
+  },
+  "split_unique_file_names": {
+    "train": 2110,
+    "dev": 299,
+    "test": 380
+  },
+  "test_pdf_resolution": {
+    "unique_file_names": 380,
+    "matched_in_repo": 380,
+    "missing": 0,
+    "match_rate": 1.0
+  },
+  "load_dataset_includes_pdf_bytes": false,
+  "kb_implication": "Phase 6 must download/clone PDFs (or page PDFs) via HF; do not use gold context field as the retrieval corpus.",
+  "phase3_selected_140": false
+}

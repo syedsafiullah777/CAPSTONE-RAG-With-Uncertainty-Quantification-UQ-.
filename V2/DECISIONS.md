@@ -41,3 +41,13 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 - Final 140 selection (Phase 4)
 - PDF acquisition and KB build (Phase 6)
 - Quantisation / confidence method / Arch3 reuse flag
+
+## 2026-08-21 — Phase 3 dataset verification closed
+
+**Decision:** Treat FinQA schema/splits as verified. Confirm source PDFs resolve in the HF dataset repo before Phase 4 sampling.
+
+**Verified:**
+- Path rule: `data/FinQA/{split}/{file_name}`
+- Test PDFs: **380/380** present in repo
+- Checkpoint: `docs/phase3_dataset_verification.md`
+- No 140 freeze in Phase 3
