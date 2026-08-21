@@ -51,3 +51,15 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 - Test PDFs: **380/380** present in repo
 - Checkpoint: `docs/phase3_dataset_verification.md`
 - No 140 freeze in Phase 3
+
+## 2026-08-21 — Phase 4 freeze 140 test questions
+
+**Decision:** Freeze a reproducible FinQA **test** sample of 140 unique questions with seed 42, company cap 3, file cap 1.
+
+**Outputs:**
+- `data/final/selected_140_questions.csv`
+- `data/final/sampling_manifest.json`
+- `selected_ids_sha256 = 1a69d93e412097a076e8ec836253b8fff53366aefc5ea5f8998020984f6bbd8a`
+- 77 companies, 140 distinct source files
+
+**Rule:** Do not alter the freeze based on later experimental results. Calibration is Phase 5 (dev only).

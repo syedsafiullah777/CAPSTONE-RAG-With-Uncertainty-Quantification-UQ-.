@@ -34,7 +34,9 @@ dataset:
   frozen_test_size: 140
   architectures: 3
   total_cases: 420
-  sampling_seed: 42  # proposed; freeze only after Phase 4 sampling succeeds
+  sampling_seed: 42  # FROZEN in Phase 4 — do not change after selected_140_questions.csv
+  frozen_test_set: "data/final/selected_140_questions.csv"
+  sampling_manifest: "data/final/sampling_manifest.json"
   # Phase 2–3 verified live load (see docs/phase3_dataset_verification.md):
   verified_split_counts:
     train: 6251
@@ -44,6 +46,12 @@ dataset:
   source_pdf_path_template: "data/FinQA/{split}/{file_name}"
   test_pdfs_resolved: 380
   test_pdfs_missing: 0
+  # Phase 4 freeze summary (see sampling_manifest.json for authority):
+  phase4_frozen: true
+  phase4_n: 140
+  phase4_unique_companies: 77
+  phase4_unique_files: 140
+  phase4_selected_ids_sha256: "1a69d93e412097a076e8ec836253b8fff53366aefc5ea5f8998020984f6bbd8a"
 
 model:
   # NEEDS_VERIFICATION: GGUF quant / VRAM fit on actual Colab GPU.

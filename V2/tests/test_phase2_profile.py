@@ -88,9 +88,7 @@ def test_phase2_docs_exist() -> None:
     assert data["splits"]["test"] == 1147
     assert data["sampling_readiness"]["phase2_selected_140"] is False
     assert data["sampling_readiness"]["can_support_140_from_test"] is True
-    assert "selected_140_questions.csv" not in [
-        p.name for p in (project_root() / "data" / "final").iterdir()
-    ]
+    # Phase 4 may later freeze selected_140_questions.csv; Phase 2 must not require its absence.
 
 
 def test_v2_root_unchanged_name() -> None:

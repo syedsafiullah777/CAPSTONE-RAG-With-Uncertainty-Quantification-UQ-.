@@ -42,12 +42,14 @@ data/processed/**
 !data/processed/.gitkeep
 !data/processed/finqa_profile.json
 !data/processed/finqa_pdf_probe.json
-# Calibration and final freeze files may be committed later when ready.
-# Ignore large intermediate dumps by default:
+# Calibration and final freeze files may be committed when ready.
 data/calibration/*.parquet
 data/calibration/*.jsonl
 data/final/*.parquet
 data/final/*.jsonl
+!data/final/selected_140_questions.csv
+!data/final/sampling_manifest.json
+!results/config/phase4_sampling_manifest.json
 
 # Knowledge-base artefacts (documents/index are large; keep structure)
 knowledge_base/documents/**

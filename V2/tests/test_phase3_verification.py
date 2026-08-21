@@ -35,7 +35,6 @@ def test_phase3_profile_splits_unchanged() -> None:
     assert profile["sampling_readiness"]["phase2_selected_140"] is False
 
 
-def test_phase3_did_not_freeze_140() -> None:
-    final_dir = project_root() / "data" / "final"
-    assert not (final_dir / "selected_140_questions.csv").exists()
-    assert not (final_dir / "sampling_manifest.json").exists()
+def test_phase3_checkpoint_does_not_claim_140_freeze() -> None:
+    text = (project_root() / "docs" / "phase3_dataset_verification.md").read_text(encoding="utf-8")
+    assert "not selected in Phase 3" in text or "No 140 freeze performed" in text
