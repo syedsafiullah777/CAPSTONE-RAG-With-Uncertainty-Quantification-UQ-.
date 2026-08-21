@@ -49,8 +49,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 4 complete — FinQA test 140 frozen.**  
-Next approved step: Phase 5 (calibration set from FinQA **dev**).
+**Phase 5 complete — FinQA DEV calibration set frozen (40 questions; threshold not locked).**  
+Next approved step: Phase 6 (knowledge base from source PDFs).
 
 ## Key paths
 
@@ -64,3 +64,7 @@ Next approved step: Phase 5 (calibration set from FinQA **dev**).
 - Phase 4 freeze: `V2/data/final/selected_140_questions.csv`
 - Phase 4 manifest: `V2/data/final/sampling_manifest.json`
 - Phase 4 notes: `V2/docs/phase4_sampling.md`
+- Phase 5 calibration: `V2/data/calibration/calibration_questions.csv`
+- Phase 5 manifest: `V2/data/calibration/calibration_manifest.json`
+- Phase 5 notes: `V2/docs/phase5_calibration.md`
+- **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

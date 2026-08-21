@@ -123,6 +123,3 @@ def test_phase4_frozen_artefacts_if_present() -> None:
 
     payload = json.dumps([r["id"] for r in rows], separators=(",", ":"))
     assert hashlib.sha256(payload.encode("utf-8")).hexdigest() == manifest["selected_ids_sha256"]
-
-    # Phase 5 calibration freeze must not exist yet.
-    assert not (root / "data" / "calibration" / "calibration_questions.csv").exists()

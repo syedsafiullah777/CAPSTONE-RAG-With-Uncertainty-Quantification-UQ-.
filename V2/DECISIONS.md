@@ -63,3 +63,22 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 - 77 companies, 140 distinct source files
 
 **Rule:** Do not alter the freeze based on later experimental results. Calibration is Phase 5 (dev only).
+
+## 2026-08-21 — Phase 5 freeze DEV calibration set
+
+**Decision:** Freeze **40** FinQA **dev** questions (seed 42; company cap 2; file cap 1), excluding any id/question overlap with the frozen test 140.
+
+**Outputs:**
+- `data/calibration/calibration_questions.csv`
+- `data/calibration/calibration_manifest.json`
+- `selected_ids_sha256 = b229d45331fc18dd7c784175abd37cee3550775f268c843b2417d3f9d2e3aeca`
+- 32 companies, 40 files
+- `threshold_locked = false` (lock later, before test evaluation)
+
+**Rule:** Never tune the confidence threshold on the frozen test 140.
+
+## 2026-08-21 — Project master record instituted
+
+**Decision:** Add Cursor rule `.cursor/rules/05-project-master-record.mdc` and authoritative chronology at `V2/project_record/PROJECT_MASTER_RECORD.md`.
+
+**Rule:** After every completed phase, update the master record before declaring the phase complete. Do not overwrite historical phase summaries.

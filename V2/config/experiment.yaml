@@ -37,6 +37,10 @@ dataset:
   sampling_seed: 42  # FROZEN in Phase 4 — do not change after selected_140_questions.csv
   frozen_test_set: "data/final/selected_140_questions.csv"
   sampling_manifest: "data/final/sampling_manifest.json"
+  calibration_size: 40
+  calibration_seed: 42
+  frozen_calibration_set: "data/calibration/calibration_questions.csv"
+  calibration_manifest: "data/calibration/calibration_manifest.json"
   # Phase 2–3 verified live load (see docs/phase3_dataset_verification.md):
   verified_split_counts:
     train: 6251
@@ -52,6 +56,13 @@ dataset:
   phase4_unique_companies: 77
   phase4_unique_files: 140
   phase4_selected_ids_sha256: "1a69d93e412097a076e8ec836253b8fff53366aefc5ea5f8998020984f6bbd8a"
+  # Phase 5 calibration freeze (threshold NOT locked yet):
+  phase5_frozen: true
+  phase5_n: 40
+  phase5_unique_companies: 32
+  phase5_unique_files: 40
+  phase5_selected_ids_sha256: "b229d45331fc18dd7c784175abd37cee3550775f268c843b2417d3f9d2e3aeca"
+  phase5_threshold_locked: false
 
 model:
   # NEEDS_VERIFICATION: GGUF quant / VRAM fit on actual Colab GPU.

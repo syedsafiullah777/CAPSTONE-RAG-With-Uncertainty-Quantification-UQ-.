@@ -49,7 +49,10 @@ data/final/*.parquet
 data/final/*.jsonl
 !data/final/selected_140_questions.csv
 !data/final/sampling_manifest.json
+!data/calibration/calibration_questions.csv
+!data/calibration/calibration_manifest.json
 !results/config/phase4_sampling_manifest.json
+!results/config/phase5_calibration_manifest.json
 
 # Knowledge-base artefacts (documents/index are large; keep structure)
 knowledge_base/documents/**

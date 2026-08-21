@@ -1,0 +1,50 @@
+---
+description: Maintain the project master record after every completed phase
+globs: V2/**
+alwaysApply: true
+---
+
+# PROJECT MASTER RECORD — MANDATORY PHASE UPDATE
+
+The file:
+
+V2/project_record/PROJECT_MASTER_RECORD.md
+
+is the authoritative chronological record of the V2 project.
+
+AFTER EVERY COMPLETED PHASE:
+
+1. Verify the phase is actually complete.
+2. Review the implementation, tests, configuration and outputs produced by that phase.
+3. Update PROJECT_MASTER_RECORD.md before declaring the phase complete.
+4. Add a new chronological section:
+
+## Phase X — [Phase Name]
+
+Include:
+- Date
+- Objective
+- Why the phase was required
+- Work completed
+- Technical decisions
+- Files created/modified
+- Tests/validation
+- Actual outcome
+- Problems encountered
+- Problems resolved
+- Remaining issues
+- Dissertation relevance
+- Evidence/source file paths
+
+5. Update the relevant sections of the master record with newly verified information.
+6. Mark unknown or unverified information as:
+   NEEDS VERIFICATION
+
+7. Never invent results or settings.
+8. Never overwrite historical phase summaries.
+9. If a later phase changes a previous assumption, preserve the historical entry and add the correction/change to the Decisions Log.
+10. Do not declare a phase complete until the master record has been updated.
+
+The master record must always reflect the actual implemented project, not merely the original plan.
+
+Actual code, configuration, experiment outputs and test results take precedence over previous AI summaries or assumptions.
