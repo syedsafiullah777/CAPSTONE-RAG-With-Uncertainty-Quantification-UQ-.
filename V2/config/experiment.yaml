@@ -65,16 +65,23 @@ dataset:
   phase5_threshold_locked: false
 
 model:
-  # NEEDS_VERIFICATION: GGUF quant / VRAM fit on actual Colab GPU.
   name: "Qwen3-8B"
-  backend: "colab"  # colab | ollama_dev (optional local only)
-  quantisation: "Q4_K_M"  # placeholder default
+  # Primary remote path: llama_cpp (GGUF on Colab GPU). auto falls back to transformers/CUDA then ollama_dev.
+  backend: "auto"
+  quantisation: "Q4_K_M"
   model_path: null
+  hf_repo_id: "bartowski/Qwen_Qwen3-8B-GGUF"
+  gguf_filename: "Qwen3-8B-Q4_K_M.gguf"
+  hf_model_id: "Qwen/Qwen3-8B"
+  ollama_model: "qwen3:8b"  # optional local smoke only
+  n_ctx: 4096
+  n_gpu_layers: -1
+  load_in_4bit: true
   temperature: 0.1
   top_p: null
   top_k: null
   max_new_tokens: 512
-  # Final inference must not require local Mac GPU.
+  # Final 420-case benchmark must use Colab GPU (llama_cpp or transformers), not Mac Ollama.
 
 embeddings:
   model: "BAAI/bge-small-en-v1.5"

@@ -88,3 +88,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Index FinQA source page PDFs (test 140 + calibration 40 + 50 train distractors) with `BAAI/bge-small-en-v1.5` into Chroma; never ingest gold `context` as KB documents.
 
 **Verified build:** 230 docs indexed, 1239 chunks, 0 download failures. Manifest: `knowledge_base/index/index_manifest.json`.
+
+## 2026-08-21 — Phase 7 Qwen backend
+
+**Decision:** RAG code talks only to `create_backend()` / `LLMBackend`. Primary Colab path is `llama_cpp` GGUF (`bartowski/Qwen_Qwen3-8B-GGUF`, `Qwen3-8B-Q4_K_M.gguf`) with `transformers` 4-bit fallback. `ollama_dev` is optional local smoke only and must not be required for the final 420-case benchmark.
+
+**Verified smoke (Mac):** `scripts/smoke_generate.py --backend ollama_dev` → answer `4`; artefacts under `results/config/phase7_*.json`. Colab GPU GGUF execution remains **NEEDS VERIFICATION**.

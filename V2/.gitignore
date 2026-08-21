@@ -62,6 +62,8 @@ knowledge_base/index/**
 !knowledge_base/index/index_manifest.json
 !knowledge_base/index/retrieval_demo.json
 !results/config/phase6_index_manifest.json
+!results/config/phase7_runtime_fingerprint.json
+!results/config/phase7_smoke_generate.json
 
 # Results (never silently commit large/raw experiment dumps by default)
 results/raw/**

@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-21 |
-| Current completed phase | **Phase 6** |
-| Next phase (not started) | Phase 7 — Qwen3-8B Colab backend |
+| Current completed phase | **Phase 7** |
+| Next phase (not started) | Phase 8 — Single-Agent RAG baseline |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -39,14 +39,18 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Chunking | size 900 / overlap 150 | index manifest / `experiment.yaml` |
 | Distractors | 50 train PDFs | index manifest `roles.distractor` |
 
-### Model / compute (planned; not yet executed)
+### Model / compute
 
 | Item | Status |
 | --- | --- |
-| LLM | Qwen3-8B — **NEEDS VERIFICATION** (quant / VRAM on actual Colab GPU) |
-| Primary compute | Google Colab GPU / Colab CLI — **not run yet** |
-| Local Mac | Development/control only (KB embed ran on local CPU for Phase 6) |
+| LLM | Qwen3-8B (configured); live smoke via Ollama `qwen3:8b` |
+| Backend abstraction | `src/models/` — `llama_cpp` / `transformers` / `ollama_dev` / `mock` |
+| Planned Colab GGUF | `bartowski/Qwen_Qwen3-8B-GGUF` + `Qwen3-8B-Q4_K_M.gguf` — **NEEDS VERIFICATION** (VRAM fit on Colab GPU) |
+| Primary compute | Google Colab GPU — code path ready; Colab CLI not installed on Mac; live GGUF smoke **NEEDS VERIFICATION** |
+| Local Mac | Dev/control; Phase 7 generation smoke used optional `ollama_dev` |
 | Paid LLM API | Not used / not required |
+| Fingerprint artefact | `results/config/phase7_runtime_fingerprint.json` |
+| Smoke artefact | `results/config/phase7_smoke_generate.json` (answer `4`) |
 
 ### Architectures (not implemented yet)
 
@@ -59,7 +63,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **25 passed** (Phases 1–6 tests)
+- Result: **29 passed** (Phases 1–7 tests)
 
 ---
 
@@ -74,6 +78,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 5. **Threshold not locked in Phase 5.** Lock before final test evaluation (later phase).
 6. **Master record rule added 2026-08-21:** `.cursor/rules/05-project-master-record.mdc` — update this file after every completed phase.
 7. **Phase 6 KB:** Source PDFs only (not gold context); Chroma + bge-small-en-v1.5; 230 docs / 1239 chunks verified.
+8. **Phase 7 backends:** Final 420-case benchmark must use Colab GPU (`llama_cpp` or `transformers`). `ollama_dev` is optional local smoke only and is not the official benchmark path.
 
 ---
 
@@ -262,11 +267,44 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 7 — Qwen3-8B backend
+
+- **Date:** 2026-08-21
+- **Objective:** Model backend abstraction + runtime fingerprint + one successful generation (without building RAG architectures).
+- **Why required:** Later RAG phases need a stable generate API and reproducible device/model logging; Mac must not be required for final inference.
+- **Work completed:**
+  - `src/models/` backends: `llama_cpp` (GGUF), `transformers` (4-bit when CUDA), `ollama_dev`, `mock`
+  - Factory (`create_backend`) with `auto` preference order
+  - Fingerprint collector (platform, GPU/nvidia-smi, torch, package versions, model config, git commit)
+  - Smoke script `scripts/smoke_generate.py`; Colab notes `notebooks/colab_runtime.md`
+  - Live smoke on Mac via Ollama `qwen3:8b` → answer `4`
+- **Technical decisions:**
+  - Default GGUF: `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen3-8B-Q4_K_M.gguf`
+  - `backend: auto` in `experiment.yaml`; Colab primary = llama_cpp or transformers
+  - Ollama allowed for local smoke only
+- **Files created/modified:**
+  - `V2/src/models/*.py`, `V2/scripts/smoke_generate.py`
+  - `V2/notebooks/colab_runtime.md`, `V2/docs/phase7_qwen_backend.md`
+  - `V2/tests/test_phase7_model_backend.py`, `V2/config/experiment.yaml`, `V2/requirements.txt`
+  - `V2/results/config/phase7_runtime_fingerprint.json`, `phase7_smoke_generate.json`
+- **Tests/validation:**
+  - Unit: fingerprint fields + mock generate + factory
+  - Integration: smoke artefacts present with non-empty text
+  - Live: `ollama_dev` generation latency ~4.9s
+  - Full suite: **29 passed**
+- **Actual outcome:** Abstraction works; one logged successful generate. Colab GGUF path implemented but not executed on a Colab GPU in this session (`colab` CLI absent).
+- **Problems encountered:** Newer `ollama` Python client returns pydantic `ChatResponse` (no `.keys()`); first smoke crashed after generation.
+- **Problems resolved:** Parse both dict and ChatResponse message content.
+- **Remaining issues:** Colab GPU GGUF/transformers VRAM fit and package install **NEEDS VERIFICATION**; RAG arches not started.
+- **Dissertation relevance:** Reproducible model logging; controlled compute story (Colab primary).
+- **Evidence:** `V2/results/config/phase7_smoke_generate.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 7 | Qwen3-8B Colab backend | Not started |
 | 8–10 | Baseline / Multi-Agent / UQ RAG | Not started |
 | 11+ | Schema logging, Streamlit, pilot, calibration lock, 420 benchmark, stats | Not started |
 

@@ -49,8 +49,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 6 complete — source-PDF knowledge base built (230 docs / 1239 chunks).**  
-Next approved step: Phase 7 (Qwen3-8B Colab backend).
+**Phase 7 complete — Qwen3-8B backend abstraction + fingerprint + live generation smoke.**  
+Next approved step: Phase 8 (Single-Agent RAG baseline).
 
 ## Key paths
 
@@ -70,4 +70,7 @@ Next approved step: Phase 7 (Qwen3-8B Colab backend).
 - Phase 6 KB docs: `V2/knowledge_base/documents/`
 - Phase 6 index: `V2/knowledge_base/index/`
 - Phase 6 notes: `V2/docs/phase6_knowledge_base.md`
+- Phase 7 notes: `V2/docs/phase7_qwen_backend.md`
+- Phase 7 smoke: `V2/results/config/phase7_smoke_generate.json`
+- Phase 7 fingerprint: `V2/results/config/phase7_runtime_fingerprint.json`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`
