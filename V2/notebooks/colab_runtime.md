@@ -20,7 +20,13 @@ Auto-detect looks for folders that contain both:
 - `config/experiment.yaml`
 - `scripts/smoke_generate.py`
 
-**Recommended:** copy/sync the `V2` folder (or whole CAPSTONE project) into Google Drive → open the notebook → run the setup cell with `MOUNT_DRIVE = True`.
+**Recommended when Drive mount fails** (`credential propagation was unsuccessful`):
+
+1. Zip local `V2/` on Mac: `zip -r V2.zip V2` (from project parent folder)
+2. In notebook: `MOUNT_DRIVE = False`, `ALLOW_ZIP_UPLOAD = True`
+3. Re-run setup cell and upload `V2.zip`
+
+Optional Drive mount only if auth works in your browser (not incognito; allow popups).
 
 ## Steps
 
