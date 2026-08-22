@@ -1,0 +1,21 @@
+# Prompt versions for V2 RAG architectures.
+# Phase 1: placeholders only. Real prompts are defined in later phases.
+# Do not use these as production generation prompts yet.
+
+version: "0.1.0-phase1"
+
+baseline:
+  system: null  # NEEDS_VERIFICATION / Phase 8
+  user_template: null
+
+multi_agent:
+  generation:
+    system: null  # NEEDS_VERIFICATION / Phase 9
+    user_template: null
+  verification:
+    system: null  # NEEDS_VERIFICATION / Phase 9
+    user_template: null
+
+uncertainty:
+  # Confidence is computed from pipeline signals; not a free-text "confidence prompt" alone.
+  notes: "Defined in Phase 10 after calibration methodology is fixed."
