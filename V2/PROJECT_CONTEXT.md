@@ -51,10 +51,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 7 complete — Qwen3-8B backend abstraction + fingerprint + live generation smoke.**  
-**Next validation step:** Colab GPU notebook smoke (`notebooks/colab_phase7_smoke.ipynb`) — **NEEDS VERIFICATION**.  
-Next implementation phase: Phase 8 (Single-Agent RAG baseline).
-
+**Phase 7 complete — Qwen3-8B backend + Colab GPU smoke verified (Tesla T4 / llama_cpp / Q4_K_M PASS).**  
+Next implementation phase: Phase 8 (Single-Agent RAG baseline) — not started.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`

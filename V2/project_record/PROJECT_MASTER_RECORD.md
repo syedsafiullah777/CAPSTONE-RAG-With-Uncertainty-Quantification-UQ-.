@@ -41,18 +41,25 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Model / compute
 
-| Item | Status |
-| --- | --- |
-| LLM | Qwen3-8B (configured); live smoke via Ollama `qwen3:8b` |
-| Backend abstraction | `src/models/` — `llama_cpp` / `transformers` / `ollama_dev` / `mock` |
-| Planned Colab GGUF | `bartowski/Qwen_Qwen3-8B-GGUF` + `Qwen_Qwen3-8B-Q4_K_M.gguf` (filename verified on HF) — Colab GPU load **NEEDS VERIFICATION** |
-| Primary compute | **Standard Google Colab GPU notebooks** (not Colab CLI / gcloud) |
-| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` |
-| Colab GPU verification | **NEEDS VERIFICATION** (next validation step) |
-| Local Mac | Dev/control; Phase 7 generation smoke used optional `ollama_dev` |
-| Paid LLM API | Not used / not required |
-| Fingerprint artefact | `results/config/phase7_runtime_fingerprint.json` |
-| Smoke artefact | `results/config/phase7_smoke_generate.json` (answer `4`) |
+| Item | Verified value | Evidence |
+| --- | --- | --- |
+| LLM | Qwen3-8B | Colab smoke |
+| Backend (Colab) | `llama_cpp` | `phase7_smoke_test.json` |
+| GGUF | `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen_Qwen3-8B-Q4_K_M.gguf` | fingerprint + smoke |
+| Quantisation | Q4_K_M | fingerprint |
+| Device | CUDA | fingerprint |
+| GPU | Tesla T4 (15360 MB VRAM; driver 580.82.07) | fingerprint |
+| Torch | 2.11.0+cu128; CUDA available | fingerprint |
+| llama_cpp | 0.3.35 | fingerprint |
+| Python (Colab) | 3.13.15 (Linux x86_64) | fingerprint |
+| Colab smoke status | **PASS** (2026-08-22T16:23:06Z) | `phase7_smoke_test.json` |
+| Generation | Non-empty; starts with `4`; latency ~15.37s; finish_reason `length` | smoke JSON |
+| Primary compute | Standard Google Colab GPU notebooks | notebook entrypoint |
+| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` | — |
+| Local Mac | Dev/control; optional `ollama_dev` smoke | earlier local PASS |
+| Paid LLM API | Not used / not required | — |
+| Fingerprint artefact | `results/config/phase7_runtime_fingerprint.json` | — |
+| Smoke artefact | `results/config/phase7_smoke_test.json` | — |
 
 ### Architectures (not implemented yet)
 
@@ -96,7 +103,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 9. **Phase 7 remote strategy (2026-08-21 correction):** Use **standard Google Colab GPU notebooks** (`notebooks/colab_phase7_smoke.ipynb`). Do **not** use Colab CLI / `gcloud`. Architecture (Qwen3-8B, model abstraction, fingerprinting, checkpoint/resume design) unchanged. Next validation: Colab GPU verification.
 10. **Storage model (2026-08-22):** GitHub = source; Colab = compute; Drive `MSc-RAG/` = persistent archive; Mac = dev + secondary backup. Incremental checkpoint/resume mandatory for 420-case benchmark. Never claim backup without verified paths.
 11. **Validation evidence (2026-08-22):** `project_record/evidence/phaseN_validation.md` after every major phase; actual PASS/FAIL/NEEDS VERIFICATION only; `phase7_smoke_test.json` for machine-readable smoke evidence.
-12. **Phase 7 GGUF filename correction (2026-08-22):** `gguf_filename` must be `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF` (was incorrectly `Qwen3-8B-Q4_K_M.gguf`). Verified on HF Hub API; Colab `llama_cpp` run still **NEEDS VERIFICATION**.
+12. **Phase 7 GGUF filename correction (2026-08-22):** `gguf_filename` must be `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF` (was incorrectly `Qwen3-8B-Q4_K_M.gguf`). Verified on HF Hub API.
+13. **Phase 7 Colab GPU smoke verified (2026-08-22):** Tesla T4 + `llama_cpp` + Q4_K_M GGUF → **PASS**. Evidence: `results/config/phase7_smoke_test.json`, `phase7_runtime_fingerprint.json`.
 
 ---
 
@@ -287,7 +295,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ## Phase 7 — Qwen3-8B backend
 
-- **Date:** 2026-08-21
+- **Date:** 2026-08-21 (implementation); Colab GPU smoke verified **2026-08-22**
 - **Objective:** Model backend abstraction + runtime fingerprint + one successful generation (without building RAG architectures).
 - **Why required:** Later RAG phases need a stable generate API and reproducible device/model logging; Mac must not be required for final inference.
 - **Work completed:**
@@ -295,7 +303,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Factory (`create_backend`) with `auto` preference order
   - Fingerprint collector (platform, GPU/nvidia-smi, torch, package versions, model config, git commit)
   - Smoke script `scripts/smoke_generate.py`; Colab notebook `notebooks/colab_phase7_smoke.ipynb` + notes `notebooks/colab_runtime.md`
-  - Live smoke on Mac via Ollama `qwen3:8b` → answer `4`
+  - Local smoke (Mac): Ollama `qwen3:8b` → answer `4`
+  - **Colab GPU smoke (verified):** `llama_cpp` + Q4_K_M GGUF on Tesla T4 → **PASS**
 - **Technical decisions:**
   - Default GGUF: `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen_Qwen3-8B-Q4_K_M.gguf`
   - `backend: auto` in `experiment.yaml`; Colab primary = llama_cpp or transformers
@@ -305,20 +314,37 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - `V2/src/models/*.py`, `V2/scripts/smoke_generate.py`
   - `V2/notebooks/colab_phase7_smoke.ipynb`, `V2/notebooks/colab_runtime.md`, `V2/docs/phase7_qwen_backend.md`
   - `V2/tests/test_phase7_model_backend.py`, `V2/config/experiment.yaml`, `V2/requirements.txt`
-  - `V2/results/config/phase7_runtime_fingerprint.json`, `phase7_smoke_generate.json`
+  - `V2/results/config/phase7_runtime_fingerprint.json`, `phase7_smoke_test.json`
 - **Tests/validation:**
-  - Unit: fingerprint fields + mock generate + factory
-  - Integration: smoke artefacts present with non-empty text
-  - Live: `ollama_dev` generation latency ~4.9s
-  - Full suite: **29 passed**
-- **Actual outcome:** Abstraction works; one logged successful generate (local `ollama_dev`). Colab GGUF path implemented for notebook execution; live Colab GPU smoke not run in this session.
-- **Problems encountered:** Newer `ollama` Python client returns pydantic `ChatResponse` (no `.keys()`); first smoke crashed after generation. Mac has no `gcloud` / Colab CLI (not required under notebook strategy).
-- **Problems resolved:** Parse both dict and ChatResponse message content. Remote strategy documented as Colab notebooks (not CLI).
-- **Remaining issues:** **Next validation step — Colab GPU verification** (GGUF/transformers VRAM fit via `notebooks/colab_phase7_smoke.ipynb`) recorded as **NEEDS VERIFICATION** in `project_record/evidence/phase7_validation.md`; RAG arches not started.
-- **Dissertation relevance:** Reproducible model logging; controlled compute story (Colab notebook primary).
+  - Unit: fingerprint fields + mock generate + factory + GGUF filename
+  - Local: `ollama_dev` smoke PASS
+  - **Colab (2026-08-22T16:23:06Z):** status **PASS**; run_id `phase7_20260822T162122Z_cee1f3d4`
+  - Full suite (local): **36 passed**
+- **Colab runtime (verified from fingerprint):**
+  - Device: **cuda**
+  - GPU: **Tesla T4** (15360 MB total VRAM; 14913 MB free at capture; driver 580.82.07)
+  - Torch: **2.11.0+cu128**; CUDA available; 1 device
+  - llama_cpp: **0.3.35**
+  - Platform: Linux 6.6.122+ x86_64; Python **3.13.15**
+  - Model: **Qwen3-8B**; backend **llama_cpp**; quant **Q4_K_M**; file `Qwen_Qwen3-8B-Q4_K_M.gguf`
+  - Notebook: `notebooks/colab_phase7_smoke.ipynb`
+- **Colab generation (verified from smoke JSON):**
+  - Prompt: smoke arithmetic (`2 + 2` → number only)
+  - Status: **PASS** (non-empty text; error null)
+  - Observed output begins with **`4`**; continued generation until max tokens (`finish_reason: length`; 512 completion tokens; latency **15.37s**)
+- **Actual outcome:** Backend abstraction works on Colab GPU. Primary remote path (`llama_cpp` GGUF Q4_K_M on Tesla T4) verified with successful smoke generation.
+- **Problems encountered:** Initial GGUF filename mismatch (`Qwen3-8B-Q4_K_M.gguf` vs actual `Qwen_Qwen3-8B-Q4_K_M.gguf`); Ollama ChatResponse parsing on Mac; Colab Drive auth issues (resolved via GitHub clone workflow).
+- **Problems resolved:** Correct GGUF filename; Ollama response parsing; Colab clone-from-GitHub notebook path.
+- **Remaining issues:** RAG architectures not started (Phase 8+); smoke `finish_reason: length` / verbose continuation is a known generation-control detail for later prompt/token tuning if needed — does not invalidate Phase 7 PASS.
+- **Dissertation relevance:** Reproducible model/GPU logging; Colab-primary compute story verified.
 - **Evidence:** `V2/results/config/phase7_smoke_test.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`, `V2/notebooks/colab_phase7_smoke.ipynb`
-- **Validation evidence:** `V2/project_record/evidence/phase7_validation.md` (GGUF filename fix verified on HF; Colab GPU smoke **NEEDS VERIFICATION**)
+- **Validation evidence:** `V2/project_record/evidence/phase7_validation.md`
 - **GGUF filename fix (2026-08-22):** `Qwen_Qwen3-8B-Q4_K_M.gguf` in `experiment.yaml`, `llama_cpp_backend.py`, `factory.py`
+- **Backup status (Phase 7 Colab verification):**
+  - Colab: verified run artefacts in local V2 copy of `results/config/phase7_*.json`
+  - Google Drive: **NEEDS VERIFICATION** (optional copy to `MSc-RAG/configs/phase7/`)
+  - Local: verified — smoke + fingerprint files present under `V2/results/config/`
+  - GitHub: recommended commit of updated master record + evidence after this verification
 
 ---
 
@@ -349,7 +375,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Actual outcome:** Rules and plan integrated; benchmark recovery contract specified in config; no RAG code added.
 - **Problems encountered:** None.
 - **Problems resolved:** N/A
-- **Remaining issues:** Google Drive folder layout **NEEDS VERIFICATION**; benchmark runner not yet implemented (later phases); Colab GPU smoke **NEEDS VERIFICATION**.
+- **Remaining issues:** Google Drive folder layout **NEEDS VERIFICATION**; benchmark runner not yet implemented (later phases). Colab GPU smoke verified **PASS** (Phase 7).
 - **Dissertation relevance:** Reproducibility, artefact provenance, honest reporting of backup status.
 - **Evidence:** `V2/docs/storage_backup_recovery.md`, `V2/docs/IMPLEMENTATION_PLAN.md`, `V2/config/experiment.yaml`
 - **Validation evidence:** `V2/project_record/evidence/` (phases 1–7 backfilled; template for future phases)

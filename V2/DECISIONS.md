@@ -128,4 +128,4 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Correction:** `model.gguf_filename` → `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF`. Previous value `Qwen3-8B-Q4_K_M.gguf` did not exist on the repo.
 
-**Verified:** HF Hub metadata (5027784224 bytes); pytest 36 passed; local `ollama_dev` smoke PASS with updated config in fingerprint. Colab `llama_cpp` generation still **NEEDS VERIFICATION**.
+**Verified:** HF Hub metadata (5027784224 bytes); pytest 36 passed; local `ollama_dev` smoke PASS; **Colab `llama_cpp` on Tesla T4 PASS** (2026-08-22T16:23:06Z) — see `results/config/phase7_smoke_test.json`.

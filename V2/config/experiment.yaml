@@ -90,7 +90,7 @@ remote_execution:
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   # Next validation step:
-  colab_gpu_verification: "NEEDS_VERIFICATION"
+  colab_gpu_verification: "PASS"  # verified 2026-08-22 Tesla T4 llama_cpp; see results/config/phase7_smoke_test.json
   preserves:
     - "Qwen3-8B"
     - "src/models backend abstraction"
