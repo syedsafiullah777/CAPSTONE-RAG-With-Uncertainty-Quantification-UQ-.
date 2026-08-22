@@ -123,3 +123,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** After every major phase, save actual test/smoke/benchmark results to `project_record/evidence/phaseN_validation.md` plus machine-readable JSON where useful (e.g. `results/config/phase7_smoke_test.json`). Record PASS/FAIL/NEEDS VERIFICATION from observed runs only — never fabricate PASS. Master record must reference the evidence file. Benchmark raw outputs stay in `results/raw/`; evidence files are concise summaries.
 
 **Backfilled:** `phase1_validation.md` through `phase7_validation.md`. Colab GPU smoke in Phase 7 recorded as **NEEDS VERIFICATION**.
+
+## 2026-08-22 — Phase 7 GGUF filename correction
+
+**Correction:** `model.gguf_filename` → `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF`. Previous value `Qwen3-8B-Q4_K_M.gguf` did not exist on the repo.
+
+**Verified:** HF Hub metadata (5027784224 bytes); pytest 36 passed; local `ollama_dev` smoke PASS with updated config in fingerprint. Colab `llama_cpp` generation still **NEEDS VERIFICATION**.

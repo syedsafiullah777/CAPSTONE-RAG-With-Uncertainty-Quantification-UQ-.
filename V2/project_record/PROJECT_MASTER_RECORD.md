@@ -45,7 +45,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | --- | --- |
 | LLM | Qwen3-8B (configured); live smoke via Ollama `qwen3:8b` |
 | Backend abstraction | `src/models/` — `llama_cpp` / `transformers` / `ollama_dev` / `mock` |
-| Planned Colab GGUF | `bartowski/Qwen_Qwen3-8B-GGUF` + `Qwen3-8B-Q4_K_M.gguf` — **NEEDS VERIFICATION** (VRAM fit on Colab GPU) |
+| Planned Colab GGUF | `bartowski/Qwen_Qwen3-8B-GGUF` + `Qwen_Qwen3-8B-Q4_K_M.gguf` (filename verified on HF) — Colab GPU load **NEEDS VERIFICATION** |
 | Primary compute | **Standard Google Colab GPU notebooks** (not Colab CLI / gcloud) |
 | Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` |
 | Colab GPU verification | **NEEDS VERIFICATION** (next validation step) |
@@ -65,7 +65,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **35 passed** (Phases 1–7 + storage/backup + validation evidence tests)
+- Result: **36 passed** (Phases 1–7 + storage/backup + GGUF filename test)
 
 ### Storage / backup (project infrastructure)
 
@@ -96,6 +96,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 9. **Phase 7 remote strategy (2026-08-21 correction):** Use **standard Google Colab GPU notebooks** (`notebooks/colab_phase7_smoke.ipynb`). Do **not** use Colab CLI / `gcloud`. Architecture (Qwen3-8B, model abstraction, fingerprinting, checkpoint/resume design) unchanged. Next validation: Colab GPU verification.
 10. **Storage model (2026-08-22):** GitHub = source; Colab = compute; Drive `MSc-RAG/` = persistent archive; Mac = dev + secondary backup. Incremental checkpoint/resume mandatory for 420-case benchmark. Never claim backup without verified paths.
 11. **Validation evidence (2026-08-22):** `project_record/evidence/phaseN_validation.md` after every major phase; actual PASS/FAIL/NEEDS VERIFICATION only; `phase7_smoke_test.json` for machine-readable smoke evidence.
+12. **Phase 7 GGUF filename correction (2026-08-22):** `gguf_filename` must be `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF` (was incorrectly `Qwen3-8B-Q4_K_M.gguf`). Verified on HF Hub API; Colab `llama_cpp` run still **NEEDS VERIFICATION**.
 
 ---
 
@@ -296,7 +297,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Smoke script `scripts/smoke_generate.py`; Colab notebook `notebooks/colab_phase7_smoke.ipynb` + notes `notebooks/colab_runtime.md`
   - Live smoke on Mac via Ollama `qwen3:8b` → answer `4`
 - **Technical decisions:**
-  - Default GGUF: `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen3-8B-Q4_K_M.gguf`
+  - Default GGUF: `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen_Qwen3-8B-Q4_K_M.gguf`
   - `backend: auto` in `experiment.yaml`; Colab primary = llama_cpp or transformers
   - Ollama allowed for local smoke only
   - Remote execution = standard Colab GPU notebooks (not Colab CLI) — confirmed in strategy update
@@ -316,7 +317,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Remaining issues:** **Next validation step — Colab GPU verification** (GGUF/transformers VRAM fit via `notebooks/colab_phase7_smoke.ipynb`) recorded as **NEEDS VERIFICATION** in `project_record/evidence/phase7_validation.md`; RAG arches not started.
 - **Dissertation relevance:** Reproducible model logging; controlled compute story (Colab notebook primary).
 - **Evidence:** `V2/results/config/phase7_smoke_test.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`, `V2/notebooks/colab_phase7_smoke.ipynb`
-- **Validation evidence:** `V2/project_record/evidence/phase7_validation.md` (Colab GPU smoke **NEEDS VERIFICATION**)
+- **Validation evidence:** `V2/project_record/evidence/phase7_validation.md` (GGUF filename fix verified on HF; Colab GPU smoke **NEEDS VERIFICATION**)
+- **GGUF filename fix (2026-08-22):** `Qwen_Qwen3-8B-Q4_K_M.gguf` in `experiment.yaml`, `llama_cpp_backend.py`, `factory.py`
 
 ---
 

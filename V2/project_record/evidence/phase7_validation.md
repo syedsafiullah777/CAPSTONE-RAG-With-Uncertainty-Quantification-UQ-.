@@ -10,77 +10,77 @@
 
 | # | Test name | Status | Evidence path |
 | --- | --- | --- | --- |
-| 1 | Phase 7 unit/integration tests | PASS | `tests/test_phase7_model_backend.py` |
-| 2 | Full pytest suite | PASS | `project_record/evidence/artifacts/phase7_pytest_20260822T145200Z.txt` |
-| 3 | Local LLM smoke (`ollama_dev`) | PASS | `results/config/phase7_smoke_test.json` |
-| 4 | Runtime fingerprint | PASS | `results/config/phase7_runtime_fingerprint.json` |
+| 1 | GGUF filename on Hugging Face | **PASS** | HF `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen_Qwen3-8B-Q4_K_M.gguf` (~5.03 GB) |
+| 2 | Config + factory filename | **PASS** | `config/experiment.yaml`, `tests/test_phase7_model_backend.py` |
+| 3 | Full pytest suite | **PASS** | `project_record/evidence/artifacts/phase7_pytest_20260822T161500Z.txt` (36 passed) |
+| 4 | Local LLM smoke (`ollama_dev`) | **PASS** | `results/config/phase7_smoke_test.json` |
 | 5 | Colab GPU smoke (`llama_cpp`) | **NEEDS VERIFICATION** | `notebooks/colab_phase7_smoke.ipynb` |
 
 ---
 
 ## Test records
 
-### 1. Phase 7 pytest module
+### 1. GGUF filename fix (llama_cpp)
 
 | Field | Value |
 | --- | --- |
-| Date/time (UTC) | 2026-08-22T14:52:07 |
+| Date/time (UTC) | 2026-08-22T16:14:37 |
 | Phase | 7 |
-| Test name | `test_phase7_model_backend` |
-| Command | `PYTHONPATH=. pytest tests/test_phase7_model_backend.py -v` |
-| Environment | Local Mac; Python 3.9.6; `.venv` |
-| Expected | Fingerprint fields; mock generate; smoke validation artefact present |
-| Actual (observed) | 4 tests pass (included in 34-test full suite) |
+| Test name | `hf_gguf_filename_resolution` |
+| Command | `huggingface_hub.get_hf_file_metadata` for repo/file |
+| Environment | Local Mac (HF Hub API) |
+| Expected | File `Qwen_Qwen3-8B-Q4_K_M.gguf` resolves on `bartowski/Qwen_Qwen3-8B-GGUF` |
+| Actual (observed) | **PASS** — size **5027784224** bytes |
 | Status | **PASS** |
 | Error | — |
-| Output path | `tests/test_phase7_model_backend.py` |
+| Output path | `config/experiment.yaml` → `model.gguf_filename` |
 
-### 2. Full suite regression
+**Fix applied:** was `Qwen3-8B-Q4_K_M.gguf` (wrong) → now `Qwen_Qwen3-8B-Q4_K_M.gguf` (correct).
+
+### 2. Full pytest suite
 
 | Field | Value |
 | --- | --- |
-| Date/time (UTC) | 2026-08-22T14:52:07 |
+| Date/time (UTC) | 2026-08-22T16:15:00 |
 | Phase | 7 |
 | Test name | full_pytest_suite |
 | Command | `PYTHONPATH=. pytest -v --tb=short` |
-| Environment | Local Mac; `.venv` |
-| Expected | All V2 tests pass |
-| Actual (observed) | **34 passed in 5.42s** |
+| Environment | Local Mac; `.venv`; Python 3.13 |
+| Expected | All V2 tests pass including `test_gguf_filename_matches_hf_repo` |
+| Actual (observed) | **36 passed in 4.94s** |
 | Status | **PASS** |
 | Error | — |
-| Output path | `project_record/evidence/artifacts/phase7_pytest_20260822T145200Z.txt` |
+| Output path | `project_record/evidence/artifacts/phase7_pytest_20260822T161500Z.txt` |
 
-### 3. Local LLM generation smoke
+### 3. Local LLM generation smoke (post-fix)
 
 | Field | Value |
 | --- | --- |
-| Date/time (UTC) | 2026-08-22T14:52:22 |
+| Date/time (UTC) | 2026-08-22T16:14:59 |
 | Phase | 7 |
 | Test name | `phase7_llm_generation_smoke` |
 | Command | `PYTHONPATH=. python scripts/smoke_generate.py --backend ollama_dev` |
-| Environment | Local Mac; device `mps_capable_host`; GPU nvidia-smi **unavailable**; Ollama `qwen3:8b` |
-| Expected | Non-empty generation for smoke prompt (`2+2` → number) |
-| Actual (observed) | Text **`4`**; latency **9.94s**; backend `ollama_dev` |
-| Status | **PASS** (local dev smoke only — not the Colab benchmark path) |
+| Environment | Local Mac; Ollama `qwen3:8b`; fingerprint shows `gguf_filename: Qwen_Qwen3-8B-Q4_K_M.gguf` |
+| Expected | Non-empty generation; config records corrected GGUF filename |
+| Actual (observed) | Text **`4`**; latency ~11s; `gguf_filename` in fingerprint **Qwen_Qwen3-8B-Q4_K_M.gguf** |
+| Status | **PASS** (local dev smoke — not Colab `llama_cpp` path) |
 | Error | — |
 | Output path | `results/config/phase7_smoke_test.json` |
 
-### 4. Colab GPU smoke (primary remote validation)
+### 4. Colab GPU smoke (`llama_cpp`)
 
 | Field | Value |
 | --- | --- |
 | Date/time (UTC) | — |
 | Phase | 7 |
 | Test name | `phase7_colab_gpu_smoke` |
-| Command / notebook | `notebooks/colab_phase7_smoke.ipynb` → `scripts/smoke_generate.py --backend llama_cpp` |
-| Environment | Google Colab GPU — **not executed in recorded session** |
-| Expected | GGUF or transformers backend loads on Colab GPU and generates non-empty text |
+| Command / notebook | `notebooks/colab_phase7_smoke.ipynb` → `--backend llama_cpp` |
+| Environment | Google Colab GPU — **not run in this session** |
+| Expected | GGUF loads with corrected filename and generates non-empty text |
 | Actual (observed) | **Not run** |
 | Status | **NEEDS VERIFICATION** |
 | Error | — |
-| Output path | (pending) `results/config/phase7_smoke_test.json` from Colab run |
-
-**Note:** Phase 7 code abstraction is complete; Colab GPU verification remains the next validation step before treating the Colab runtime path as verified.
+| Output path | (pending Colab run) |
 
 ---
 

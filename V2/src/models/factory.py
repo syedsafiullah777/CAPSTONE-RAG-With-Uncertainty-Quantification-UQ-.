@@ -32,7 +32,7 @@ def create_backend(model_cfg: dict[str, Any] | None = None) -> LLMBackend:
         return LlamaCppBackend(
             model_path=cfg.get("model_path"),
             hf_repo_id=str(cfg.get("hf_repo_id") or "bartowski/Qwen_Qwen3-8B-GGUF"),
-            gguf_filename=str(cfg.get("gguf_filename") or "Qwen3-8B-Q4_K_M.gguf"),
+            gguf_filename=str(cfg.get("gguf_filename") or "Qwen_Qwen3-8B-Q4_K_M.gguf"),
             quantisation=str(cfg.get("quantisation") or "Q4_K_M"),
             n_ctx=int(cfg.get("n_ctx") or 4096),
             n_gpu_layers=int(cfg.get("n_gpu_layers") if cfg.get("n_gpu_layers") is not None else -1),
@@ -50,7 +50,7 @@ def create_backend(model_cfg: dict[str, Any] | None = None) -> LLMBackend:
         llama = LlamaCppBackend(
             model_path=cfg.get("model_path"),
             hf_repo_id=str(cfg.get("hf_repo_id") or "bartowski/Qwen_Qwen3-8B-GGUF"),
-            gguf_filename=str(cfg.get("gguf_filename") or "Qwen3-8B-Q4_K_M.gguf"),
+            gguf_filename=str(cfg.get("gguf_filename") or "Qwen_Qwen3-8B-Q4_K_M.gguf"),
             quantisation=str(cfg.get("quantisation") or "Q4_K_M"),
             model_name=str(cfg.get("name") or "Qwen3-8B"),
         )

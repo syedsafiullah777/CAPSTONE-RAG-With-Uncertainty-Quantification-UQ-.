@@ -34,6 +34,14 @@ def test_factory_ollama_name() -> None:
     assert backend.name == "ollama_dev"
 
 
+def test_gguf_filename_matches_hf_repo() -> None:
+    from src.config import load_experiment_config
+
+    cfg = load_experiment_config().section("model")
+    assert cfg.get("hf_repo_id") == "bartowski/Qwen_Qwen3-8B-GGUF"
+    assert cfg.get("gguf_filename") == "Qwen_Qwen3-8B-Q4_K_M.gguf"
+
+
 def test_phase7_smoke_validation_artefact_if_present() -> None:
     root = project_root()
     smoke = root / "results" / "config" / "phase7_smoke_test.json"

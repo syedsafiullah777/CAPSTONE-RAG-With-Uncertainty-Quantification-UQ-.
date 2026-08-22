@@ -17,7 +17,7 @@ class LlamaCppBackend:
         *,
         model_path: str | None = None,
         hf_repo_id: str = "bartowski/Qwen_Qwen3-8B-GGUF",
-        gguf_filename: str = "Qwen3-8B-Q4_K_M.gguf",
+        gguf_filename: str = "Qwen_Qwen3-8B-Q4_K_M.gguf",
         quantisation: str = "Q4_K_M",
         n_ctx: int = 4096,
         n_gpu_layers: int = -1,
