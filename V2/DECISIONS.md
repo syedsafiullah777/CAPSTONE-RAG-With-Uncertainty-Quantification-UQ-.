@@ -93,4 +93,27 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** RAG code talks only to `create_backend()` / `LLMBackend`. Primary Colab path is `llama_cpp` GGUF (`bartowski/Qwen_Qwen3-8B-GGUF`, `Qwen3-8B-Q4_K_M.gguf`) with `transformers` 4-bit fallback. `ollama_dev` is optional local smoke only and must not be required for the final 420-case benchmark.
 
-**Verified smoke (Mac):** `scripts/smoke_generate.py --backend ollama_dev` → answer `4`; artefacts under `results/config/phase7_*.json`. Colab GPU GGUF execution remains **NEEDS VERIFICATION**.
+**Verified smoke (Mac):** `scripts/smoke_generate.py --backend ollama_dev` → answer `4`; artefacts under `results/config/phase7_*.json`.
+
+## 2026-08-21 — Phase 7 remote strategy: Colab notebooks (not CLI)
+
+**Decision:** Primary remote execution uses **standard Google Colab GPU notebooks** (`notebooks/colab_phase7_smoke.ipynb`). Colab CLI / `gcloud` is not part of the V2 execution path.
+
+**Unchanged:** Qwen3-8B, `src/models` abstraction, runtime fingerprinting, checkpointing/resumable benchmark design.
+
+**Next validation step:** Colab GPU verification — run the Phase 7 notebook on a real Colab GPU (`remote_execution.colab_gpu_verification: NEEDS_VERIFICATION`).
+
+## 2026-08-22 — Storage, backup, recovery and monitoring
+
+**Decision:** Adopt four-layer storage model:
+
+- GitHub = source/version control
+- Google Colab = computation only
+- Google Drive (`Google Drive/MSc-RAG/`) = persistent experiment archive/recovery
+- Local Mac = secondary offline backup + main dev copy
+
+**Requirements:** Incremental saves, checkpoint/resume, duplicate prevention, raw-result preservation, phase backup reminders, master-record backup status. No second permanent copy of full V2 repo on Drive. No Colab CLI/gcloud.
+
+**Docs:** `docs/storage_backup_recovery.md`, `docs/IMPLEMENTATION_PLAN.md`, `.cursor/rules/06-storage-backup-recovery.mdc`, config `storage` section.
+
+**Drive root NEEDS VERIFICATION** until user creates and confirms `Google Drive/MSc-RAG/` layout.

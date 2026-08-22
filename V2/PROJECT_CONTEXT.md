@@ -31,8 +31,10 @@ Design and Evaluation of a Multi-Agent Retrieval-Augmented Generation Framework 
 
 ## Model / compute
 
-- LLM: Qwen3-8B (quantisation NEEDS_VERIFICATION)
-- Primary execution: Google Colab GPU / Colab CLI
+- LLM: Qwen3-8B (quantisation NEEDS_VERIFICATION on Colab GPU)
+- Primary execution: **standard Google Colab GPU notebooks** (not Colab CLI / gcloud)
+- Entrypoint: `V2/notebooks/colab_phase7_smoke.ipynb`
+- Next validation step: Colab GPU verification (GGUF / transformers smoke) — **NEEDS VERIFICATION**
 - Local Mac: development/control only (not required for final inference)
 - No paid inference API
 
@@ -50,7 +52,17 @@ Streamlit app that runs live pipelines on a new question through all three archi
 ## Phase status
 
 **Phase 7 complete — Qwen3-8B backend abstraction + fingerprint + live generation smoke.**  
-Next approved step: Phase 8 (Single-Agent RAG baseline).
+**Next validation step:** Colab GPU notebook smoke (`notebooks/colab_phase7_smoke.ipynb`) — **NEEDS VERIFICATION**.  
+Next implementation phase: Phase 8 (Single-Agent RAG baseline).
+
+## Storage / backup / recovery
+
+- Spec: `V2/docs/storage_backup_recovery.md`
+- Plan section: `V2/docs/IMPLEMENTATION_PLAN.md` → Storage, Backup, Recovery and Monitoring
+- Config: `V2/config/experiment.yaml` → `storage`
+- Cursor rule: `.cursor/rules/06-storage-backup-recovery.mdc`
+- Phase backup template: `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
+- Drive root (logical): `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION**
 
 ## Key paths
 

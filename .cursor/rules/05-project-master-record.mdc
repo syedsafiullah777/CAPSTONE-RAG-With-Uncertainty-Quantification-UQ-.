@@ -45,6 +45,15 @@ Include:
 9. If a later phase changes a previous assumption, preserve the historical entry and add the correction/change to the Decisions Log.
 10. Do not declare a phase complete until the master record has been updated.
 
+11. Record **backup status** for the completed phase:
+    - Colab / Google Drive / Local / GitHub (verified paths only)
+    - local backup recommendation
+    - GitHub commit recommendation
+    Use format in `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`.
+    Never claim a backup exists unless verified.
+
+12. Stop before beginning the next phase.
+
 The master record must always reflect the actual implemented project, not merely the original plan.
 
 Actual code, configuration, experiment outputs and test results take precedence over previous AI summaries or assumptions.

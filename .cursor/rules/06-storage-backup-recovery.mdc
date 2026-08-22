@@ -1,0 +1,211 @@
+---
+description: Storage, backup, recovery, checkpointing and phase-completion reminders
+globs: V2/**
+alwaysApply: true
+---
+
+# STORAGE, BACKUP, RECOVERY AND MONITORING
+
+## Roles (locked)
+
+| Layer | Role |
+| --- | --- |
+| **GitHub** | Source / version control |
+| **Google Drive** | Persistent experiment archive / recovery |
+| **Local Mac** | Secondary offline backup + main development copy |
+| **Google Colab** | Computation only |
+
+**Never claim a backup exists unless the path/file has actually been verified.**
+
+Do not use Colab CLI, gcloud, ADC, Kubernetes, or cloud orchestration unless explicitly required later.
+
+Preferred compute workflow:
+
+Cursor / GitHub → standard Google Colab GPU notebook → Qwen3-8B → Google Drive for persistent results/checkpoints
+
+---
+
+## GitHub = source / version control
+
+Store in git (V2 only; never modify V1):
+
+- source code, configuration, scripts, tests, documentation, project rules
+- sampling manifests, calibration manifests
+- final reproducible artefacts and final aggregated metric/statistical tables where appropriate
+
+Do **not** normally store:
+
+- model weights, huge raw experiment outputs, large caches, unnecessary generated files
+
+After every completed major phase:
+
+1. `git status` and `git diff`
+2. confirm no V1 changes
+3. run phase tests
+4. commit with a clear message (e.g. `Phase 8: implement single-agent RAG baseline`)
+
+Do not force-push, rewrite history, or commit secrets.
+
+---
+
+## Google Colab = computation only
+
+Use Colab GPU for:
+
+- Qwen3-8B inference
+- knowledge-base heavy processing where required
+- calibration, benchmark execution, metric evaluation, statistical processing where appropriate
+
+Do **not** rely on Colab `/content` as the only copy of important data.
+
+Sync checkpoints, raw results, logs, and progress state to Google Drive during and after runs.
+
+---
+
+## Google Drive = persistent experiment storage
+
+Logical root (create on Drive; path NEEDS VERIFICATION until confirmed):
+
+```text
+Google Drive/MSc-RAG/
+├── results/
+│   ├── raw/
+│   ├── processed/
+│   ├── metrics/
+│   └── final/
+├── checkpoints/
+├── logs/
+├── configs/
+└── artifacts/
+```
+
+Store on Drive:
+
+- raw benchmark outputs, checkpoints, progress state, logs
+- intermediate metrics, experiment configurations
+- large experiment artefacts required to resume interrupted runs
+
+Do **not** create a second permanent copy of the entire V2 repository on Google Drive.
+
+Configuration reference: `V2/config/experiment.yaml` → `storage.google_drive`
+
+---
+
+## Local Mac = secondary / offline backup
+
+- Local V2 repository = main development copy
+- After major milestones or completed experiments, copy important Drive results to local Mac
+- Never assume local backup exists unless verified
+
+---
+
+## Benchmark recovery (420 cases)
+
+Target: **140 questions × 3 architectures = 420** independently traceable cases.
+
+All benchmark/evaluation jobs must survive:
+
+- Colab disconnection, runtime termination, GPU failure
+- manual interruption, timeout, Python/process crash, model failure
+
+Required behaviour:
+
+- incremental saves
+- progress/checkpoint state
+- identify completed and failed cases
+- retry failed cases when appropriate
+- skip already completed cases
+- duplicate prevention
+- resume from latest valid checkpoint
+
+**Never** require restart from question 1 after interruption.
+
+Case key format: `{architecture}:{question_id}` (see `storage.benchmark` in config).
+
+---
+
+## Raw result preservation
+
+Save structured raw output **before** aggregation. Do not silently overwrite raw experimental data.
+
+Preserve where applicable: run ID, question ID, architecture, question, retrieved evidence, retrieval scores, answer, reference answer, verification result, confidence, threshold, ANSWER/ABSTAIN decision, latency, model, model version, quantisation, device/GPU, configuration, random seed, timestamp, error information.
+
+Field list: `V2/config/experiment.yaml` → `storage.raw_result_fields`
+
+---
+
+## Backup checkpoints
+
+Create a backup checkpoint after every major phase involving:
+
+dataset, 140-question sampling, calibration, knowledge base, model/runtime, RAG architecture, benchmark, evaluation, statistics, final artefact
+
+Before a large or potentially destructive operation:
+
+1. verify latest checkpoint exists
+2. verify important files are backed up
+3. then proceed
+
+Use `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` at phase end.
+
+---
+
+## Master project record
+
+`V2/project_record/PROJECT_MASTER_RECORD.md` is the authoritative project history and dissertation evidence record.
+
+Rule `.cursor/rules/05-project-master-record.mdc` applies.
+
+After **every** completed phase, also record:
+
+- backup status (Colab / Drive / Local / GitHub)
+- whether local backup is recommended
+- whether important artefacts should be committed to GitHub
+
+Do not mark a phase complete until the master record is updated.
+
+Do not fabricate information. Use **NEEDS VERIFICATION** for unconfirmed items.
+
+Never silently rewrite historical phase information.
+
+---
+
+## Phase completion reminder (mandatory format)
+
+Before stopping after a relevant phase, report:
+
+```text
+Backup status:
+* Colab: ...
+* Google Drive: ...
+* Local: ...
+* GitHub: ...
+
+Action needed:
+* ...
+```
+
+This is a **reminder**, not an assumption that backup actions are complete.
+
+---
+
+## Live artefact
+
+The Streamlit live artefact must use actual V2 RAG code — not precomputed benchmark lookup for fresh user questions.
+
+The same V2 RAG pipelines must support:
+
+- benchmark mode
+- live demonstration mode
+
+Large live-session outputs follow the same Drive persistence rules as benchmark runs.
+
+---
+
+## Dissertation support
+
+The storage/master-record system must preserve verified information for:
+
+research aim, objectives, RQs, contribution, dataset, 140-question sampling, calibration, knowledge base, retrieval, three architectures, model, prompts, confidence, abstention, experimental setup, metrics, statistics, actual results, error analysis, limitations, live artefact, reproducibility, hardware/runtime, decisions
+
+Final experimental results must come from saved outputs — not assumptions or planning text.

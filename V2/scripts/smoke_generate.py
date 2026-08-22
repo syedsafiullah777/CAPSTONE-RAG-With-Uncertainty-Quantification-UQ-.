@@ -85,8 +85,11 @@ def main() -> int:
         "generation": result.to_dict(),
         "fingerprint_path": str(fp_path),
         "notes": {
+            "primary_remote_strategy": "standard Google Colab GPU notebooks (notebooks/colab_phase7_smoke.ipynb)",
+            "colab_cli": False,
             "primary_benchmark_backend": "llama_cpp or transformers on Colab GPU",
             "ollama_dev": "optional local smoke only; not required for final 420-case benchmark",
+            "next_validation_step": "Colab GPU verification NEEDS_VERIFICATION",
         },
     }
     out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

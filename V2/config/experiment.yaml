@@ -83,6 +83,20 @@ model:
   max_new_tokens: 512
   # Final 420-case benchmark must use Colab GPU (llama_cpp or transformers), not Mac Ollama.
 
+# Remote execution (Phase 7 strategy — architecture unchanged).
+remote_execution:
+  strategy: "google_colab_gpu_notebook"
+  primary_entrypoint: "notebooks/colab_phase7_smoke.ipynb"
+  notes_md: "notebooks/colab_runtime.md"
+  colab_cli: false  # not used; standard Colab notebook Runtime → GPU
+  # Next validation step:
+  colab_gpu_verification: "NEEDS_VERIFICATION"
+  preserves:
+    - "Qwen3-8B"
+    - "src/models backend abstraction"
+    - "runtime fingerprinting"
+    - "checkpointing / resumable benchmark design"
+
 embeddings:
   model: "BAAI/bge-small-en-v1.5"
   version: null  # Hugging Face revision pin NEEDS VERIFICATION if required for paper
@@ -118,8 +132,110 @@ execution:
   device: "auto"
   random_seed: 42
   run_id: null  # generated per run if unset
+  # Final LLM runs: upload/mount V2 in a standard Google Colab notebook with GPU runtime.
+  # Do not rely on Colab CLI / gcloud.
 
 logging:
   level: "INFO"
   console: true
   file: true
+
+# Storage, backup, recovery — see docs/storage_backup_recovery.md and .cursor/rules/06-storage-backup-recovery.mdc
+storage:
+  roles:
+    github: source_version_control
+    google_colab: computation_only
+    google_drive: persistent_experiment_archive
+    local_mac: secondary_offline_backup_and_dev_copy
+
+  google_drive:
+    # Logical root on user's Google Drive — NEEDS VERIFICATION until created and confirmed.
+    root: "Google Drive/MSc-RAG"
+    layout:
+      results_raw: "results/raw"
+      results_processed: "results/processed"
+      results_metrics: "results/metrics"
+      results_final: "results/final"
+      checkpoints: "checkpoints"
+      logs: "logs"
+      configs: "configs"
+      artifacts: "artifacts"
+    # Do not mirror the full V2 git repository on Drive.
+    mirror_full_repo: false
+
+  github:
+    store:
+      - source_code
+      - configuration
+      - scripts
+      - tests
+      - documentation
+      - project_rules
+      - sampling_manifests
+      - calibration_manifests
+      - final_reproducible_artefacts
+      - final_aggregated_metric_tables
+    exclude_normally:
+      - model_weights
+      - huge_raw_experiment_outputs
+      - large_caches
+      - unnecessary_generated_files
+
+  colab:
+    ephemeral_paths:
+      - "/content"
+    sync_to_drive: true  # required for checkpoints, raw results, logs
+
+  benchmark:
+    questions: 140
+    architectures: 3
+    total_cases: 420
+    case_key_template: "{architecture}:{question_id}"
+    recovery:
+      incremental_save: true
+      checkpoint_state: true
+      identify_completed: true
+      identify_failed: true
+      retry_failed: true
+      skip_completed: true
+      duplicate_prevention: true
+      resume_from_latest_checkpoint: true
+      never_restart_from_question_1: true
+
+  raw_result_fields:
+    - run_id
+    - question_id
+    - architecture
+    - question
+    - retrieved_evidence
+    - retrieval_scores
+    - answer
+    - reference_answer
+    - verification_result
+    - confidence
+    - threshold
+    - decision  # ANSWER | ABSTAIN
+    - latency_seconds
+    - model
+    - model_version
+    - quantisation
+    - device
+    - gpu
+    - configuration
+    - random_seed
+    - timestamp
+    - error
+
+  live_artefact:
+    use_actual_v2_rag_code: true
+    precomputed_benchmark_lookup_for_fresh_questions: false
+    shared_pipelines:
+      - benchmark_mode
+      - live_demonstration_mode
+
+  phase_completion:
+    master_record: "project_record/PROJECT_MASTER_RECORD.md"
+    backup_template: "project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md"
+    implementation_plan: "docs/IMPLEMENTATION_PLAN.md"
+    storage_doc: "docs/storage_backup_recovery.md"
+

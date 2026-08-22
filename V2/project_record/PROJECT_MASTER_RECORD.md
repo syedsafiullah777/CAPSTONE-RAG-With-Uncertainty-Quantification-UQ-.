@@ -5,7 +5,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-21 |
+| Last updated | 2026-08-22 |
 | Current completed phase | **Phase 7** |
 | Next phase (not started) | Phase 8 — Single-Agent RAG baseline |
 | V1 status | Reference-only (never modified by V2 work) |
@@ -46,7 +46,9 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | LLM | Qwen3-8B (configured); live smoke via Ollama `qwen3:8b` |
 | Backend abstraction | `src/models/` — `llama_cpp` / `transformers` / `ollama_dev` / `mock` |
 | Planned Colab GGUF | `bartowski/Qwen_Qwen3-8B-GGUF` + `Qwen3-8B-Q4_K_M.gguf` — **NEEDS VERIFICATION** (VRAM fit on Colab GPU) |
-| Primary compute | Google Colab GPU — code path ready; Colab CLI not installed on Mac; live GGUF smoke **NEEDS VERIFICATION** |
+| Primary compute | **Standard Google Colab GPU notebooks** (not Colab CLI / gcloud) |
+| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` |
+| Colab GPU verification | **NEEDS VERIFICATION** (next validation step) |
 | Local Mac | Dev/control; Phase 7 generation smoke used optional `ollama_dev` |
 | Paid LLM API | Not used / not required |
 | Fingerprint artefact | `results/config/phase7_runtime_fingerprint.json` |
@@ -63,7 +65,19 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **29 passed** (Phases 1–7 tests)
+- Result: **34 passed** (Phases 1–7 + storage/backup config tests)
+
+### Storage / backup (project infrastructure)
+
+| Item | Status |
+| --- | --- |
+| Storage model documented | GitHub / Colab / Drive / Local Mac |
+| Cursor rule | `.cursor/rules/06-storage-backup-recovery.mdc` |
+| Implementation plan | `docs/IMPLEMENTATION_PLAN.md` |
+| Config | `config/experiment.yaml` → `storage` |
+| Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
+| Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
+| Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
 
 ---
 
@@ -79,6 +93,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 6. **Master record rule added 2026-08-21:** `.cursor/rules/05-project-master-record.mdc` — update this file after every completed phase.
 7. **Phase 6 KB:** Source PDFs only (not gold context); Chroma + bge-small-en-v1.5; 230 docs / 1239 chunks verified.
 8. **Phase 7 backends:** Final 420-case benchmark must use Colab GPU (`llama_cpp` or `transformers`). `ollama_dev` is optional local smoke only and is not the official benchmark path.
+9. **Phase 7 remote strategy (2026-08-21 correction):** Use **standard Google Colab GPU notebooks** (`notebooks/colab_phase7_smoke.ipynb`). Do **not** use Colab CLI / `gcloud`. Architecture (Qwen3-8B, model abstraction, fingerprinting, checkpoint/resume design) unchanged. Next validation: Colab GPU verification.
+10. **Storage model (2026-08-22):** GitHub = source; Colab = compute; Drive `MSc-RAG/` = persistent archive; Mac = dev + secondary backup. Incremental checkpoint/resume mandatory for 420-case benchmark. Never claim backup without verified paths.
 
 ---
 
@@ -276,15 +292,16 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - `src/models/` backends: `llama_cpp` (GGUF), `transformers` (4-bit when CUDA), `ollama_dev`, `mock`
   - Factory (`create_backend`) with `auto` preference order
   - Fingerprint collector (platform, GPU/nvidia-smi, torch, package versions, model config, git commit)
-  - Smoke script `scripts/smoke_generate.py`; Colab notes `notebooks/colab_runtime.md`
+  - Smoke script `scripts/smoke_generate.py`; Colab notebook `notebooks/colab_phase7_smoke.ipynb` + notes `notebooks/colab_runtime.md`
   - Live smoke on Mac via Ollama `qwen3:8b` → answer `4`
 - **Technical decisions:**
   - Default GGUF: `bartowski/Qwen_Qwen3-8B-GGUF` / `Qwen3-8B-Q4_K_M.gguf`
   - `backend: auto` in `experiment.yaml`; Colab primary = llama_cpp or transformers
   - Ollama allowed for local smoke only
+  - Remote execution = standard Colab GPU notebooks (not Colab CLI) — confirmed in strategy update
 - **Files created/modified:**
   - `V2/src/models/*.py`, `V2/scripts/smoke_generate.py`
-  - `V2/notebooks/colab_runtime.md`, `V2/docs/phase7_qwen_backend.md`
+  - `V2/notebooks/colab_phase7_smoke.ipynb`, `V2/notebooks/colab_runtime.md`, `V2/docs/phase7_qwen_backend.md`
   - `V2/tests/test_phase7_model_backend.py`, `V2/config/experiment.yaml`, `V2/requirements.txt`
   - `V2/results/config/phase7_runtime_fingerprint.json`, `phase7_smoke_generate.json`
 - **Tests/validation:**
@@ -292,12 +309,52 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Integration: smoke artefacts present with non-empty text
   - Live: `ollama_dev` generation latency ~4.9s
   - Full suite: **29 passed**
-- **Actual outcome:** Abstraction works; one logged successful generate. Colab GGUF path implemented but not executed on a Colab GPU in this session (`colab` CLI absent).
-- **Problems encountered:** Newer `ollama` Python client returns pydantic `ChatResponse` (no `.keys()`); first smoke crashed after generation.
-- **Problems resolved:** Parse both dict and ChatResponse message content.
-- **Remaining issues:** Colab GPU GGUF/transformers VRAM fit and package install **NEEDS VERIFICATION**; RAG arches not started.
-- **Dissertation relevance:** Reproducible model logging; controlled compute story (Colab primary).
-- **Evidence:** `V2/results/config/phase7_smoke_generate.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`
+- **Actual outcome:** Abstraction works; one logged successful generate (local `ollama_dev`). Colab GGUF path implemented for notebook execution; live Colab GPU smoke not run in this session.
+- **Problems encountered:** Newer `ollama` Python client returns pydantic `ChatResponse` (no `.keys()`); first smoke crashed after generation. Mac has no `gcloud` / Colab CLI (not required under notebook strategy).
+- **Problems resolved:** Parse both dict and ChatResponse message content. Remote strategy documented as Colab notebooks (not CLI).
+- **Remaining issues:** **Next validation step — Colab GPU verification** (GGUF/transformers VRAM fit via `notebooks/colab_phase7_smoke.ipynb`) **NEEDS VERIFICATION**; RAG arches not started.
+- **Dissertation relevance:** Reproducible model logging; controlled compute story (Colab notebook primary).
+- **Evidence:** `V2/results/config/phase7_smoke_generate.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`, `V2/notebooks/colab_phase7_smoke.ipynb`
+
+---
+
+## Project infrastructure — Storage, backup & recovery
+
+- **Date:** 2026-08-22
+- **Objective:** Establish project-wide storage, backup, recovery, progress-tracking rules and integrate into the approved V2 plan (no new RAG functionality).
+- **Why required:** 420-case Colab benchmark must survive interruption; dissertation needs verified artefact trails; prevent data loss from ephemeral Colab storage.
+- **Work completed:**
+  - Cursor rule `.cursor/rules/06-storage-backup-recovery.mdc`
+  - `docs/storage_backup_recovery.md`, `docs/IMPLEMENTATION_PLAN.md` (with dedicated Storage section)
+  - `config/experiment.yaml` → `storage` (Drive layout, benchmark recovery, raw fields, live artefact rules)
+  - `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
+  - Updated master-record rule (05) with backup-status requirement
+  - Tests: `tests/test_storage_backup_recovery.py`
+- **Technical decisions:**
+  - Four-layer model: GitHub / Colab / Drive / Local Mac
+  - Drive logical root `Google Drive/MSc-RAG/` with results/checkpoints/logs/configs/artifacts
+  - No full V2 repo mirror on Drive; no Colab CLI/gcloud
+  - Same RAG pipelines for benchmark and live Streamlit (when built)
+- **Files created/modified:**
+  - `.cursor/rules/06-storage-backup-recovery.mdc`, `.cursor/rules/05-project-master-record.mdc`
+  - `V2/docs/storage_backup_recovery.md`, `V2/docs/IMPLEMENTATION_PLAN.md`
+  - `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
+  - `V2/config/experiment.yaml`, `V2/DECISIONS.md`, `V2/PROJECT_CONTEXT.md`
+  - `V2/tests/test_storage_backup_recovery.py`
+- **Tests/validation:** Storage config + doc/rule presence tests added.
+- **Actual outcome:** Rules and plan integrated; benchmark recovery contract specified in config; no RAG code added.
+- **Problems encountered:** None.
+- **Problems resolved:** N/A
+- **Remaining issues:** Google Drive folder layout **NEEDS VERIFICATION**; benchmark runner not yet implemented (later phases); Colab GPU smoke **NEEDS VERIFICATION**.
+- **Dissertation relevance:** Reproducibility, artefact provenance, honest reporting of backup status.
+- **Evidence:** `V2/docs/storage_backup_recovery.md`, `V2/docs/IMPLEMENTATION_PLAN.md`, `V2/config/experiment.yaml`
+- **Backup status (this task):**
+  - Colab: N/A (documentation only)
+  - Google Drive: **NEEDS VERIFICATION** — user must create `MSc-RAG/` layout
+  - Local: files in local V2 repo (verified by implementation)
+  - GitHub: recommended commit for this infrastructure task
+- **Local backup recommendation:** Optional — copy nothing new beyond existing local repo until Drive is set up.
+- **GitHub commit recommendation:** Commit rules, docs, config, tests; exclude large/raw results.
 
 ---
 

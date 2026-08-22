@@ -1,43 +1,38 @@
-# V2 Phase 7 — Colab GPU smoke (Qwen3-8B)
+# V2 Phase 7 — Google Colab GPU notebook (primary remote path)
 
-This notebook is the **primary remote** entrypoint when Colab CLI is unavailable.
+**Remote strategy:** standard Google Colab notebooks with a GPU runtime.  
+**Not used:** Colab CLI / `gcloud` / remote Colab CLI sessions.
+
+## Primary notebook
+
+`notebooks/colab_phase7_smoke.ipynb`
+
+## Setup cell options
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `MOUNT_DRIVE` | `True` | Mount Google Drive, then auto-search MyDrive for V2 |
+| `MANUAL_V2_ROOT` | `""` | Force exact path if you already know it |
+| `ALLOW_ZIP_UPLOAD` | `False` | Optional last-resort zip upload |
+
+Auto-detect looks for folders that contain both:
+
+- `config/experiment.yaml`
+- `scripts/smoke_generate.py`
+
+**Recommended:** copy/sync the `V2` folder (or whole CAPSTONE project) into Google Drive → open the notebook → run the setup cell with `MOUNT_DRIVE = True`.
 
 ## Steps
 
-1. Runtime → Change runtime type → **GPU**
-2. Upload / mount this `V2/` project (Drive or zip)
-3. Run the cells below
+1. Runtime → **GPU**
+2. Run setup cell (Drive mount + auto-detect)
+3. Install deps + smoke generate
 
-```python
-# Optional: mount Drive if V2 lives there
-# from google.colab import drive
-# drive.mount('/content/drive')
-# %cd /content/drive/MyDrive/path/to/V2
-```
+## Expected outputs
 
-```python
-import sys
-from pathlib import Path
-V2 = Path('.').resolve()
-# If needed: V2 = Path('/content/V2')
-sys.path.insert(0, str(V2))
-%cd {V2}
-```
-
-```python
-!pip -q install -r requirements.txt
-# Prefer CUDA llama-cpp on Colab (install wheel matching CUDA if needed):
-# !pip -q install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu122
-```
-
-```python
-!PYTHONPATH=. python scripts/smoke_generate.py --backend llama_cpp
-# Fallback:
-# !PYTHONPATH=. python scripts/smoke_generate.py --backend transformers
-```
-
-Outputs:
 - `results/config/phase7_runtime_fingerprint.json`
 - `results/config/phase7_smoke_generate.json`
 
-Do **not** use local Mac Ollama for the final 420-case benchmark. Ollama is optional for development smoke only.
+## Next validation step
+
+**Colab GPU verification (NEEDS VERIFICATION)** via this notebook.
