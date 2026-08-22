@@ -44,7 +44,10 @@ def test_standard_paths_resolve_under_v2() -> None:
 
 def test_prompts_config_loads() -> None:
     prompts = load_prompts_config()
-    assert prompts.get("version") == "0.1.0-phase1"
+    assert prompts.get("version")
+    assert prompts.get("baseline", {}).get("system")
+    assert "{evidence}" in str(prompts.get("baseline", {}).get("user_template") or "")
+    assert "{question}" in str(prompts.get("baseline", {}).get("user_template") or "")
 
 
 def test_run_id_and_logging() -> None:

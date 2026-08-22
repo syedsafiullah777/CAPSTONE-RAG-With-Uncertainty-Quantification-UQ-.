@@ -65,6 +65,10 @@ knowledge_base/index/**
 !results/config/phase7_runtime_fingerprint.json
 !results/config/phase7_smoke_test.json
 !results/config/phase7_smoke_generate.json
+!results/config/phase8_runtime_fingerprint.json
+!results/config/phase8_smoke_test.json
+!results/config/phase8_single_agent_smoke.json
+!results/config/phase8_single_agent_smoke.jsonl
 !project_record/evidence/**
 !project_record/evidence/artifacts/**
 

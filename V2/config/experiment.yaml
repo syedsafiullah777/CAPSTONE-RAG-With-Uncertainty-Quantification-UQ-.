@@ -115,6 +115,19 @@ retrieval:
   phase6_download_failed: 0
   index_manifest: "knowledge_base/index/index_manifest.json"
 
+rag:
+  architectures:
+    single_agent:
+      enabled: true
+      phase: 8
+      name: "single_agent"
+    multi_agent:
+      enabled: false  # Phase 9
+    multi_agent_uq:
+      enabled: false  # Phase 10
+  # Phase 8 validation uses a small subset of the frozen 140 (not the full 420-case run).
+  phase8_smoke_n: 3
+
 uncertainty:
   # Threshold MUST be locked on DEV/calibration only (Phase 15). Never tune on test.
   confidence_threshold: null  # set via results/config/threshold.lock.json later

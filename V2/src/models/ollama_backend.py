@@ -50,11 +50,16 @@ class OllamaBackend:
             options["top_p"] = top_p
 
         start = time.perf_counter()
-        response = ollama.chat(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}],
-            options=options,
-        )
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "options": options,
+        }
+        # Qwen3 via Ollama may return empty content when "thinking" mode is on.
+        try:
+            response = ollama.chat(**kwargs, think=False)
+        except TypeError:
+            response = ollama.chat(**kwargs)
         latency = time.perf_counter() - start
         if isinstance(response, dict):
             text = str(response.get("message", {}).get("content", "")).strip()

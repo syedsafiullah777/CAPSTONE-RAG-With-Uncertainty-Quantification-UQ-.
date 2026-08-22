@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-22 |
-| Current completed phase | **Phase 7** |
-| Next phase (not started) | Phase 8 — Single-Agent RAG baseline |
+| Current completed phase | **Phase 8** |
+| Next phase (not started) | Phase 9 — Multi-Agent RAG |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -61,18 +61,18 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Fingerprint artefact | `results/config/phase7_runtime_fingerprint.json` | — |
 | Smoke artefact | `results/config/phase7_smoke_test.json` | — |
 
-### Architectures (not implemented yet)
+### Architectures
 
-1. Single-Agent RAG  
-2. Multi-Agent RAG  
-3. Multi-Agent + UQ / abstention  
+1. **Single-Agent RAG** — implemented (Phase 8); smoke **PASS** (n=3)
+2. Multi-Agent RAG — not started (Phase 9)
+3. Multi-Agent + UQ / abstention — not started (Phase 10)
 
 **NEEDS VERIFICATION / later phases:** confidence method weights; whether Arch3 reuses Arch2 draft/verify; dense vs hybrid retrieval; judge configuration.
 
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **36 passed** (Phases 1–7 + storage/backup + GGUF filename test)
+- Result: **40 passed** (Phases 1–8 + storage/backup tests)
 
 ### Storage / backup (project infrastructure)
 
@@ -105,6 +105,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 11. **Validation evidence (2026-08-22):** `project_record/evidence/phaseN_validation.md` after every major phase; actual PASS/FAIL/NEEDS VERIFICATION only; `phase7_smoke_test.json` for machine-readable smoke evidence.
 12. **Phase 7 GGUF filename correction (2026-08-22):** `gguf_filename` must be `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF` (was incorrectly `Qwen3-8B-Q4_K_M.gguf`). Verified on HF Hub API.
 13. **Phase 7 Colab GPU smoke verified (2026-08-22):** Tesla T4 + `llama_cpp` + Q4_K_M GGUF → **PASS**. Evidence: `results/config/phase7_smoke_test.json`, `phase7_runtime_fingerprint.json`.
+14. **Phase 8 Single-Agent RAG (2026-08-22):** Retrieve from Phase 6 KB + generate via Qwen3-8B backend; common `RAGCaseResult` schema; no multi-agent/UQ. Smoke n=3 **PASS** (`ollama_dev` local generation + real retrieval).
 
 ---
 
@@ -389,12 +390,54 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 8 — Single-Agent RAG baseline
+
+- **Date:** 2026-08-22
+- **Objective:** Implement and validate Single-Agent RAG using the Phase 6 KB/retriever and Qwen3-8B backend (common raw-result schema; no multi-agent / UQ).
+- **Why required:** RQ1 baseline architecture; shared retrieve+generate path for later architectures and the live artefact.
+- **Work completed:**
+  - `RAGCaseResult` schema aligned with `storage.raw_result_fields`
+  - Baseline prompts in `config/prompts.yaml`
+  - `run_single_agent()`: retrieve (Chroma/bge) → prompt → generate
+  - Smoke script `scripts/smoke_single_agent.py` (small-N frozen questions)
+  - Live smoke **n=3** with real retrieval + Qwen3 generation (`ollama_dev`) → **PASS**
+  - Ollama `think=False` to avoid empty Qwen3 responses on local smoke
+- **Technical decisions:**
+  - Architecture id: `single_agent`; case key `{architecture}:{question_id}`
+  - Baseline always `decision=ANSWER`; `confidence`/`verification_result`/`threshold` left null
+  - Reuse Phase 6 index (`finqa_source_pdfs`, top_k=4) and Phase 7 backend factory
+  - Empty-generation one-shot retry in `run_single_agent`
+- **Files created/modified:**
+  - `V2/src/rag/schema.py`, `prompts.py`, `single_agent.py`, `__init__.py`
+  - `V2/scripts/smoke_single_agent.py`, `V2/tests/test_phase8_single_agent.py`
+  - `V2/config/prompts.yaml`, `V2/config/experiment.yaml` (`rag` section)
+  - `V2/docs/phase8_single_agent.md`
+  - `V2/results/config/phase8_*.json`, `phase8_single_agent_smoke.jsonl`
+- **Tests/validation:**
+  - Unit: schema fields, prompt formatting, mock retrieve+generate
+  - Live: 3 frozen questions; each returned 4 evidence chunks + non-empty answers
+  - Full suite: **40 passed**
+- **Actual outcome:** Single-Agent RAG works end-to-end on the shared KB. Example: `finqa_test_1000` top hit `pdf/SNA/2013/page_34.pdf` (score ~0.87). Frozen sets unchanged. No multi-agent/UQ.
+- **Problems encountered:** Local Ollama Qwen3 sometimes returned empty `content` when thinking mode was enabled.
+- **Problems resolved:** Pass `think=False` to Ollama chat; empty-answer retry in pipeline.
+- **Remaining issues:** Colab `llama_cpp` single-agent smoke not re-run in this session (**optional NEEDS VERIFICATION** for GPU parity); Multi-Agent / UQ not started; full 420-case runner not started.
+- **Dissertation relevance:** Controlled baseline for RQ1; provenance-bearing retrieval + logged generation.
+- **Evidence:** `V2/results/config/phase8_single_agent_smoke.json`, `phase8_smoke_test.json`, `docs/phase8_single_agent.md`
+- **Validation evidence:** `V2/project_record/evidence/phase8_validation.md`
+- **Backup status:**
+  - Colab: N/A for this smoke (local ollama_dev + real KB)
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — Phase 8 smoke artefacts under `V2/results/config/`
+  - GitHub: recommended commit `Phase 8: implement single-agent RAG baseline`
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 8–10 | Baseline / Multi-Agent / UQ RAG | Not started |
-| 11+ | Schema logging, Streamlit, pilot, calibration lock, 420 benchmark, stats | Not started |
+| 9–10 | Multi-Agent / UQ RAG | Not started |
+| 11+ | Schema logging expansion, Streamlit, pilot, calibration lock, 420 benchmark, stats | Not started |
 
 ---
 

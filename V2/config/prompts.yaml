@@ -1,12 +1,20 @@
 # Prompt versions for V2 RAG architectures.
-# Phase 1: placeholders only. Real prompts are defined in later phases.
-# Do not use these as production generation prompts yet.
 
-version: "0.1.0-phase1"
+version: "0.2.0-phase8"
 
 baseline:
-  system: null  # NEEDS_VERIFICATION / Phase 8
-  user_template: null
+  system: >-
+    You are answering questions about financial documents.
+    Use only the provided evidence. If the evidence is insufficient, say so clearly.
+    Give a concise final answer.
+  user_template: |
+    Evidence:
+    {evidence}
+
+    Question:
+    {question}
+
+    Answer:
 
 multi_agent:
   generation:
@@ -17,5 +25,4 @@ multi_agent:
     user_template: null
 
 uncertainty:
-  # Confidence is computed from pipeline signals; not a free-text "confidence prompt" alone.
   notes: "Defined in Phase 10 after calibration methodology is fixed."

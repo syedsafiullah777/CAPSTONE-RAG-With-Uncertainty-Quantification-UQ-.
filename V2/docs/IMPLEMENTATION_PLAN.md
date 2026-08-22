@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-22 |
-| Current completed phase | **Phase 7** |
-| Next implementation phase | Phase 8 — Single-Agent RAG baseline (not started) |
+| Current completed phase | **Phase 8** |
+| Next implementation phase | Phase 9 — Multi-Agent RAG (not started) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -137,7 +137,7 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 5 | Freeze calibration 40 | ✅ Complete | `evidence/phase5_validation.md` |
 | 6 | Knowledge base | ✅ Complete | `evidence/phase6_validation.md` |
 | 7 | Qwen3-8B backend | ✅ Complete | `evidence/phase7_validation.md` (Colab GPU **NEEDS VERIFICATION**) |
-| 8 | Single-Agent RAG baseline | ⬜ Not started | `evidence/phase8_validation.md` |
+| 8 | Single-Agent RAG baseline | ✅ Complete | `evidence/phase8_validation.md` |
 | 9 | Multi-Agent RAG | ⬜ Not started | `evidence/phase9_validation.md` |
 | 10 | Multi-Agent + UQ / abstention | ⬜ Not started | `evidence/phase10_validation.md` |
 | 11 | Result schema + logging | ⬜ Not started | evidence + raw JSONL paths |
@@ -157,24 +157,26 @@ Phase numbers 11–18 are indicative; adjust if merged — storage requirements 
 
 Phases 1–7 chronology and evidence: `V2/project_record/PROJECT_MASTER_RECORD.md`
 
-**Next validation (not a new dev phase):** Colab GPU smoke via `notebooks/colab_phase7_smoke.ipynb` — **NEEDS VERIFICATION**
+**Next validation:** Optional Colab `llama_cpp` single-agent smoke for GPU parity with Phase 7.
 
 ---
 
-## Phase 8 — Single-Agent RAG baseline (next; not started)
+## Phase 8 — Single-Agent RAG baseline (complete)
 
 **Objective:** Baseline RAG pipeline using frozen KB + Qwen3-8B backend.
 
-**Storage / recovery (required from design):**
+**Verified:** Smoke n=3 **PASS** (real retrieval + generation). Evidence: `project_record/evidence/phase8_validation.md`.
+
+**Storage / recovery (design carried forward):**
 
 - Per-case raw JSONL compatible with `storage.raw_result_fields`
-- Checkpoint file under `results/checkpoints/` (local) mirrored to Drive `checkpoints/`
+- Checkpoint / resume for later 420-case runner
 - Skip/resume by `{architecture}:{question_id}`
 - No silent overwrite of raw results
 
-**Do not start until explicitly approved.**
-
 ---
+
+## Phase 9 — Multi-Agent RAG (next; not started)
 
 ## Git workflow (all phases)
 

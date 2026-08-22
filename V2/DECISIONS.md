@@ -129,3 +129,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Correction:** `model.gguf_filename` → `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF`. Previous value `Qwen3-8B-Q4_K_M.gguf` did not exist on the repo.
 
 **Verified:** HF Hub metadata (5027784224 bytes); pytest 36 passed; local `ollama_dev` smoke PASS; **Colab `llama_cpp` on Tesla T4 PASS** (2026-08-22T16:23:06Z) — see `results/config/phase7_smoke_test.json`.
+
+## 2026-08-22 — Phase 8 Single-Agent RAG baseline
+
+**Decision:** Implement `single_agent` as retrieve (Phase 6 KB) → baseline prompt → Qwen3-8B generate. Use `RAGCaseResult` matching `storage.raw_result_fields`. Always `decision=ANSWER`; leave confidence/verification/threshold null until Phase 10. Do not implement multi-agent or abstention here.
+
+**Verified smoke:** n=3 frozen questions; real Chroma retrieval + `ollama_dev` generation; status **PASS**. Artefacts: `results/config/phase8_single_agent_smoke.json`, `project_record/evidence/phase8_validation.md`.

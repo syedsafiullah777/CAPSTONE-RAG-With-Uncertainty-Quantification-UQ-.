@@ -51,8 +51,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 7 complete — Qwen3-8B backend + Colab GPU smoke verified (Tesla T4 / llama_cpp / Q4_K_M PASS).**  
-Next implementation phase: Phase 8 (Single-Agent RAG baseline) — not started.
+**Phase 8 complete — Single-Agent RAG baseline (retrieve + generate; smoke n=3 PASS).**  
+Next implementation phase: Phase 9 (Multi-Agent RAG) — not started.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -61,7 +61,9 @@ Next implementation phase: Phase 8 (Single-Agent RAG baseline) — not started.
 - Cursor rule: `.cursor/rules/06-storage-backup-recovery.mdc`
 - Phase backup template: `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
 - Validation evidence: `V2/project_record/evidence/phaseN_validation.md`
-- Phase 7 smoke JSON: `V2/results/config/phase7_smoke_test.json`
+- Phase 8 notes: `V2/docs/phase8_single_agent.md`
+- Phase 8 smoke: `V2/results/config/phase8_single_agent_smoke.json`
+- Phase 8 evidence: `V2/project_record/evidence/phase8_validation.md`
 
 ## Key paths
 
