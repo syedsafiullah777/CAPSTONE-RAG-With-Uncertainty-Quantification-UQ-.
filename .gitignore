@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.streamlit_home/
+.matplotlib/
+vectorstore/chroma/
+knowledge_base/embeddings/
+knowledge_base/documents/*.pdf
+results/*.csv
+results/charts/*.png
+data/pdfs/*.pdf
+data/ragbench/
+data/sampled_questions.csv

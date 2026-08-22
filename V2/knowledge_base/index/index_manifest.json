@@ -1,0 +1,29 @@
+{
+  "phase": 6,
+  "built_at_utc": "2026-08-21T16:20:26.044802+00:00",
+  "collection_name": "finqa_source_pdfs",
+  "persist_dir": "/Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2/knowledge_base/index",
+  "documents_dir": "/Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2/knowledge_base/documents",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "chunk_size": 900,
+  "chunk_overlap": 150,
+  "vector_store": "chroma",
+  "docs_requested": 230,
+  "docs_indexed": 230,
+  "docs_empty_text": 0,
+  "chunks": 1239,
+  "roles": {
+    "test": 140,
+    "calibration": 40,
+    "distractor": 50
+  },
+  "extract_failures": [],
+  "note": "Index is built from FinQA source page PDFs only. Gold context fields are not ingested as retrieval documents.",
+  "download": {
+    "requested": 230,
+    "downloaded": 230,
+    "skipped_existing": 0,
+    "failed_count": 0,
+    "failed": []
+  }
+}

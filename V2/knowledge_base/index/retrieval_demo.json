@@ -1,0 +1,64 @@
+{
+  "query": "What is the return on investment if $100 are invested in the S&P 500 at the end of 2008 and sold at the end of 2010, based on the cumulative total shareholder return data provided for Snap-on Incorporated's five-year stock performance graph?",
+  "top_k": 4,
+  "hits": [
+    {
+      "chunk_id": "test::pdf/SNA/2013/page_34.pdf::chunk_0000",
+      "text": "Five-year Stock Performance Graph The graph below illustrates the cumulative total shareholder return on Snap-on common stock since December 31, 2008, assuming that dividends were reinvested. The graph compares Snap-on\u2019s performance to that of the Standard & Poor\u2019s 500 Stock Index (\u201cS&P 500\u201d) and a Peer Group. Snap-on Incorporated Total Shareholder Return (1) Fiscal Year Ended (2) Snap-on Incorporated Peer Group (3) S&P 500 December 31, 2008 $ 100.00 $ 100.00 $ 100.00 December 31, 2009 111.40 127.17 126.46 December 31, 2010 153.24 169.36 145.51 December 31, 2011 140.40 165.85 148.59 December 31, 2012 223.82 195.02 172.37 December 31, 2013 315.72 265.68 228.19 (1) Assumes $100 was invested on December 31, 2008, and that dividends were reinvested quarterly. (2) The company's fiscal year ends on the Saturday that is on or nearest to December 31 of each year; for ease of calculation, the fis",
+      "score": 0.8717721700668335,
+      "doc_id": "test::pdf/SNA/2013/page_34.pdf",
+      "file_name": "pdf/SNA/2013/page_34.pdf",
+      "split": "test",
+      "page": 1,
+      "company_symbol": "SNA",
+      "report_year": "2013",
+      "role": "test",
+      "context_id": "finqa_test_ctx_130",
+      "source_type": "pdf"
+    },
+    {
+      "chunk_id": "test::pdf/INTC/2013/page_31.pdf::chunk_0000",
+      "text": "26 Stock Performance Graph The line graph that follows compares the cumulative total stockholder return on our common stock with the cumulative total return of the Dow Jones U.S. Technology Index* and the Standard & Poor\u2019s S&P 500* Index for the five years ended December 28, 2013. The graph and table assume that $100 was invested on December 26, 2008 (the last day of trading for the fiscal year ended December 27, 2008) in each of our common stock, the Dow Jones U.S. Technology Index, and the S&P 500 Index, and that all dividends were reinvested. Cumulative total stockholder returns for our common stock, the Dow Jones U.S. Technology Index, and the S&P 500 Index are based on our fiscal year. Comparison of Five-Year Cumulative Return for Intel, the Dow Jones U.S. Technology Index*, and the S&P 500* Index 2008 2009 2010 2011 2012 2013 Intel Corporation $ 100 $ 148 $ 157 $ 191 $ 163 $ 214 Do",
+      "score": 0.7975845336914062,
+      "doc_id": "test::pdf/INTC/2013/page_31.pdf",
+      "file_name": "pdf/INTC/2013/page_31.pdf",
+      "split": "test",
+      "page": 1,
+      "company_symbol": "INTC",
+      "report_year": "2013",
+      "role": "test",
+      "context_id": "finqa_test_ctx_298",
+      "source_type": "pdf"
+    },
+    {
+      "chunk_id": "test::pdf/GS/2013/page_220.pdf::chunk_0000",
+      "text": "Supplemental Financial Information Common Stock Performance The following graph compares the performance of an investment in the firm\u2019s common stock from December 26, 2008 (the last trading day before the firm\u2019s 2009 fiscal year) through December 31, 2013, with the S&P 500 Index and the S&P 500 Financials Index. The graph assumes $100 was invested on December 26, 2008 in each of the firm\u2019s common stock, the S&P 500 Index and the S&P 500 Financials Index, and the dividends were reinvested on the date of payment without payment of any commissions. The performance shown in the graph represents past performance and should not be considered an indication of future performance. $0 $50 $100 $150 $200 $250 $300 The Goldman Sachs Group, Inc. S&P 500 Index S&P 500 Financials Index Dec-09 Dec-10 Dec-11 Dec-12 Dec-13 Dec-08 The table below shows the cumulative total returns in dollars of the firm\u2019s ",
+      "score": 0.792279839515686,
+      "doc_id": "test::pdf/GS/2013/page_220.pdf",
+      "file_name": "pdf/GS/2013/page_220.pdf",
+      "split": "test",
+      "page": 1,
+      "company_symbol": "GS",
+      "report_year": "2013",
+      "role": "test",
+      "context_id": "finqa_test_ctx_302",
+      "source_type": "pdf"
+    },
+    {
+      "chunk_id": "test::pdf/MAS/2012/page_26.pdf::chunk_0000",
+      "text": "Performance Graph The table below compares the cumulative total shareholder return on our common stock with the cumulative total return of (i) the Standard & Poor\u2019s 500 Composite Stock Index (\u201cS&P 500 Index\u201d), (ii) The Standard & Poor\u2019s Industrials Index (\u201cS&P Industrials Index\u201d) and (iii) the Standard & Poor\u2019s Consumer Durables & Apparel Index (\u201cS&P Consumer Durables & Apparel Index\u201d), from December 31, 2007 through December 31, 2012, when the closing price of our common stock was $16.66. The graph assumes investments of $100 on December 31, 2007 in our common stock and in each of the three indices and the reinvestment of dividends. PERFORMANCE GRAPH $0 $50 $100 $150 $200 2007 2008 2009 2010 2011 2012 INDEXED VALUE Masco S&P 500 Index S&P Industrials Index S&P Consumer Durables & Apparel Index The table below sets forth the value, as of December 31 for each of the years indicated, of a ",
+      "score": 0.7861220240592957,
+      "doc_id": "test::pdf/MAS/2012/page_26.pdf",
+      "file_name": "pdf/MAS/2012/page_26.pdf",
+      "split": "test",
+      "page": 1,
+      "company_symbol": "MAS",
+      "report_year": "2012",
+      "role": "test",
+      "context_id": "finqa_test_ctx_260",
+      "source_type": "pdf"
+    }
+  ],
+  "question_id": "finqa_test_1000",
+  "gold_file_name": "pdf/SNA/2013/page_34.pdf"
+}

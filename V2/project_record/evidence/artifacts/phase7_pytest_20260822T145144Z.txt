@@ -1,0 +1,6 @@
+# Phase 7 pytest capture
+# recorded_at_utc: 2026-08-22T14:51:44.804226+00:00
+# command: PYTHONPATH=. pytest -v --tb=short
+# exit_code: 1
+
+/Library/Developer/CommandLineTools/usr/bin/python3: No module named pytest

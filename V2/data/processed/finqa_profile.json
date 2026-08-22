@@ -1,0 +1,799 @@
+{
+  "generated_at_utc": "2026-08-21T15:52:54.702322+00:00",
+  "dataset_id": "G4KMU/t2-ragbench",
+  "subset": "FinQA",
+  "splits": {
+    "train": 6251,
+    "dev": 883,
+    "test": 1147
+  },
+  "total_rows": 8281,
+  "columns": [
+    "id",
+    "context_id",
+    "split",
+    "question",
+    "program_answer",
+    "original_answer",
+    "context",
+    "table",
+    "pre_text",
+    "post_text",
+    "file_name",
+    "company_name",
+    "company_symbol",
+    "report_year",
+    "page_number",
+    "company_sector",
+    "company_industry",
+    "company_headquarters",
+    "company_date_added",
+    "company_cik",
+    "company_founded"
+  ],
+  "columns_match_expected": true,
+  "split_profiles": {
+    "train": {
+      "split": "train",
+      "n_rows": 6251,
+      "columns": [
+        "id",
+        "context_id",
+        "split",
+        "question",
+        "program_answer",
+        "original_answer",
+        "context",
+        "table",
+        "pre_text",
+        "post_text",
+        "file_name",
+        "company_name",
+        "company_symbol",
+        "report_year",
+        "page_number",
+        "company_sector",
+        "company_industry",
+        "company_headquarters",
+        "company_date_added",
+        "company_cik",
+        "company_founded"
+      ],
+      "missing_counts": {
+        "id": 0,
+        "context_id": 0,
+        "split": 0,
+        "question": 0,
+        "program_answer": 0,
+        "original_answer": 48,
+        "context": 0,
+        "table": 0,
+        "pre_text": 0,
+        "post_text": 0,
+        "file_name": 0,
+        "company_name": 0,
+        "company_symbol": 0,
+        "report_year": 0,
+        "page_number": 0,
+        "company_sector": 0,
+        "company_industry": 0,
+        "company_headquarters": 0,
+        "company_date_added": 0,
+        "company_cik": 0,
+        "company_founded": 0
+      },
+      "missing_rates": {
+        "id": 0.0,
+        "context_id": 0.0,
+        "split": 0.0,
+        "question": 0.0,
+        "program_answer": 0.0,
+        "original_answer": 0.0077,
+        "context": 0.0,
+        "table": 0.0,
+        "pre_text": 0.0,
+        "post_text": 0.0,
+        "file_name": 0.0,
+        "company_name": 0.0,
+        "company_symbol": 0.0,
+        "report_year": 0.0,
+        "page_number": 0.0,
+        "company_sector": 0.0,
+        "company_industry": 0.0,
+        "company_headquarters": 0.0,
+        "company_date_added": 0.0,
+        "company_cik": 0.0,
+        "company_founded": 0.0
+      },
+      "unique_ids": 6251,
+      "duplicate_id_groups": 0,
+      "duplicate_id_examples": [],
+      "unique_questions": 6237,
+      "duplicate_question_groups": 14,
+      "duplicate_question_extra_rows": 14,
+      "duplicate_question_examples": [
+        {
+          "question": "What proportion of Devon Energy's estimated 2005 oil production, in million barrels (mmbbls), is expected to come from unproved reserves as of December 31, 2004",
+          "count": 2
+        },
+        {
+          "question": "What percentage of A. O. Smith's total aggregate contractual obligations as of December 31, 2010, is composed of long-term debt?",
+          "count": 2
+        },
+        {
+          "question": "What is the difference between the statutory tax rate and the effective tax rate for international operations in 2018 for Aon?",
+          "count": 2
+        },
+        {
+          "question": "What was the percentage increase in net income attributable to noncontrolling interests, net of tax, from fiscal 2008 to fiscal 2009 for Global Payments?",
+          "count": 2
+        },
+        {
+          "question": "In 2016, as part of Entergy Arkansas' intent to implement a forward test year formula rate plan pursuant to Arkansas legislation passed in 2015, what was the ra",
+          "count": 2
+        }
+      ],
+      "unique_context_ids": 2110,
+      "unique_file_names": 2110,
+      "unique_companies": 134,
+      "rows_with_essential_fields": 6251,
+      "eligible_for_sampling_estimate": 6251,
+      "question_length_chars": {
+        "n": 6251,
+        "min": 47,
+        "max": 547,
+        "mean": 179.41,
+        "median": 174
+      },
+      "context_length_chars": {
+        "n": 6251,
+        "min": 772,
+        "max": 16303,
+        "mean": 4558.91,
+        "median": 4470
+      },
+      "table_length_chars": {
+        "n": 6251,
+        "min": 80,
+        "max": 9175,
+        "mean": 861.48,
+        "median": 679
+      },
+      "program_answer_equals_original_rate": 0.0434,
+      "report_year_top": [
+        [
+          "2017",
+          545
+        ],
+        [
+          "2018",
+          509
+        ],
+        [
+          "2012",
+          498
+        ],
+        [
+          "2013",
+          487
+        ],
+        [
+          "2015",
+          485
+        ],
+        [
+          "2008",
+          476
+        ],
+        [
+          "2016",
+          474
+        ],
+        [
+          "2009",
+          426
+        ],
+        [
+          "2014",
+          423
+        ],
+        [
+          "2010",
+          377
+        ]
+      ],
+      "company_top": [
+        [
+          "Entergy",
+          363
+        ],
+        [
+          "Union Pacific Corporation",
+          303
+        ],
+        [
+          "JPMorgan Chase",
+          223
+        ],
+        [
+          "American Tower",
+          206
+        ],
+        [
+          "Lockheed Martin",
+          191
+        ],
+        [
+          "Goldman Sachs",
+          183
+        ],
+        [
+          "PNC Financial Services",
+          173
+        ],
+        [
+          "Marathon Oil",
+          170
+        ],
+        [
+          "International Paper",
+          168
+        ],
+        [
+          "Apple Inc.",
+          160
+        ]
+      ],
+      "samples": [
+        {
+          "id": "finqa_train_0",
+          "context_id": "finqa_train_ctx_897",
+          "file_name": "pdf/ADI/2009/page_49.pdf",
+          "company_name": "Analog Devices",
+          "report_year": 2009,
+          "page_number": 49,
+          "question": "What was Analog Devices reported interest expense for fiscal year 2009, as listed in its annual report?",
+          "program_answer": "3.8",
+          "original_answer": "380",
+          "context_chars": 4402,
+          "table_chars": 939,
+          "pre_text_chars": 2591,
+          "post_text_chars": 870,
+          "table_preview": "|    |                                                                                                                                           | october 31 2009   | november 1 2008    |\n|---:|:-----\u2026"
+        },
+        {
+          "id": "finqa_train_1",
+          "context_id": "finqa_train_ctx_191",
+          "file_name": "pdf/ABMD/2012/page_75.pdf",
+          "company_name": "Abiomed, Inc.",
+          "report_year": 2012,
+          "page_number": 75,
+          "question": "During the fiscal year ended March 31, 2012, for Abiomed, Inc., did the stock-based compensation expense of $3.3 million for equity awards where prescribed performance milestones were achieved or deemed probable exceed the total fair value \u2026",
+          "program_answer": "1",
+          "original_answer": null,
+          "context_chars": 5052,
+          "table_chars": 1182,
+          "pre_text_chars": 424,
+          "post_text_chars": 3444,
+          "table_preview": "|    |                                                                  | number of shares ( in thousands )   | weighted average grant date fair value ( per share )   |\n|---:|:------------------------\u2026"
+        }
+      ]
+    },
+    "dev": {
+      "split": "dev",
+      "n_rows": 883,
+      "columns": [
+        "id",
+        "context_id",
+        "split",
+        "question",
+        "program_answer",
+        "original_answer",
+        "context",
+        "table",
+        "pre_text",
+        "post_text",
+        "file_name",
+        "company_name",
+        "company_symbol",
+        "report_year",
+        "page_number",
+        "company_sector",
+        "company_industry",
+        "company_headquarters",
+        "company_date_added",
+        "company_cik",
+        "company_founded"
+      ],
+      "missing_counts": {
+        "id": 0,
+        "context_id": 0,
+        "split": 0,
+        "question": 0,
+        "program_answer": 0,
+        "original_answer": 12,
+        "context": 0,
+        "table": 0,
+        "pre_text": 0,
+        "post_text": 0,
+        "file_name": 0,
+        "company_name": 0,
+        "company_symbol": 0,
+        "report_year": 0,
+        "page_number": 0,
+        "company_sector": 0,
+        "company_industry": 0,
+        "company_headquarters": 0,
+        "company_date_added": 0,
+        "company_cik": 0,
+        "company_founded": 0
+      },
+      "missing_rates": {
+        "id": 0.0,
+        "context_id": 0.0,
+        "split": 0.0,
+        "question": 0.0,
+        "program_answer": 0.0,
+        "original_answer": 0.0136,
+        "context": 0.0,
+        "table": 0.0,
+        "pre_text": 0.0,
+        "post_text": 0.0,
+        "file_name": 0.0,
+        "company_name": 0.0,
+        "company_symbol": 0.0,
+        "report_year": 0.0,
+        "page_number": 0.0,
+        "company_sector": 0.0,
+        "company_industry": 0.0,
+        "company_headquarters": 0.0,
+        "company_date_added": 0.0,
+        "company_cik": 0.0,
+        "company_founded": 0.0
+      },
+      "unique_ids": 883,
+      "duplicate_id_groups": 0,
+      "duplicate_id_examples": [],
+      "unique_questions": 883,
+      "duplicate_question_groups": 0,
+      "duplicate_question_extra_rows": 0,
+      "duplicate_question_examples": [],
+      "unique_context_ids": 299,
+      "unique_file_names": 299,
+      "unique_companies": 96,
+      "rows_with_essential_fields": 883,
+      "eligible_for_sampling_estimate": 883,
+      "question_length_chars": {
+        "n": 883,
+        "min": 76,
+        "max": 351,
+        "mean": 176.29,
+        "median": 173
+      },
+      "context_length_chars": {
+        "n": 883,
+        "min": 891,
+        "max": 9785,
+        "mean": 4487.64,
+        "median": 4418
+      },
+      "table_length_chars": {
+        "n": 883,
+        "min": 179,
+        "max": 7300,
+        "mean": 852.57,
+        "median": 643
+      },
+      "program_answer_equals_original_rate": 0.043,
+      "report_year_top": [
+        [
+          "2017",
+          101
+        ],
+        [
+          "2013",
+          73
+        ],
+        [
+          "2015",
+          72
+        ],
+        [
+          "2008",
+          70
+        ],
+        [
+          "2007",
+          64
+        ],
+        [
+          "2014",
+          61
+        ],
+        [
+          "2009",
+          59
+        ],
+        [
+          "2011",
+          58
+        ],
+        [
+          "2016",
+          58
+        ],
+        [
+          "2012",
+          57
+        ]
+      ],
+      "company_top": [
+        [
+          "Entergy",
+          59
+        ],
+        [
+          "Union Pacific Corporation",
+          48
+        ],
+        [
+          "Lockheed Martin",
+          38
+        ],
+        [
+          "Marathon Oil",
+          35
+        ],
+        [
+          "JPMorgan Chase",
+          30
+        ],
+        [
+          "PNC Financial Services",
+          27
+        ],
+        [
+          "AES Corporation",
+          27
+        ],
+        [
+          "International Paper",
+          27
+        ],
+        [
+          "BlackRock",
+          27
+        ],
+        [
+          "Philip Morris International",
+          26
+        ]
+      ],
+      "samples": [
+        {
+          "id": "finqa_dev_0",
+          "context_id": "finqa_dev_ctx_138",
+          "file_name": "pdf/V/2008/page_17.pdf",
+          "company_name": "Visa Inc.",
+          "report_year": 2008,
+          "page_number": 17,
+          "question": "What was the average payment volume per transaction for American Express in 2007, based on its reported payments volume and total number of transactions?",
+          "program_answer": "127.4",
+          "original_answer": "127.40",
+          "context_chars": 4525,
+          "table_chars": 1183,
+          "pre_text_chars": 944,
+          "post_text_chars": 2396,
+          "table_preview": "|    | company          | payments volume ( billions )   | total volume ( billions )   |   total transactions ( billions ) |   cards ( millions ) |\n|---:|:-----------------|:--------------------------\u2026"
+        },
+        {
+          "id": "finqa_dev_1",
+          "context_id": "finqa_dev_ctx_207",
+          "file_name": "pdf/C/2017/page_328.pdf",
+          "company_name": "Citigroup",
+          "report_year": 2017,
+          "page_number": 328,
+          "question": "What was the percentage cumulative total return for Citi's common stock over the five-year period ended December 31, 2017, as reflected in the performance graph comparison?",
+          "program_answer": "0.935",
+          "original_answer": "93.5%",
+          "context_chars": 1214,
+          "table_chars": 487,
+          "pre_text_chars": 724,
+          "post_text_chars": 1,
+          "table_preview": "|    | date        |   citi |   s&p 500 |   s&p financials |\n|---:|:------------|-------:|----------:|-----------------:|\n|  0 | 31-dec-2012 |  100   |     100   |            100   |\n|  1 | 31-dec-201\u2026"
+        }
+      ]
+    },
+    "test": {
+      "split": "test",
+      "n_rows": 1147,
+      "columns": [
+        "id",
+        "context_id",
+        "split",
+        "question",
+        "program_answer",
+        "original_answer",
+        "context",
+        "table",
+        "pre_text",
+        "post_text",
+        "file_name",
+        "company_name",
+        "company_symbol",
+        "report_year",
+        "page_number",
+        "company_sector",
+        "company_industry",
+        "company_headquarters",
+        "company_date_added",
+        "company_cik",
+        "company_founded"
+      ],
+      "missing_counts": {
+        "id": 0,
+        "context_id": 0,
+        "split": 0,
+        "question": 1,
+        "program_answer": 0,
+        "original_answer": 14,
+        "context": 0,
+        "table": 0,
+        "pre_text": 0,
+        "post_text": 0,
+        "file_name": 0,
+        "company_name": 0,
+        "company_symbol": 0,
+        "report_year": 0,
+        "page_number": 0,
+        "company_sector": 0,
+        "company_industry": 0,
+        "company_headquarters": 0,
+        "company_date_added": 0,
+        "company_cik": 0,
+        "company_founded": 0
+      },
+      "missing_rates": {
+        "id": 0.0,
+        "context_id": 0.0,
+        "split": 0.0,
+        "question": 0.0009,
+        "program_answer": 0.0,
+        "original_answer": 0.0122,
+        "context": 0.0,
+        "table": 0.0,
+        "pre_text": 0.0,
+        "post_text": 0.0,
+        "file_name": 0.0,
+        "company_name": 0.0,
+        "company_symbol": 0.0,
+        "report_year": 0.0,
+        "page_number": 0.0,
+        "company_sector": 0.0,
+        "company_industry": 0.0,
+        "company_headquarters": 0.0,
+        "company_date_added": 0.0,
+        "company_cik": 0.0,
+        "company_founded": 0.0
+      },
+      "unique_ids": 1147,
+      "duplicate_id_groups": 0,
+      "duplicate_id_examples": [],
+      "unique_questions": 1146,
+      "duplicate_question_groups": 1,
+      "duplicate_question_extra_rows": 1,
+      "duplicate_question_examples": [
+        {
+          "question": "What was the percentage increase in the average price of WTI crude oil from 2011 to 2013 for Marathon Oil, as reflected in the benchmark crude oil price average",
+          "count": 2
+        }
+      ],
+      "unique_context_ids": 380,
+      "unique_file_names": 380,
+      "unique_companies": 99,
+      "rows_with_essential_fields": 1146,
+      "eligible_for_sampling_estimate": 1146,
+      "question_length_chars": {
+        "n": 1147,
+        "min": 0,
+        "max": 437,
+        "mean": 181.58,
+        "median": 175
+      },
+      "context_length_chars": {
+        "n": 1147,
+        "min": 531,
+        "max": 9423,
+        "mean": 4451.78,
+        "median": 4510
+      },
+      "table_length_chars": {
+        "n": 1147,
+        "min": 107,
+        "max": 3215,
+        "mean": 864.59,
+        "median": 699
+      },
+      "program_answer_equals_original_rate": 0.0392,
+      "report_year_top": [
+        [
+          "2012",
+          115
+        ],
+        [
+          "2008",
+          92
+        ],
+        [
+          "2017",
+          91
+        ],
+        [
+          "2018",
+          88
+        ],
+        [
+          "2015",
+          87
+        ],
+        [
+          "2016",
+          84
+        ],
+        [
+          "2013",
+          83
+        ],
+        [
+          "2006",
+          76
+        ],
+        [
+          "2007",
+          73
+        ],
+        [
+          "2010",
+          72
+        ]
+      ],
+      "company_top": [
+        [
+          "Goldman Sachs",
+          65
+        ],
+        [
+          "American Tower",
+          56
+        ],
+        [
+          "Entergy",
+          50
+        ],
+        [
+          "JPMorgan Chase",
+          40
+        ],
+        [
+          "Union Pacific Corporation",
+          38
+        ],
+        [
+          "Marathon Oil",
+          36
+        ],
+        [
+          "PNC Financial Services",
+          30
+        ],
+        [
+          "International Paper",
+          27
+        ],
+        [
+          "Citigroup",
+          26
+        ],
+        [
+          "Snap-on",
+          25
+        ]
+      ],
+      "samples": [
+        {
+          "id": "finqa_test_0",
+          "context_id": "finqa_test_ctx_110",
+          "file_name": "pdf/ETR/2016/page_23.pdf",
+          "company_name": "Entergy",
+          "report_year": 2016,
+          "page_number": 23,
+          "question": "What is the net change in Entergy's net revenue from 2014 to 2015, considering factors such as retail electric price, volume/weather, and the impact of the Louisiana business combination customer credits?",
+          "program_answer": "94.0",
+          "original_answer": "94",
+          "context_chars": 4169,
+          "table_chars": 859,
+          "pre_text_chars": 2558,
+          "post_text_chars": 750,
+          "table_preview": "|    |                                                   | amount ( in millions )   |\n|---:|:--------------------------------------------------|:-------------------------|\n|  0 | 2014 net revenue     \u2026"
+        },
+        {
+          "id": "finqa_test_1",
+          "context_id": "finqa_test_ctx_159",
+          "file_name": "pdf/INTC/2015/page_41.pdf",
+          "company_name": "Intel",
+          "report_year": 2015,
+          "page_number": 41,
+          "question": "As of December 26, 2015, what percentage of Intel's total facilities, measured in square feet, were leased?",
+          "program_answer": "0.14464285714285713",
+          "original_answer": "14%",
+          "context_chars": 3142,
+          "table_chars": 424,
+          "pre_text_chars": 491,
+          "post_text_chars": 2225,
+          "table_preview": "|    | ( square feet in millions )   |   unitedstates |   othercountries |   total |\n|---:|:------------------------------|---------------:|-----------------:|--------:|\n|  0 | owned facilities1      \u2026"
+        }
+      ]
+    }
+  },
+  "cross_split_duplicate_id_groups": 0,
+  "unique_file_names_all_splits": 2789,
+  "pdf_source_documents": {
+    "dataset_card_claims_pdfs": true,
+    "pdfs_bundled_in_arrow_rows": false,
+    "unique_file_names_observed": 2789,
+    "example_file_names": [
+      "pdf/AAL/2010/page_72.pdf",
+      "pdf/AAL/2013/page_15.pdf",
+      "pdf/AAL/2013/page_172.pdf",
+      "pdf/AAL/2013/page_18.pdf",
+      "pdf/AAL/2014/page_15.pdf",
+      "pdf/AAL/2014/page_18.pdf",
+      "pdf/AAL/2014/page_219.pdf",
+      "pdf/AAL/2014/page_59.pdf",
+      "pdf/AAL/2014/page_80.pdf",
+      "pdf/AAL/2014/page_89.pdf"
+    ],
+    "local_pdf_probe": {},
+    "notes": [
+      "Official card: clone G4KMU/t2-ragbench to obtain PDFs under data/ organised by dataset/split. load_dataset() returns text/metadata columns, not PDF bytes.",
+      "huggingface_hub is available for later PDF fetch/clone."
+    ]
+  },
+  "rq_implications": [
+    {
+      "rq": "RQ1/RQ2/RQ3",
+      "issue": "Test pool size 1147, essential-eligible \u2248 1146 \u2014 enough for a 140 sample.",
+      "severity": "info"
+    },
+    {
+      "rq": "RQ1 (paired tests)",
+      "issue": "Duplicate question text exists in test; sampling must dedupe by question/id.",
+      "severity": "medium"
+    },
+    {
+      "rq": "RQ2",
+      "issue": "No native hallucination/unsupported label. Must pre-register an evidence-grounded definition using retrieved evidence + verification (not wrong\u2260hallucination).",
+      "severity": "medium"
+    },
+    {
+      "rq": "RQ3",
+      "issue": "No insufficient_evidence label. Gold context is oracle; every row has supporting C. Abstention/insufficient criteria must be pre-registered from retrieval/verify signals (and optional withheld-document probes), not a dataset field.",
+      "severity": "high"
+    },
+    {
+      "rq": "All",
+      "issue": "Feeding gold `context` to the generator as retrieval would invalidate RAG claims. KB must use source documents (file_name / PDFs), with gold context for evaluation only.",
+      "severity": "high"
+    }
+  ],
+  "sampling_readiness": {
+    "recommended_test_pool": "test",
+    "recommended_calibration_pool": "dev",
+    "frozen_test_target": 140,
+    "test_rows": 1147,
+    "test_essential_eligible_estimate": 1146,
+    "dev_rows": 883,
+    "can_support_140_from_test": true,
+    "phase2_selected_140": false
+  }
+}

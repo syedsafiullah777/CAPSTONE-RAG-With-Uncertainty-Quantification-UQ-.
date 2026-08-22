@@ -1,0 +1,226 @@
+{
+  "accuracy": {
+    "metric": "accuracy",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -14.636320174706299,
+        "p_value": 2.344479080884477e-36,
+        "significant_at_0.05": true
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -14.793987016877814,
+        "p_value": 5.121311032222663e-37,
+        "significant_at_0.05": true
+      }
+    ],
+    "anova": {
+      "f_statistic": 216.54099795470492,
+      "p_value": 2.6181035714590213e-65,
+      "significant_at_0.05": true
+    }
+  },
+  "faithfulness": {
+    "metric": "faithfulness",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": 0.09165430759197382,
+        "p_value": 0.9270384737769432,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": 0.043910810513597576,
+        "p_value": 0.9650070211154947,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -0.04795810287156196,
+        "p_value": 0.9617837006770547,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": 0.004210710713148433,
+      "p_value": 0.9957981840364437,
+      "significant_at_0.05": false
+    }
+  },
+  "context_precision": {
+    "metric": "context_precision",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": 0.024271028364211685,
+        "p_value": 0.9806537722109767,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -0.017123181783861387,
+        "p_value": 0.9863506277440843,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -0.0417350082921825,
+        "p_value": 0.9667395842703417,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": 0.0008750624089516381,
+      "p_value": 0.9991253221724167,
+      "significant_at_0.05": false
+    }
+  },
+  "ragas_faithfulness": {
+    "metric": "ragas_faithfulness",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": NaN,
+      "p_value": NaN,
+      "significant_at_0.05": false
+    }
+  },
+  "ragas_answer_correctness": {
+    "metric": "ragas_answer_correctness",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": NaN,
+      "p_value": NaN,
+      "significant_at_0.05": false
+    }
+  },
+  "ragas_context_precision": {
+    "metric": "ragas_context_precision",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": NaN,
+        "p_value": NaN,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": NaN,
+      "p_value": NaN,
+      "significant_at_0.05": false
+    }
+  },
+  "ragas_context_recall": {
+    "metric": "ragas_context_recall",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": 0.04083677840419609,
+        "p_value": 0.9674552262927791,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": 0.027323052975665764,
+        "p_value": 0.9782216734605469,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -0.01351317666973351,
+        "p_value": 0.989227962175736,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": 0.000865531577820475,
+      "p_value": 0.9991348446729598,
+      "significant_at_0.05": false
+    }
+  },
+  "response_time": {
+    "metric": "response_time",
+    "tests": [
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG",
+        "t_statistic": -0.28543452536896036,
+        "p_value": 0.7755230463779162,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Single-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": -0.19570479307531682,
+        "p_value": 0.8449842014417601,
+        "significant_at_0.05": false
+      },
+      {
+        "comparison": "Multi-Agent RAG vs Multi-Agent RAG + UQ",
+        "t_statistic": 0.08963907421899492,
+        "p_value": 0.9286378893951986,
+        "significant_at_0.05": false
+      }
+    ],
+    "anova": {
+      "f_statistic": 0.04239551264412031,
+      "p_value": 0.9584947215187979,
+      "significant_at_0.05": false
+    }
+  }
+}
