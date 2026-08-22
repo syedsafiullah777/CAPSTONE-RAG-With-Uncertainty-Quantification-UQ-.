@@ -2,58 +2,45 @@
 
 Notebook: `notebooks/colab_phase7_smoke.ipynb`
 
-## Before Colab
+## Workflow: GitHub → Colab (no Drive upload for code)
 
-1. Copy the whole **`V2/`** folder to **Google Drive** (My Drive).
-   - Example: `My Drive/V2/` or `My Drive/CAPSTONE (...)/V2/`
+1. **Commit and push** your latest V2 changes to GitHub.
+2. Open the notebook in Colab with **GPU** runtime.
+3. Check **`REPO_URL`** and **`BRANCH`** in cell 1 (defaults point to your GitHub repo).
+4. **Run all cells.**
 
-2. Commit/push the notebook from GitHub is optional; you can also upload the `.ipynb` directly to Colab.
+The setup cell clones the repo to `/content/capstone-rag/` and uses `/content/capstone-rag/V2`.
 
-## In Google Colab
-
-1. Open [Google Colab](https://colab.research.google.com)
-2. **File → Open notebook** → GitHub or upload `colab_phase7_smoke.ipynb`
-3. **Runtime → Change runtime type → T4 GPU (or any GPU) → Save**
-4. Open the **Setup instructions** cell and read the steps
-5. In **cell 1 (Mount Drive and set V2 path)** edit this line to match your Drive folder:
+## Default clone settings
 
 ```python
-V2_ROOT = Path('/content/drive/MyDrive/V2')  # <-- change this
+REPO_URL = 'https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git'
+BRANCH = 'main'  # change if your work is on another branch
 ```
 
-### How to find the correct path
+If smoke fails with “branch not found”, set `BRANCH` to the branch you pushed (e.g. `cursor/empty-v2-workspace`).
 
-1. Run the cell once with a guess, **or** mount Drive in a scratch cell:
-   ```python
-   from google.colab import drive
-   drive.mount('/content/drive')
-   ```
-2. In Colab’s **file browser** (left panel), expand **drive → MyDrive**
-3. Navigate to your `V2` folder
-4. Right-click **V2** → **Copy path**
-5. Paste into `V2_ROOT` (must start with `/content/drive/MyDrive/...`)
+## Private repo
 
-6. Re-run the setup cell. You should see:
-   ```text
-   OK — V2_ROOT: /content/drive/MyDrive/...
-   ```
+If the repo is private, use a GitHub personal access token:
 
-7. **Run all remaining cells** (install deps → smoke test → check results)
+```python
+REPO_URL = 'https://<TOKEN>@github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git'
+```
 
-## If Drive mount fails
+Do not commit tokens to git.
 
-- Use a normal browser window (not incognito)
-- Allow popups for Colab
-- Click the link in the mount output and sign in to Google
-- Re-run the setup cell
+## Success
 
-## Success criteria
+- `results/config/phase7_smoke_test.json` → `"status": "PASS"`
+- `results/config/phase7_runtime_fingerprint.json` → GPU/CUDA details
 
-- `results/config/phase7_smoke_test.json` shows `"status": "PASS"`
-- `results/config/phase7_runtime_fingerprint.json` shows Colab GPU / CUDA info
+Update `project_record/evidence/phase7_validation.md` with the Colab result.
 
-Then update `project_record/evidence/phase7_validation.md` with the Colab run result.
+## Optional: save results to Drive
+
+Run **section 5** in the notebook to copy JSON outputs to `My Drive/MSc-RAG/configs/phase7/` (Drive is for **results backup**, not for syncing source code).
 
 ## Before git commit
 
-In Colab: **Edit → Clear all outputs** before saving the notebook back to git (avoids GitHub “invalid notebook” errors).
+Colab: **Edit → Clear all outputs** before saving the notebook to avoid GitHub “invalid notebook” errors.

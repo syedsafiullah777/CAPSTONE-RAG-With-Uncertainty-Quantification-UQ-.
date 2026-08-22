@@ -43,10 +43,12 @@ PYTHONPATH=. python scripts/smoke_generate.py --backend ollama_dev
 
 ## Colab GPU smoke (required next validation)
 
-1. Open `notebooks/colab_phase7_smoke.ipynb` in Google Colab
-2. Runtime → GPU
-3. Run the setup cell: it auto-finds V2, or mounts Drive, or prompts for `V2.zip` (Colab does **not** ship with `/content/V2`)
-4. Run remaining cells (primary `--backend llama_cpp`)
+1. **Push latest V2 to GitHub**
+2. Open `notebooks/colab_phase7_smoke.ipynb` in Google Colab → **Runtime → GPU**
+3. Check `REPO_URL` / `BRANCH` in setup cell → run all cells (clones repo; no Drive upload for code)
+4. Optional: section 5 copies results to Drive for backup
+
+Instructions: `notebooks/colab_runtime.md`
 
 ## Verified artefacts (Mac local smoke)
 
