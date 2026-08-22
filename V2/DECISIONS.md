@@ -117,3 +117,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Docs:** `docs/storage_backup_recovery.md`, `docs/IMPLEMENTATION_PLAN.md`, `.cursor/rules/06-storage-backup-recovery.mdc`, config `storage` section.
 
 **Drive root NEEDS VERIFICATION** until user creates and confirms `Google Drive/MSc-RAG/` layout.
+
+## 2026-08-22 — Validation evidence system
+
+**Decision:** After every major phase, save actual test/smoke/benchmark results to `project_record/evidence/phaseN_validation.md` plus machine-readable JSON where useful (e.g. `results/config/phase7_smoke_test.json`). Record PASS/FAIL/NEEDS VERIFICATION from observed runs only — never fabricate PASS. Master record must reference the evidence file. Benchmark raw outputs stay in `results/raw/`; evidence files are concise summaries.
+
+**Backfilled:** `phase1_validation.md` through `phase7_validation.md`. Colab GPU smoke in Phase 7 recorded as **NEEDS VERIFICATION**.

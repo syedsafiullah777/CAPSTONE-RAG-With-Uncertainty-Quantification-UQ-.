@@ -113,13 +113,19 @@ Template: `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
 
 `V2/project_record/PROJECT_MASTER_RECORD.md` — authoritative chronology and dissertation evidence.
 
-Updated after every completed phase (rule: `.cursor/rules/05-project-master-record.mdc`).
-
-Also record: backup status, local backup recommendation, GitHub commit recommendation.
+Updated after every completed phase. Also maintain validation evidence at `project_record/evidence/phaseN_validation.md`.
 
 ---
 
-## 6. Phase completion reminder
+## 6. Validation evidence (every major phase)
+
+See `project_record/evidence/README.md` and `docs/IMPLEMENTATION_PLAN.md`.
+
+Record **actual** observed results. Do not fabricate PASS. Benchmark raw data stays in `results/raw/`; evidence files are concise summaries.
+
+---
+
+## 7. Phase completion reminder
 
 At end of each relevant phase, report:
 

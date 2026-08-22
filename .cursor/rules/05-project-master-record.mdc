@@ -35,6 +35,7 @@ Include:
 - Remaining issues
 - Dissertation relevance
 - Evidence/source file paths
+- Validation evidence file (`project_record/evidence/phaseX_validation.md`)
 
 5. Update the relevant sections of the master record with newly verified information.
 6. Mark unknown or unverified information as:
@@ -52,7 +53,14 @@ Include:
     Use format in `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`.
     Never claim a backup exists unless verified.
 
-12. Stop before beginning the next phase.
+12. Create or update **validation evidence** at `V2/project_record/evidence/phaseN_validation.md`:
+    - record actual test/smoke/benchmark results (not planned results)
+    - PASS / FAIL / NEEDS VERIFICATION only from observed runs
+    - machine-readable JSON under `results/config/` where useful (e.g. `phase7_smoke_test.json`)
+    - add concise reference in the master record phase section
+    Template: `V2/project_record/evidence/_TEMPLATE.md`
+
+13. Stop before beginning the next phase.
 
 The master record must always reflect the actual implemented project, not merely the original plan.
 

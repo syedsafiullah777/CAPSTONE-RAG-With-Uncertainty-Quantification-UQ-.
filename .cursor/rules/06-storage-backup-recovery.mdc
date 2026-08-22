@@ -189,6 +189,23 @@ This is a **reminder**, not an assumption that backup actions are complete.
 
 ---
 
+## Validation and evidence (every major phase)
+
+After tests, smoke tests, model runs, retrieval validation, benchmark execution, calibration, evaluation, or live-artifact validation:
+
+1. Run relevant tests.
+2. Save actual output to `V2/project_record/evidence/phaseN_validation.md` (JSON under `results/config/` where useful).
+3. Record date/time, phase, test name, command/notebook, environment, expected, **actual**, PASS/FAIL, error, output path.
+4. Update `PROJECT_MASTER_RECORD.md` with a reference to the evidence file.
+
+**Do not fabricate PASS.** Record FAIL with the actual error.
+
+For the 420-case benchmark: raw outputs in `results/raw/` + checkpoints; evidence files are concise summaries — not one giant markdown dump.
+
+Spec: `V2/project_record/evidence/README.md`
+
+---
+
 ## Live artefact
 
 The Streamlit live artefact must use actual V2 RAG code — not precomputed benchmark lookup for fresh user questions.

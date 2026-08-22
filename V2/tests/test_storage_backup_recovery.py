@@ -35,8 +35,17 @@ def test_storage_docs_and_rules_exist() -> None:
     assert (root / "docs" / "storage_backup_recovery.md").is_file()
     assert (root / "docs" / "IMPLEMENTATION_PLAN.md").is_file()
     assert (root / "project_record" / "PHASE_COMPLETION_BACKUP_TEMPLATE.md").is_file()
+    assert (root / "project_record" / "evidence" / "README.md").is_file()
+    assert (root / "project_record" / "evidence" / "phase7_validation.md").is_file()
     repo_root = root.parent
     assert (repo_root / ".cursor" / "rules" / "06-storage-backup-recovery.mdc").is_file()
+
+
+def test_validation_evidence_config() -> None:
+    ve = load_experiment_config().section("storage").get("validation_evidence", {})
+    assert ve.get("required_after_major_phase") is True
+    assert ve.get("do_not_fabricate_pass") is True
+    assert "NEEDS_VERIFICATION" in ve.get("status_values", [])
 
 
 def test_storage_drive_layout_matches_spec() -> None:

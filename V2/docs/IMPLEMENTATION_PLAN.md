@@ -74,12 +74,49 @@ Each architecture–question case must preserve structured fields listed in `sto
 
 ### Phase completion (every phase)
 
-1. Update `V2/project_record/PROJECT_MASTER_RECORD.md`
-2. Report backup status using `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
-3. Run tests; review git status/diff; commit if appropriate
-4. Stop before starting the next phase
+1. Run relevant tests / smoke / validation for the phase.
+2. Save **actual** results to `V2/project_record/evidence/phaseN_validation.md` (and machine-readable JSON under `results/config/` where useful).
+3. Update `V2/project_record/PROJECT_MASTER_RECORD.md` with a concise reference to the evidence file.
+4. Report backup status using `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
+5. Run tests; review git status/diff; commit if appropriate
+6. Stop before starting the next phase
 
-### Live artefact
+**Do not fabricate PASS.** Record FAIL with the actual error. Do not mark a phase complete until approved criteria are met.
+
+---
+
+## Validation and evidence (all phases)
+
+After every major phase that performs tests, smoke tests, model runs, retrieval validation, benchmark execution, calibration, evaluation, or live-artifact validation:
+
+1. Run the relevant tests.
+2. Save actual output to a dedicated file inside V2.
+3. Record: date/time, phase, test name, command/notebook, environment/device/GPU, expected, **actual**, PASS/FAIL, error (if any), output path.
+4. Update the master record with a reference to the evidence file.
+
+**Evidence layout:**
+
+```text
+V2/project_record/evidence/
+├── phase1_validation.md … phase7_validation.md
+├── artifacts/              # pytest captures, small logs
+└── _TEMPLATE.md
+```
+
+Machine-readable smoke output example: `results/config/phase7_smoke_test.json`
+
+**Benchmark / evaluation:** do **not** put every raw case in one giant markdown file. Keep raw machine-readable results in `results/raw/` + `checkpoints/`; evidence files are concise summaries pointing to those paths.
+
+Continues through: RAG validation, calibration, 420-case benchmark, metrics, statistics, Streamlit live validation, final reproducibility validation.
+
+Capture helpers:
+
+- `scripts/capture_pytest_evidence.py --phase N`
+- `scripts/smoke_generate.py` → `results/config/phase7_smoke_test.json`
+
+Spec: `project_record/evidence/README.md`
+
+---
 
 Streamlit demo uses the same V2 RAG pipelines as benchmark mode (not precomputed lookup for new questions). Session outputs follow Drive persistence rules where applicable.
 
@@ -91,26 +128,26 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 
 ## Phase overview
 
-| Phase | Name | Status | Storage notes |
+| Phase | Name | Status | Evidence |
 | --- | --- | --- | --- |
-| 1 | Project foundation | ✅ Complete | GitHub: code/config/tests |
-| 2 | V1 audit + FinQA profile | ✅ Complete | GitHub: profile JSON + docs |
-| 3 | PDF resolvability | ✅ Complete | GitHub: probe JSON + checkpoint doc |
-| 4 | Freeze test 140 | ✅ Complete | GitHub: CSV + manifest (authoritative) |
-| 5 | Freeze calibration 40 | ✅ Complete | GitHub: CSV + manifest |
-| 6 | Knowledge base | ✅ Complete | GitHub: index manifest; KB bulk on local/Drive not git |
-| 7 | Qwen3-8B backend | ✅ Complete | GitHub: smoke/fingerprint configs; Colab GPU **NEEDS VERIFICATION** |
-| 8 | Single-Agent RAG baseline | ⬜ Not started | Log raw per-case outputs; design for 420-case resume |
-| 9 | Multi-Agent RAG | ⬜ Not started | Same storage/recovery contract |
-| 10 | Multi-Agent + UQ / abstention | ⬜ Not started | Same; include confidence/threshold fields |
-| 11 | Result schema + logging | ⬜ Not started | Implement `storage.raw_result_fields` in code |
-| 12 | Streamlit live artefact | ⬜ Not started | Live mode ≠ benchmark lookup |
-| 13 | Pilot run | ⬜ Not started | Drive checkpoints + incremental saves |
-| 14 | Calibration / threshold lock | ⬜ Not started | DEV only; lock file to GitHub when ready |
-| 15 | 420-case benchmark | ⬜ Not started | Full recovery contract mandatory |
-| 16 | Evaluation + metrics | ⬜ Not started | Raw before aggregation; metrics to Drive |
-| 17 | Statistics + final tables | ⬜ Not started | Final aggregated tables → GitHub where appropriate |
-| 18 | Dissertation evidence pack | ⬜ Not started | Master record + verified artefact paths |
+| 1 | Project foundation | ✅ Complete | `evidence/phase1_validation.md` |
+| 2 | V1 audit + FinQA profile | ✅ Complete | `evidence/phase2_validation.md` |
+| 3 | PDF resolvability | ✅ Complete | `evidence/phase3_validation.md` |
+| 4 | Freeze test 140 | ✅ Complete | `evidence/phase4_validation.md` |
+| 5 | Freeze calibration 40 | ✅ Complete | `evidence/phase5_validation.md` |
+| 6 | Knowledge base | ✅ Complete | `evidence/phase6_validation.md` |
+| 7 | Qwen3-8B backend | ✅ Complete | `evidence/phase7_validation.md` (Colab GPU **NEEDS VERIFICATION**) |
+| 8 | Single-Agent RAG baseline | ⬜ Not started | `evidence/phase8_validation.md` |
+| 9 | Multi-Agent RAG | ⬜ Not started | `evidence/phase9_validation.md` |
+| 10 | Multi-Agent + UQ / abstention | ⬜ Not started | `evidence/phase10_validation.md` |
+| 11 | Result schema + logging | ⬜ Not started | evidence + raw JSONL paths |
+| 12 | Streamlit live artefact | ⬜ Not started | live validation evidence |
+| 13 | Pilot run | ⬜ Not started | concise summary → raw/checkpoints on Drive |
+| 14 | Calibration / threshold lock | ⬜ Not started | calibration evidence |
+| 15 | 420-case benchmark | ⬜ Not started | summary only; raw in `results/raw/` |
+| 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
+| 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
+| 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
 
 Phase numbers 11–18 are indicative; adjust if merged — storage requirements remain.
 
@@ -157,6 +194,7 @@ Do not force-push. Do not commit secrets, weights, or large raw dumps.
 | Record | Path |
 | --- | --- |
 | Master chronology | `V2/project_record/PROJECT_MASTER_RECORD.md` |
+| Phase validation evidence | `V2/project_record/evidence/phaseN_validation.md` |
 | Decisions | `V2/DECISIONS.md` |
 | Context | `V2/PROJECT_CONTEXT.md` |
 | Storage spec | `V2/docs/storage_backup_recovery.md` |

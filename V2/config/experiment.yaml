@@ -238,4 +238,19 @@ storage:
     backup_template: "project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md"
     implementation_plan: "docs/IMPLEMENTATION_PLAN.md"
     storage_doc: "docs/storage_backup_recovery.md"
+    evidence_dir: "project_record/evidence"
+    evidence_template: "project_record/evidence/_TEMPLATE.md"
+    evidence_readme: "project_record/evidence/README.md"
+    pytest_capture_script: "scripts/capture_pytest_evidence.py"
+
+  validation_evidence:
+    required_after_major_phase: true
+    markdown_pattern: "project_record/evidence/phase{N}_validation.md"
+    artifacts_dir: "project_record/evidence/artifacts"
+    status_values:
+      - PASS
+      - FAIL
+      - NEEDS_VERIFICATION
+    do_not_fabricate_pass: true
+    benchmark_evidence_style: concise_summary_pointing_to_raw_results
 

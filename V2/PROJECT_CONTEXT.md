@@ -62,7 +62,8 @@ Next implementation phase: Phase 8 (Single-Agent RAG baseline).
 - Config: `V2/config/experiment.yaml` → `storage`
 - Cursor rule: `.cursor/rules/06-storage-backup-recovery.mdc`
 - Phase backup template: `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
-- Drive root (logical): `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION**
+- Validation evidence: `V2/project_record/evidence/phaseN_validation.md`
+- Phase 7 smoke JSON: `V2/results/config/phase7_smoke_test.json`
 
 ## Key paths
 

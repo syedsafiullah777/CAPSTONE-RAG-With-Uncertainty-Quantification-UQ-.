@@ -65,7 +65,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **34 passed** (Phases 1–7 + storage/backup config tests)
+- Result: **35 passed** (Phases 1–7 + storage/backup + validation evidence tests)
 
 ### Storage / backup (project infrastructure)
 
@@ -78,8 +78,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-
----
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase7_validation.md` |
+| Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 
 ## Decisions log (corrections and standing rules)
 
@@ -95,6 +95,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 8. **Phase 7 backends:** Final 420-case benchmark must use Colab GPU (`llama_cpp` or `transformers`). `ollama_dev` is optional local smoke only and is not the official benchmark path.
 9. **Phase 7 remote strategy (2026-08-21 correction):** Use **standard Google Colab GPU notebooks** (`notebooks/colab_phase7_smoke.ipynb`). Do **not** use Colab CLI / `gcloud`. Architecture (Qwen3-8B, model abstraction, fingerprinting, checkpoint/resume design) unchanged. Next validation: Colab GPU verification.
 10. **Storage model (2026-08-22):** GitHub = source; Colab = compute; Drive `MSc-RAG/` = persistent archive; Mac = dev + secondary backup. Incremental checkpoint/resume mandatory for 420-case benchmark. Never claim backup without verified paths.
+11. **Validation evidence (2026-08-22):** `project_record/evidence/phaseN_validation.md` after every major phase; actual PASS/FAIL/NEEDS VERIFICATION only; `phase7_smoke_test.json` for machine-readable smoke evidence.
 
 ---
 
@@ -312,9 +313,10 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Actual outcome:** Abstraction works; one logged successful generate (local `ollama_dev`). Colab GGUF path implemented for notebook execution; live Colab GPU smoke not run in this session.
 - **Problems encountered:** Newer `ollama` Python client returns pydantic `ChatResponse` (no `.keys()`); first smoke crashed after generation. Mac has no `gcloud` / Colab CLI (not required under notebook strategy).
 - **Problems resolved:** Parse both dict and ChatResponse message content. Remote strategy documented as Colab notebooks (not CLI).
-- **Remaining issues:** **Next validation step — Colab GPU verification** (GGUF/transformers VRAM fit via `notebooks/colab_phase7_smoke.ipynb`) **NEEDS VERIFICATION**; RAG arches not started.
+- **Remaining issues:** **Next validation step — Colab GPU verification** (GGUF/transformers VRAM fit via `notebooks/colab_phase7_smoke.ipynb`) recorded as **NEEDS VERIFICATION** in `project_record/evidence/phase7_validation.md`; RAG arches not started.
 - **Dissertation relevance:** Reproducible model logging; controlled compute story (Colab notebook primary).
-- **Evidence:** `V2/results/config/phase7_smoke_generate.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`, `V2/notebooks/colab_phase7_smoke.ipynb`
+- **Evidence:** `V2/results/config/phase7_smoke_test.json`, `V2/results/config/phase7_runtime_fingerprint.json`, `V2/docs/phase7_qwen_backend.md`, `V2/notebooks/colab_phase7_smoke.ipynb`
+- **Validation evidence:** `V2/project_record/evidence/phase7_validation.md` (Colab GPU smoke **NEEDS VERIFICATION**)
 
 ---
 
@@ -348,13 +350,14 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Remaining issues:** Google Drive folder layout **NEEDS VERIFICATION**; benchmark runner not yet implemented (later phases); Colab GPU smoke **NEEDS VERIFICATION**.
 - **Dissertation relevance:** Reproducibility, artefact provenance, honest reporting of backup status.
 - **Evidence:** `V2/docs/storage_backup_recovery.md`, `V2/docs/IMPLEMENTATION_PLAN.md`, `V2/config/experiment.yaml`
+- **Validation evidence:** `V2/project_record/evidence/` (phases 1–7 backfilled; template for future phases)
 - **Backup status (this task):**
   - Colab: N/A (documentation only)
   - Google Drive: **NEEDS VERIFICATION** — user must create `MSc-RAG/` layout
   - Local: files in local V2 repo (verified by implementation)
   - GitHub: recommended commit for this infrastructure task
 - **Local backup recommendation:** Optional — copy nothing new beyond existing local repo until Drive is set up.
-- **GitHub commit recommendation:** Commit rules, docs, config, tests; exclude large/raw results.
+- **GitHub commit recommendation:** Commit rules, docs, config, tests, evidence files; exclude large/raw results.
 
 ---
 

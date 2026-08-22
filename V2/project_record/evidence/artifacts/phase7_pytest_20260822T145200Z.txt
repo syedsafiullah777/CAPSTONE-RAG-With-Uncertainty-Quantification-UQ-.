@@ -1,0 +1,22 @@
+# Phase 7 pytest capture
+# recorded_at_utc: 2026-08-22T14:52:07Z
+# command: PYTHONPATH=. pytest -v --tb=short
+# exit_code: 0
+
+platform darwin -- Python 3.13.4, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.14.2
+collected 34 items
+
+tests/test_config_loads.py ......                                        [ 17%]
+tests/test_phase2_profile.py ....                                        [ 29%]
+tests/test_phase3_verification.py ....                                   [ 41%]
+tests/test_phase4_select_140.py ....                                     [ 52%]
+tests/test_phase5_calibration.py ...                                     [ 61%]
+tests/test_phase6_knowledge_base.py ....                                 [ 73%]
+tests/test_phase7_model_backend.py ....                                  [ 85%]
+tests/test_storage_backup_recovery.py .....                              [100%]
+
+============================== 34 passed in 5.42s ==============================

@@ -38,6 +38,7 @@ Default config `model.backend: auto` prefers llama-cpp if importable, else trans
 cd V2
 source .venv/bin/activate
 PYTHONPATH=. python scripts/smoke_generate.py --backend ollama_dev
+# Writes results/config/phase7_smoke_test.json (PASS/FAIL + observed output)
 ```
 
 ## Colab GPU smoke (required next validation)
@@ -51,11 +52,12 @@ PYTHONPATH=. python scripts/smoke_generate.py --backend ollama_dev
 
 | Artefact | Path |
 | --- | --- |
+| Validation evidence | `project_record/evidence/phase7_validation.md` |
+| Smoke test JSON | `results/config/phase7_smoke_test.json` |
 | Fingerprint | `results/config/phase7_runtime_fingerprint.json` |
-| Smoke generation | `results/config/phase7_smoke_generate.json` |
 
-Live smoke (2026-08-21): backend `ollama_dev`, model `qwen3:8b`, answer `4`, latency ~4.9s.  
-**NEEDS VERIFICATION on Colab GPU:** GGUF load + VRAM fit for `Q4_K_M` / transformers 4-bit via the Colab notebook.
+Live smoke (2026-08-22): backend `ollama_dev`, model `qwen3:8b`, answer `4`, latency ~9.9s — **PASS** (local dev only).  
+Colab GPU smoke — **NEEDS VERIFICATION** (see evidence file).
 
 ## What this phase does *not* include
 
