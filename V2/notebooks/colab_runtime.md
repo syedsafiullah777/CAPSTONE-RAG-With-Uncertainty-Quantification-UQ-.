@@ -11,14 +11,33 @@ Notebook: `notebooks/colab_phase7_smoke.ipynb`
 
 The setup cell clones the repo to `/content/capstone-rag/` and uses `/content/capstone-rag/V2`.
 
-## Default clone settings
+## GitHub repo layout
 
-```python
-REPO_URL = 'https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git'
-BRANCH = 'main'  # change if your work is on another branch
+```text
+CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-/
+├── .cursor/rules/          ← Cursor rules (not used in Colab)
+└── V2/                     ← clone target for all Colab work
 ```
 
-If smoke fails with “branch not found”, set `BRANCH` to the branch you pushed (e.g. `cursor/empty-v2-workspace`).
+Branch: **`cursor/empty-v2-workspace`** (there is no `main` branch).
+
+## Workflow
+
+1. Push from Mac (repo root contains both `.cursor/` and `V2/`):
+   ```bash
+   git add V2/ .cursor/
+   git commit -m "your message"
+   git push origin cursor/empty-v2-workspace
+   ```
+2. Colab clones repo → enters **`V2/`** automatically
+3. Run smoke cells
+
+## Clone settings (in notebook)
+
+```python
+BRANCH = 'cursor/empty-v2-workspace'
+V2_ROOT = /content/capstone-rag/V2
+```
 
 ## Private repo
 
