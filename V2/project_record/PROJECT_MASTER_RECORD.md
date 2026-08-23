@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-23 |
-| Current completed phase | **Phase 9** |
-| Next phase (not started) | Phase 10 — Multi-Agent RAG + UQ / abstention |
+| Current completed phase | **Phase 9** (implementation); Colab T4 smoke **NEEDS VERIFICATION** |
+| Next phase (not started) | Phase 10 — Multi-Agent RAG + UQ / abstention (blocked on Phase 9 Colab validation) |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -57,7 +57,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 8 run ID | `phase8_20260823T124009Z_70a29b9f` | `phase8_single_agent_smoke.json` |
 | Phase 8 git commit (Colab) | `846c143` | `phase8_runtime_fingerprint.json` |
 | Primary compute | Standard Google Colab GPU notebooks | notebook entrypoint |
-| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` (model); `notebooks/colab_phase8_smoke.ipynb` (RAG) | — |
+| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` (model); `notebooks/colab_phase8_smoke.ipynb` (single-agent); `notebooks/colab_phase9_smoke.ipynb` (multi-agent) | — |
+| Colab Phase 9 smoke | **NEEDS VERIFICATION** | `notebooks/colab_phase9_smoke.ipynb` |
 | Local Mac | Dev/control; optional `ollama_dev` smoke | local Phase 8 PASS (2026-08-22) |
 | Paid LLM API | Not used / not required | — |
 | Phase 7 artefacts | `phase7_runtime_fingerprint.json`, `phase7_smoke_test.json` | — |
@@ -66,7 +67,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Architectures
 
 1. **Single-Agent RAG** — implemented (Phase 8); local + Colab smoke **PASS** (n=3 each)
-2. **Multi-Agent RAG** — implemented (Phase 9); local smoke **PASS** (n=3, mock LLM + real retrieval)
+2. **Multi-Agent RAG** — implemented (Phase 9); local smoke **PASS** (n=3, mock LLM + real retrieval); Colab T4 `llama_cpp` smoke **NEEDS VERIFICATION**
 3. Multi-Agent + UQ / abstention — not started (Phase 10)
 
 **NEEDS VERIFICATION / later phases:** confidence method weights; whether Arch3 reuses Arch2 draft/verify; dense vs hybrid retrieval; judge configuration.
@@ -111,7 +112,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 14. **Phase 8 Single-Agent RAG (2026-08-22):** Retrieve from Phase 6 KB + generate via Qwen3-8B backend; common `RAGCaseResult` schema; no multi-agent/UQ. Local smoke n=3 **PASS** (`ollama_dev` + real retrieval).
 15. **Phase 8 Colab retrieval fix (2026-08-23):** Option B — rebuild Chroma on Colab via `build_index.py` (HF PDF download); index preflight (`validate_index_preflight`); `notebooks/colab_phase8_smoke.ipynb`. Mac Chroma DB not copied.
 16. **Phase 8 Colab Single-Agent smoke verified (2026-08-23):** Tesla T4 + `llama_cpp` + Qwen3-8B Q4_K_M → **PASS**; run_id `phase8_20260823T124009Z_70a29b9f`; git `846c143`; 3/3 questions, 4 evidence chunks each; retrieval + generation succeeded. Evidence: `phase8_smoke_test.json`, `phase8_single_agent_smoke.json`, `phase8_runtime_fingerprint.json`. Colab KB manifest at `knowledge_base/index/index_manifest.json` on Colab/Drive — **not** stale `results/config/phase6_index_manifest.json` (Mac paths).
-17. **Phase 9 Multi-Agent RAG (2026-08-23):** Retrieve → draft → verify (lexical + LLM support score). Architecture `multi_agent`; reuses Phase 6 KB + Qwen3 backend factory; `verification_result` populated; `decision=ANSWER`; no abstention/UQ. Local smoke n=3 **PASS** (`mock` LLM + real retrieval); run_id `phase9_20260823T130745Z_22fab337`.
+17. **Phase 9 Multi-Agent RAG (2026-08-23):** Retrieve → draft → verify (lexical + LLM support score). Architecture `multi_agent`; reuses Phase 6 KB + Qwen3 backend factory; `verification_result` populated; `decision=ANSWER`; no abstention/UQ. Local smoke n=3 **PASS** (`mock` LLM + real retrieval); run_id `phase9_20260823T132941Z_f4571194`. Colab notebook `colab_phase9_smoke.ipynb` pushed at git **a9d6b0a**; T4 `llama_cpp` validation **NEEDS VERIFICATION**.
 
 ---
 
@@ -466,7 +467,9 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - `compute_verification_result()`: lexical overlap + LLM support score (average)
   - Multi-agent prompts in `config/prompts.yaml`
   - Smoke script `scripts/smoke_multi_agent.py` with index preflight (no KB rebuild)
+  - Colab notebook `notebooks/colab_phase9_smoke.ipynb` (clone → KB restore → `llama_cpp` smoke → Drive save)
   - Local smoke **n=3** → **PASS** (mock LLM + real Phase 6 retrieval)
+  - Colab T4 `llama_cpp` smoke → **NEEDS VERIFICATION** (notebook ready; not executed from Cursor agent environment)
 - **Technical decisions:**
   - Architecture id: `multi_agent`; case key `multi_agent:{question_id}`
   - Reuse Phase 6 index/retriever/embeddings/top_k unchanged
@@ -480,24 +483,24 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - `V2/src/rag/prompts.py`, `schema.py`, `__init__.py`
   - `V2/scripts/smoke_multi_agent.py`, `V2/tests/test_phase9_multi_agent.py`
   - `V2/config/prompts.yaml`, `V2/config/experiment.yaml`
-  - `V2/docs/phase9_multi_agent.md`
-  - `V2/results/config/phase9_*.json`, `phase9_multi_agent_smoke.jsonl`
+  - `V2/docs/phase9_multi_agent.md`, `V2/notebooks/colab_phase9_smoke.ipynb`, `V2/notebooks/colab_runtime.md`
+  - `V2/results/config/phase9_*.json`, `phase9_multi_agent_smoke.jsonl` (local mock only until Colab run)
 - **Tests/validation:**
   - Unit: prompts, verification scoring, mock pipeline, schema fields
   - Live smoke: 3/3 PASS; 4 evidence chunks each; verification_result present
   - Full suite: **49 passed**
-- **Actual outcome:** Multi-Agent pipeline works end-to-end with real retrieval. Mock smoke shows WEAK_EVIDENCE (expected with canned answers); draft answers and verification scores logged. Frozen sets unchanged.
-- **Problems encountered:** None blocking.
-- **Problems resolved:** N/A
-- **Remaining issues:** Colab `llama_cpp` multi-agent smoke **NEEDS VERIFICATION**; Phase 10 UQ/abstention not started; full 420-case runner not started.
+- **Actual outcome:** Multi-Agent pipeline works end-to-end locally with real retrieval (mock LLM). Draft answers and verification scores logged. Frozen sets unchanged. **Colab GPU path not yet verified** for multi-agent draft+verify (two LLM calls per case).
+- **Problems encountered:** Colab GPU notebook cannot be executed from local Cursor agent environment; `llama_cpp` not available on Mac for parity run.
+- **Problems resolved:** Phase 9 source + Colab notebook pushed to GitHub (`a9d6b0a`) so Colab clone includes `smoke_multi_agent.py`.
+- **Remaining issues:** **Colab Phase 9 smoke NEEDS VERIFICATION** (gate before Phase 10); Phase 10 UQ/abstention not started; full 420-case runner not started.
 - **Dissertation relevance:** Second controlled architecture for RQ1; verification provenance in raw results.
 - **Evidence:** `V2/results/config/phase9_smoke_test.json`, `phase9_multi_agent_smoke.json`, `phase9_runtime_fingerprint.json`, `docs/phase9_multi_agent.md`
 - **Validation evidence:** `V2/project_record/evidence/phase9_validation.md`
 - **Backup status (Phase 9):**
-  - Colab: N/A for this smoke (local mock + real KB)
-  - Google Drive: **NEEDS VERIFICATION** (reuse Phase 8 KB on Drive if present)
-  - Local: verified — smoke artefacts under `V2/results/config/phase9_*.json`
-  - GitHub: recommend commit Phase 9 source + evidence; phase9 JSON gitignored by default
+  - Colab: **NEEDS VERIFICATION** — run `notebooks/colab_phase9_smoke.ipynb` on GPU; save to `MyDrive/MSc-RAG/configs/phase9/`
+  - Google Drive: **NEEDS VERIFICATION** — reuse Phase 8 KB at `MyDrive/MSc-RAG/artifacts/knowledge_base/`; Phase 9 JSONs pending notebook cell 7
+  - Local: verified — mock smoke artefacts under `V2/results/config/phase9_*.json`; project record + evidence updated 2026-08-23
+  - GitHub: **verified** — Phase 9 source + notebook committed and pushed (`a9d6b0a` on `cursor/empty-v2-workspace`); `results/config/phase9_*.json` gitignored
 
 ---
 
