@@ -140,4 +140,10 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** Implement `multi_agent` as retrieve (shared Phase 6 KB) → draft → verification (lexical + LLM support score). Populate `verification_result` and set `confidence` to verification score. Always `decision=ANSWER`; no self-consistency, combined UQ, or abstention (Phase 10). Do not rebuild or duplicate the knowledge base.
 
-**Verified smoke:** n=3 frozen questions; real retrieval + mock draft/verify LLM; status **PASS**; run_id `phase9_20260823T130745Z_22fab337`. Artefacts: `results/config/phase9_multi_agent_smoke.json`, `project_record/evidence/phase9_validation.md`.
+**Verified smoke:** n=3 frozen questions; real retrieval + mock draft/verify LLM; status **PASS**; run_id `phase9_20260823T130745Z_22fab337`. Artefacts: `results/config/phase9_multi_agent_smoke.json`, `project_record/evidence/phase9_validation.md`. Colab T4 `llama_cpp` smoke **PASS** (2026-08-23T13:51:40Z); run_id `phase9_20260823T134858Z_6260bf43`.
+
+## 2026-08-23 — Phase 10 Multi-Agent + UQ / abstention
+
+**Decision:** Implement `multi_agent_uq` as Phase 9 pipeline plus combined confidence = mean(retrieval_score, verification_score) and binary gate `ANSWER | ABSTAIN`. No self-consistency (V1 cost/variance issue). Smoke uses `uncertainty.smoke_threshold` (0.55) only — final threshold locked on dev calibration (Phase 14), never on frozen test 140. Preserve draft in `configuration.draft_answer` when abstaining.
+
+**Colab entrypoint:** `notebooks/colab_phase10_smoke.ipynb` → `smoke_multi_agent_uq.py --backend llama_cpp --limit 3`.

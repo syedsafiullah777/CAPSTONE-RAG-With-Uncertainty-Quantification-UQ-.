@@ -45,4 +45,7 @@ multi_agent:
       Support score (0-1):
 
 uncertainty:
-  notes: "Defined in Phase 10 after calibration methodology is fixed."
+  notes: "Phase 10 — combined retrieval+verification confidence; ANSWER | ABSTAIN gate."
+  abstention_message: >-
+    I cannot answer reliably because supporting evidence is insufficient.
+  method: "mean_retrieval_verification"

@@ -8,6 +8,7 @@ from typing import Any
 
 ARCHITECTURE_SINGLE_AGENT = "single_agent"
 ARCHITECTURE_MULTI_AGENT = "multi_agent"
+ARCHITECTURE_MULTI_AGENT_UQ = "multi_agent_uq"
 
 
 @dataclass

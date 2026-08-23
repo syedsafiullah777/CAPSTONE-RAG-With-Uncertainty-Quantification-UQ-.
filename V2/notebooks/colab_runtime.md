@@ -28,6 +28,16 @@ Notebook: `notebooks/colab_phase9_smoke.ipynb`
 2. Preflight → `smoke_multi_agent.py --backend llama_cpp --limit 3`
 3. Save to `MyDrive/MSc-RAG/configs/phase9/`
 
+## Phase 10 — Multi-Agent + UQ / abstention smoke
+
+Notebook: `notebooks/colab_phase10_smoke.ipynb`
+
+1. Clone → install → restore KB from Drive (or rebuild)
+2. Preflight → `smoke_multi_agent_uq.py --backend llama_cpp --limit 3`
+3. Save to `MyDrive/MSc-RAG/configs/phase10/`
+
+Uses `uncertainty.smoke_threshold` (0.55) for verification only — not the locked benchmark threshold.
+
 ---
 
 ## Workflow: GitHub → Colab (no Drive upload for code)

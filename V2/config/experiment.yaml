@@ -89,6 +89,7 @@ remote_execution:
   primary_entrypoint: "notebooks/colab_phase7_smoke.ipynb"
   phase8_entrypoint: "notebooks/colab_phase8_smoke.ipynb"
   phase9_entrypoint: "notebooks/colab_phase9_smoke.ipynb"
+  phase10_entrypoint: "notebooks/colab_phase10_smoke.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -129,14 +130,20 @@ rag:
       name: "multi_agent"
       verification_threshold: 0.5
     multi_agent_uq:
-      enabled: false  # Phase 10
+      enabled: true
+      phase: 10
+      name: "multi_agent_uq"
+      verification_threshold: 0.5
   phase8_smoke_n: 3
   phase9_smoke_n: 3
+  phase10_smoke_n: 3
 
 uncertainty:
-  # Threshold MUST be locked on DEV/calibration only (Phase 15). Never tune on test.
+  # Final threshold MUST be locked on DEV/calibration only (Phase 14). Never tune on test.
   confidence_threshold: null  # set via results/config/threshold.lock.json later
-  method: null  # chosen during calibration phase
+  smoke_threshold: 0.55  # smoke/dev notebook only — NOT the locked benchmark threshold
+  method: "mean_retrieval_verification"
+  abstention_message: "I cannot answer reliably because supporting evidence is insufficient."
 
 evaluation:
   # Metrics wiring begins in later phases; keep placeholders only.
