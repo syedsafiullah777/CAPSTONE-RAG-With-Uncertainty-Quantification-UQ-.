@@ -15,6 +15,7 @@ from typing import Any
 from src.config import ExperimentConfig, get_path, load_experiment_config, project_root
 from src.models.factory import create_backend
 from src.models.fingerprint import collect_fingerprint
+from src.models.runtime_guard import LiveRuntimeError, mock_forbidden
 from src.models.types import LLMBackend
 from src.rag.multi_agent import run_multi_agent
 from src.rag.multi_agent_uq import run_multi_agent_uq
@@ -162,7 +163,14 @@ def run_live_comparison(
     """Run the three architectures independently on the same original question."""
     cfg = config or load_experiment_config()
     model_cfg = dict(cfg.section("model"))
-    if backend_name:
+    if mock_forbidden():
+        backend_name = "llama_cpp"
+        model_cfg["backend"] = "llama_cpp"
+        if backend is not None and str(getattr(backend, "name", "")).lower() in {"mock", "test"}:
+            raise LiveRuntimeError(
+                "Mock backend is forbidden for this live demo. Use llama_cpp on Colab T4."
+            )
+    elif backend_name:
         model_cfg["backend"] = backend_name
 
     rid = run_id or create_run_id("phase11")
@@ -173,6 +181,10 @@ def run_live_comparison(
     )
     llm = backend or create_backend(model_cfg)
     backend_used = str(getattr(llm, "name", model_cfg.get("backend")))
+    if mock_forbidden() and backend_used.lower() in {"mock", "test"}:
+        raise LiveRuntimeError(
+            "Mock backend is forbidden for this live demo. Use llama_cpp on Colab T4."
+        )
 
     comparison = LiveComparison(
         run_id=rid,

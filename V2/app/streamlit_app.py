@@ -19,6 +19,7 @@ import streamlit as st
 
 from src.config import get_path, load_experiment_config, project_root
 from src.models.factory import create_backend
+from src.models.runtime_guard import LiveRuntimeError, mock_forbidden, verify_live_llama_cpp_runtime
 from src.rag.live import (
     ARCHITECTURE_LABELS,
     LIVE_ARCHITECTURES,
@@ -35,6 +36,10 @@ from src.utils import create_run_id
 
 @st.cache_resource
 def _cached_backend(backend_name: str):
+    if mock_forbidden():
+        backend_name = "llama_cpp"
+    if backend_name in {"mock", "test"} and mock_forbidden():
+        raise LiveRuntimeError("Mock backend is forbidden for the Colab live demo.")
     config = load_experiment_config()
     model_cfg = dict(config.section("model"))
     model_cfg["backend"] = backend_name
@@ -186,18 +191,28 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Runtime")
-        backend_options = ["auto", "ollama_dev", "llama_cpp", "mock"]
-        env_backend = os.environ.get("V2_LIVE_BACKEND", "auto").strip().lower()
-        if env_backend not in backend_options:
-            env_backend = "auto"
-        backend_name = st.selectbox(
-            "LLM backend",
-            options=backend_options,
-            index=backend_options.index(env_backend),
-            help="Colab live demo sets V2_LIVE_BACKEND=llama_cpp. mock is for UI/testing only.",
-        )
-        if backend_name == "mock":
-            st.warning("Mock backend is for UI/testing only. It must not be treated as a real RAG answer.")
+        if mock_forbidden():
+            try:
+                runtime = verify_live_llama_cpp_runtime(require_cuda=os.environ.get("V2_REQUIRE_CUDA", "1") == "1")
+            except LiveRuntimeError as exc:
+                st.error(str(exc))
+                st.stop()
+            backend_name = "llama_cpp"
+            st.success(f"Backend locked: llama_cpp · GPU: {runtime.get('gpu')} · chunks: {runtime.get('index_chunks')}")
+            st.caption("Mock is disabled for this Colab live demo.")
+        else:
+            backend_options = ["auto", "ollama_dev", "llama_cpp", "mock"]
+            env_backend = os.environ.get("V2_LIVE_BACKEND", "auto").strip().lower()
+            if env_backend not in backend_options:
+                env_backend = "auto"
+            backend_name = st.selectbox(
+                "LLM backend",
+                options=backend_options,
+                index=backend_options.index(env_backend),
+                help="Colab live demo locks llama_cpp. mock is for local UI/testing only.",
+            )
+            if backend_name == "mock":
+                st.warning("Mock backend is for UI/testing only. It must not be treated as a real RAG answer.")
         threshold = st.number_input(
             "UQ smoke threshold",
             min_value=0.0,

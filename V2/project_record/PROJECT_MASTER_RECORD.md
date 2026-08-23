@@ -5,7 +5,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-23 |
+| Last updated | 2026-08-24 |
 | Current completed phase | **Phase 11** |
 | Next phase (not started) | Phase 12+ — pilot / calibration lock / 420-case benchmark |
 | V1 status | Reference-only (never modified by V2 work) |
@@ -71,7 +71,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 10 git commit (Colab) | `2f3882e` | `phase10_runtime_fingerprint.json` |
 | Phase 10 artefacts | `phase10_runtime_fingerprint.json`, `phase10_smoke_test.json`, `phase10_multi_agent_uq_smoke.json` | local copy verified |
 | Phase 11 live artefact | `app/streamlit_app.py` via `run_live_comparison()` | local smoke PASS |
-| Colab Phase 11 live | **NEEDS VERIFICATION** | `notebooks/colab_phase11_live.ipynb` |
+| Colab Phase 11 live | **FAIL** observed as Mac `mock` / `mps_capable_host` / ProxyError 403; T4 `llama_cpp` re-run **NEEDS VERIFICATION** | user report + `notebooks/colab_phase11_live.ipynb` |
 | Phase 11 artefacts | `phase11_runtime_fingerprint.json`, `phase11_smoke_test.json`, `phase11_live_smoke.json` | local copy verified |
 
 ### Architectures
@@ -85,7 +85,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **65 passed** (Phases 1–11 + storage/backup + index preflight + live failure display)
+- Result: **71 passed** (Phases 1–11 + storage/backup + index preflight + live failure display + runtime guard)
 
 ### Storage / backup (project infrastructure)
 
@@ -126,6 +126,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 18. **Phase 10 Multi-Agent + UQ / abstention (2026-08-23):** Extends Phase 9 with combined confidence = mean(retrieval_score, verification_score); binary gate `ANSWER | ABSTAIN`; no self-consistency. Architecture `multi_agent_uq`. Smoke threshold 0.55 (not locked). Colab T4 `llama_cpp` smoke n=3 **PASS**; run_id `phase10_20260823T140737Z_ab9b33d4`; git `2f3882e`; 3/3 ANSWER at smoke threshold.
 19. **Phase 11 Streamlit live artefact (2026-08-23):** One app runs the three completed pipelines independently on a fresh question or a frozen test case. Shared Phase 6 KB + one backend instance; not a benchmark lookup. Local smoke (mock + real retrieval) **PASS**; run_id `phase11_20260823T222633Z_90aab3d6`; Streamlit HTTP 200. Original plan item “result schema + logging” was already delivered in Phases 8–10 via `RAGCaseResult`.
 20. **Phase 11 live failure display (2026-08-23):** Live artefact must not show ANSWER when retrieval or generation fails (empty evidence, empty generation, or exception such as ProxyError 403). Live layer sets ERROR/UNAVAILABLE, shows the actual error, clears fabricated answers and confidence. Mock remains UI/testing only. Phase 8–10 architecture modules unchanged.
+21. **Phase 11 Colab live-demo connection (2026-08-24):** The reported live demo (`backend=mock`, `device=mps_capable_host`, `ProxyError: 403 Forbidden`) was the local Mac Streamlit process, not Colab T4/`llama_cpp`. The live-demo notebook now verifies CUDA/T4, GGUF, and a non-empty Chroma index, starts Streamlit **inside Colab** with `V2_LIVE_BACKEND=llama_cpp` + `V2_FORBID_MOCK=1`, and refuses Darwin/mock fallback. A Colab T4 URL + fresh-question smoke result is still **NEEDS VERIFICATION**.
 
 ---
 
@@ -605,7 +606,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Actual outcome:** Live artefact uses the real V2 RAG modules and existing KB. Frozen 140 / calibration 40 unchanged. V1 unchanged.
 - **Problems encountered:** Failed live runs (empty evidence / ProxyError 403) still showed Decision=ANSWER and could display a mock answer. Browser click-through of the Run button was not executed in this agent environment (HTTP start verified only).
 - **Problems resolved:** Live-only `normalize_live_case()` maps failed retrieval/generation to ERROR/UNAVAILABLE, shows the actual error, clears fabricated answers and confidence. Mock labelled UI/testing only; default backend is `auto`. Phase 8–10 architecture modules not changed.
-- **Remaining issues:** Locked threshold not created (calibration); 420-case runner not started; **Colab T4 `llama_cpp` live validation NEEDS VERIFICATION** via `notebooks/colab_phase11_live.ipynb`. A ProxyError 403 during embedding download is an environment/network issue — the app now reports it instead of treating it as ANSWER.
+- **Remaining issues:** Locked threshold not created (calibration); 420-case runner not started. **Observed live-demo connection FAIL (2026-08-24):** `backend=mock`, `device=mps_capable_host`, `ProxyError: 403 Forbidden` — Mac Streamlit, not Colab T4. Connection fix is implemented; Colab T4 `llama_cpp` live URL + fresh-question smoke is still **NEEDS VERIFICATION**.
 - **Dissertation relevance:** Live artefact evidence for examiner demonstration of all three architectures.
 - **Evidence:** `V2/results/config/phase11_smoke_test.json`, `phase11_live_smoke.json`, `docs/phase11_live_artefact.md`
 - **Validation evidence:** `V2/project_record/evidence/phase11_validation.md`
@@ -614,6 +615,51 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Google Drive: **NEEDS VERIFICATION** — live session JSONL would go to `results/raw/live_sessions.jsonl` then Drive if a Colab/demo session is archived
   - Local: verified — `V2/app/streamlit_app.py`; `V2/results/config/phase11_*.json`; project record + evidence updated 2026-08-23
   - GitHub: Phase 11 source **uncommitted**; recommend commit app + runner + tests + evidence; `results/raw/` gitignored
+
+---
+
+## Phase 11 — Colab live-demo runtime connection
+
+- **Date:** 2026-08-24
+- **Objective:** Make the Phase 11 Streamlit live demo use the Colab T4 / Qwen3-8B `llama_cpp` runtime instead of the local Mac mock process.
+- **Why the phase was required:** The live demo still reported `backend=mock`, `device=mps_capable_host`, and `ProxyError: 403 Forbidden`. That fingerprint is the Mac host, so Streamlit was not attached to Colab.
+- **Work completed:**
+  - `src/models/runtime_guard.py` — refuse Darwin/macOS; require CUDA, `llama_cpp`, Qwen3-8B GGUF, and a non-empty Chroma index; never select mock
+  - Factory and Streamlit lock `llama_cpp` when `V2_FORBID_MOCK=1` or `V2_LIVE_BACKEND=llama_cpp`
+  - Live runner refuses a MockBackend instance when mock is forbidden
+  - Smoke script verifies the same lock and refuses `--backend mock` under that env
+  - `notebooks/colab_phase11_live.ipynb` section 8: abort if not Colab; verify GPU/GGUF/index; start existing `app/streamlit_app.py` in the Colab process; cloudflared tunnel; print URL; one `llama_cpp --fresh-only` smoke
+- **Technical decisions:**
+  - Do not change the three RAG architectures
+  - Do not start the 420-case benchmark
+  - Do not silently fall back to mock
+  - Local Mac Streamlit remains available only when the forbid-mock env is unset (unit tests / UI testing)
+- **Files created/modified:**
+  - `V2/src/models/runtime_guard.py`
+  - `V2/src/models/factory.py`
+  - `V2/src/rag/live.py`
+  - `V2/app/streamlit_app.py`
+  - `V2/scripts/smoke_live_artefact.py`
+  - `V2/tests/test_runtime_guard.py`
+  - `V2/notebooks/colab_phase11_live.ipynb`
+  - `V2/project_record/evidence/phase11_validation.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+- **Tests/validation:**
+  - `tests/test_runtime_guard.py` + related Phase 7/11 tests — **21 passed**
+  - Full suite — **71 passed**
+  - Colab T4 Streamlit URL + fresh-question smoke — **NEEDS VERIFICATION** (cannot be executed from this Mac)
+- **Actual outcome:** Code now refuses the Mac mock path for the Colab live-demo notebook. The only observed live-demo result remains the user-reported Mac failure (`mock` / `mps_capable_host` / ProxyError 403). No Colab T4 PASS is claimed.
+- **Problems encountered:** Streamlit was being started on the Mac (`mps_capable_host`) with mock; ProxyError 403 appeared on that host.
+- **Problems resolved:** Live-demo notebook and runtime guard abort on Darwin/non-Colab and lock `llama_cpp`. RAG pipelines unchanged.
+- **Remaining issues:** Re-run `notebooks/colab_phase11_live.ipynb` on Colab GPU after the fix is on the clone branch; record the printed URL, backend, GPU, and smoke result. Frozen 140/40 unchanged. Benchmark not started.
+- **Dissertation relevance:** Examiner live demo must show the real Qwen3-8B / T4 path, not a local mock.
+- **Evidence/source file paths:** `V2/src/models/runtime_guard.py`, `V2/notebooks/colab_phase11_live.ipynb`
+- **Validation evidence:** `V2/project_record/evidence/phase11_validation.md`
+- **Backup status (Phase 11 connection fix):**
+  - Colab: **not re-run** after this fix — previous observed result was Mac mock/MPS
+  - Google Drive: **NEEDS VERIFICATION** — no new Colab `phase11_*.json` from a T4 live demo
+  - Local: verified — guard, notebook, tests, evidence, master record updated 2026-08-24
+  - GitHub: connection-fix files **uncommitted** at the time of this record; Colab clone will not see the fix until they are pushed to `cursor/empty-v2-workspace`
 
 ---
 

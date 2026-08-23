@@ -7,6 +7,7 @@ from typing import Any
 from src.models.llama_cpp_backend import LlamaCppBackend
 from src.models.mock_backend import MockBackend
 from src.models.ollama_backend import OllamaBackend
+from src.models.runtime_guard import LiveRuntimeError, assert_not_mock_backend, mock_forbidden
 from src.models.transformers_backend import TransformersBackend
 from src.models.types import LLMBackend
 
@@ -20,9 +21,14 @@ def create_backend(model_cfg: dict[str, Any] | None = None) -> LLMBackend:
     3. ollama_dev if a local model is present (dev only)
     """
     cfg = dict(model_cfg or {})
+    if mock_forbidden():
+        cfg["backend"] = "llama_cpp"
     backend = str(cfg.get("backend") or "auto").lower()
+    assert_not_mock_backend(backend)
 
     if backend in {"mock", "test"}:
+        if mock_forbidden():
+            raise LiveRuntimeError("Mock backend is forbidden for the Colab live demo.")
         return MockBackend()
 
     if backend in {"ollama", "ollama_dev"}:

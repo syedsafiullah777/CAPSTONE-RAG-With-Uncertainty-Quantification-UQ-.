@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,6 +16,7 @@ if str(V2_ROOT) not in sys.path:
 
 from src.config import get_path, load_experiment_config, project_root
 from src.models.fingerprint import collect_fingerprint
+from src.models.runtime_guard import mock_forbidden, verify_live_llama_cpp_runtime
 from src.rag.live import LIVE_ARCHITECTURES, load_frozen_questions, run_live_comparison
 from src.retrieval.index import COLLECTION_NAME
 from src.retrieval.preflight import IndexPreflightError, validate_index_preflight
@@ -87,6 +89,15 @@ def main() -> int:
         except IndexPreflightError as exc:
             log.error("Index preflight FAIL: %s", exc)
             raise SystemExit(str(exc)) from exc
+
+    if mock_forbidden() and str(args.backend).lower() in {"mock", "test"}:
+        raise SystemExit("Mock backend is forbidden for this live demo. Use --backend llama_cpp.")
+    if mock_forbidden():
+        runtime = verify_live_llama_cpp_runtime(
+            require_cuda=os.environ.get("V2_REQUIRE_CUDA", "1") == "1"
+        )
+        args.backend = "llama_cpp"
+        print(json.dumps({"runtime_lock": runtime}, indent=2))
 
     frozen = load_frozen_questions(limit=1)
     if not frozen:
