@@ -22,6 +22,36 @@ Question:
 
 Answer:"""
 
+DEFAULT_MULTI_AGENT_DRAFT_SYSTEM = (
+    "You are a financial document analyst drafting an answer from retrieved evidence. "
+    "Use only the provided evidence. Cite the most relevant source when possible. "
+    "If evidence is insufficient, say so clearly. Give a concise draft answer."
+)
+
+DEFAULT_MULTI_AGENT_DRAFT_USER = """Evidence:
+{evidence}
+
+Question:
+{question}
+
+Draft answer:"""
+
+DEFAULT_MULTI_AGENT_VERIFY_SYSTEM = (
+    "You score how well an answer is supported by the provided evidence. "
+    "Return only one decimal number between 0 and 1."
+)
+
+DEFAULT_MULTI_AGENT_VERIFY_USER = """Evidence:
+{evidence}
+
+Question:
+{question}
+
+Draft answer:
+{answer}
+
+Support score (0-1):"""
+
 
 def format_evidence(chunks: list[RetrievedChunk] | list[dict[str, Any]]) -> str:
     parts: list[str] = []
@@ -52,5 +82,41 @@ def build_baseline_prompt(
     user = user_template.format(
         evidence=format_evidence(chunks),
         question=question.strip(),
+    )
+    return f"{system.strip()}\n\n{user.strip()}"
+
+
+def build_multi_agent_draft_prompt(
+    question: str,
+    chunks: list[RetrievedChunk] | list[dict[str, Any]],
+    *,
+    prompts_cfg: dict[str, Any] | None = None,
+) -> str:
+    cfg = prompts_cfg if prompts_cfg is not None else load_prompts_config()
+    section = (cfg.get("multi_agent") or {}).get("generation") or {}
+    system = section.get("system") or DEFAULT_MULTI_AGENT_DRAFT_SYSTEM
+    user_template = section.get("user_template") or DEFAULT_MULTI_AGENT_DRAFT_USER
+    user = user_template.format(
+        evidence=format_evidence(chunks),
+        question=question.strip(),
+    )
+    return f"{system.strip()}\n\n{user.strip()}"
+
+
+def build_multi_agent_verification_prompt(
+    question: str,
+    answer: str,
+    chunks: list[RetrievedChunk] | list[dict[str, Any]],
+    *,
+    prompts_cfg: dict[str, Any] | None = None,
+) -> str:
+    cfg = prompts_cfg if prompts_cfg is not None else load_prompts_config()
+    section = (cfg.get("multi_agent") or {}).get("verification") or {}
+    system = section.get("system") or DEFAULT_MULTI_AGENT_VERIFY_SYSTEM
+    user_template = section.get("user_template") or DEFAULT_MULTI_AGENT_VERIFY_USER
+    user = user_template.format(
+        evidence=format_evidence(chunks),
+        question=question.strip(),
+        answer=answer.strip(),
     )
     return f"{system.strip()}\n\n{user.strip()}"

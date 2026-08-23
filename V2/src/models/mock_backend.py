@@ -26,7 +26,10 @@ class MockBackend:
     ) -> GenerationResult:
         _ = top_p
         start = time.perf_counter()
-        text = f"{self.canned} | prompt_chars={len(prompt)}"
+        if "Support score" in prompt:
+            text = "0.85"
+        else:
+            text = f"{self.canned} | prompt_chars={len(prompt)}"
         return GenerationResult(
             text=text,
             model="mock-qwen3-8b",

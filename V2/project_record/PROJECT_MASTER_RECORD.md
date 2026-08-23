@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-23 |
-| Current completed phase | **Phase 8** |
-| Next phase (not started) | Phase 9 — Multi-Agent RAG |
+| Current completed phase | **Phase 9** |
+| Next phase (not started) | Phase 10 — Multi-Agent RAG + UQ / abstention |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -66,7 +66,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Architectures
 
 1. **Single-Agent RAG** — implemented (Phase 8); local + Colab smoke **PASS** (n=3 each)
-2. Multi-Agent RAG — not started (Phase 9)
+2. **Multi-Agent RAG** — implemented (Phase 9); local smoke **PASS** (n=3, mock LLM + real retrieval)
 3. Multi-Agent + UQ / abstention — not started (Phase 10)
 
 **NEEDS VERIFICATION / later phases:** confidence method weights; whether Arch3 reuses Arch2 draft/verify; dense vs hybrid retrieval; judge configuration.
@@ -74,7 +74,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **43 passed** (Phases 1–8 + storage/backup + index preflight)
+- Result: **49 passed** (Phases 1–9 + storage/backup + index preflight)
 
 ### Storage / backup (project infrastructure)
 
@@ -87,7 +87,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase8_validation.md` |
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase9_validation.md` |
 | Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 | Phase 8 smoke JSON | `results/config/phase8_smoke_test.json` (local copy; gitignored by default) |
 
@@ -111,6 +111,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 14. **Phase 8 Single-Agent RAG (2026-08-22):** Retrieve from Phase 6 KB + generate via Qwen3-8B backend; common `RAGCaseResult` schema; no multi-agent/UQ. Local smoke n=3 **PASS** (`ollama_dev` + real retrieval).
 15. **Phase 8 Colab retrieval fix (2026-08-23):** Option B — rebuild Chroma on Colab via `build_index.py` (HF PDF download); index preflight (`validate_index_preflight`); `notebooks/colab_phase8_smoke.ipynb`. Mac Chroma DB not copied.
 16. **Phase 8 Colab Single-Agent smoke verified (2026-08-23):** Tesla T4 + `llama_cpp` + Qwen3-8B Q4_K_M → **PASS**; run_id `phase8_20260823T124009Z_70a29b9f`; git `846c143`; 3/3 questions, 4 evidence chunks each; retrieval + generation succeeded. Evidence: `phase8_smoke_test.json`, `phase8_single_agent_smoke.json`, `phase8_runtime_fingerprint.json`. Colab KB manifest at `knowledge_base/index/index_manifest.json` on Colab/Drive — **not** stale `results/config/phase6_index_manifest.json` (Mac paths).
+17. **Phase 9 Multi-Agent RAG (2026-08-23):** Retrieve → draft → verify (lexical + LLM support score). Architecture `multi_agent`; reuses Phase 6 KB + Qwen3 backend factory; `verification_result` populated; `decision=ANSWER`; no abstention/UQ. Local smoke n=3 **PASS** (`mock` LLM + real retrieval); run_id `phase9_20260823T130745Z_22fab337`.
 
 ---
 
@@ -455,11 +456,56 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 9 — Multi-Agent RAG
+
+- **Date:** 2026-08-23
+- **Objective:** Implement Multi-Agent RAG (retrieve → draft → verify) using shared KB, retriever, Qwen3-8B backend, and `RAGCaseResult` schema. No UQ/abstention.
+- **Why required:** RQ1 second architecture; adds verification agent over Phase 8 baseline.
+- **Work completed:**
+  - `run_multi_agent()`: retrieve → draft prompt → generate → verification score
+  - `compute_verification_result()`: lexical overlap + LLM support score (average)
+  - Multi-agent prompts in `config/prompts.yaml`
+  - Smoke script `scripts/smoke_multi_agent.py` with index preflight (no KB rebuild)
+  - Local smoke **n=3** → **PASS** (mock LLM + real Phase 6 retrieval)
+- **Technical decisions:**
+  - Architecture id: `multi_agent`; case key `multi_agent:{question_id}`
+  - Reuse Phase 6 index/retriever/embeddings/top_k unchanged
+  - `verification_result`: `{verification_score, lexical_score, llm_score, verification_threshold, status}`
+  - `status`: `VERIFIED` or `WEAK_EVIDENCE` at threshold 0.5 (informational only in Phase 9)
+  - `confidence`: verification score (not combined UQ — Phase 10)
+  - `decision`: always `ANSWER`; `threshold`: null
+  - No self-consistency, no abstention
+- **Files created/modified:**
+  - `V2/src/rag/multi_agent.py`, `verification.py`, `text_utils.py`
+  - `V2/src/rag/prompts.py`, `schema.py`, `__init__.py`
+  - `V2/scripts/smoke_multi_agent.py`, `V2/tests/test_phase9_multi_agent.py`
+  - `V2/config/prompts.yaml`, `V2/config/experiment.yaml`
+  - `V2/docs/phase9_multi_agent.md`
+  - `V2/results/config/phase9_*.json`, `phase9_multi_agent_smoke.jsonl`
+- **Tests/validation:**
+  - Unit: prompts, verification scoring, mock pipeline, schema fields
+  - Live smoke: 3/3 PASS; 4 evidence chunks each; verification_result present
+  - Full suite: **49 passed**
+- **Actual outcome:** Multi-Agent pipeline works end-to-end with real retrieval. Mock smoke shows WEAK_EVIDENCE (expected with canned answers); draft answers and verification scores logged. Frozen sets unchanged.
+- **Problems encountered:** None blocking.
+- **Problems resolved:** N/A
+- **Remaining issues:** Colab `llama_cpp` multi-agent smoke **NEEDS VERIFICATION**; Phase 10 UQ/abstention not started; full 420-case runner not started.
+- **Dissertation relevance:** Second controlled architecture for RQ1; verification provenance in raw results.
+- **Evidence:** `V2/results/config/phase9_smoke_test.json`, `phase9_multi_agent_smoke.json`, `phase9_runtime_fingerprint.json`, `docs/phase9_multi_agent.md`
+- **Validation evidence:** `V2/project_record/evidence/phase9_validation.md`
+- **Backup status (Phase 9):**
+  - Colab: N/A for this smoke (local mock + real KB)
+  - Google Drive: **NEEDS VERIFICATION** (reuse Phase 8 KB on Drive if present)
+  - Local: verified — smoke artefacts under `V2/results/config/phase9_*.json`
+  - GitHub: recommend commit Phase 9 source + evidence; phase9 JSON gitignored by default
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 9–10 | Multi-Agent / UQ RAG | Not started |
+| 10 | Multi-Agent + UQ / abstention | Not started |
 | 11+ | Schema logging expansion, Streamlit, pilot, calibration lock, 420 benchmark, stats | Not started |
 
 ---

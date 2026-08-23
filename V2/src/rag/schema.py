@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 ARCHITECTURE_SINGLE_AGENT = "single_agent"
+ARCHITECTURE_MULTI_AGENT = "multi_agent"
 
 
 @dataclass

@@ -20,6 +20,14 @@ Includes **Option B** retrieval fix:
 
 Success: `results/config/phase8_smoke_test.json` → `"status": "PASS"` and each case has `n_evidence=4`.
 
+## Phase 9 — Multi-Agent RAG smoke
+
+Notebook: `notebooks/colab_phase9_smoke.ipynb`
+
+1. Clone → install → restore KB from Drive (or rebuild)
+2. Preflight → `smoke_multi_agent.py --backend llama_cpp --limit 3`
+3. Save to `MyDrive/MSc-RAG/configs/phase9/`
+
 ---
 
 ## Workflow: GitHub → Colab (no Drive upload for code)

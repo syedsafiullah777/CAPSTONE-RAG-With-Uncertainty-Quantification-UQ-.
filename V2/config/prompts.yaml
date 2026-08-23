@@ -1,6 +1,4 @@
-# Prompt versions for V2 RAG architectures.
-
-version: "0.2.0-phase8"
+version: "0.3.0-phase9"
 
 baseline:
   system: >-
@@ -18,11 +16,33 @@ baseline:
 
 multi_agent:
   generation:
-    system: null  # NEEDS_VERIFICATION / Phase 9
-    user_template: null
+    system: >-
+      You are a financial document analyst drafting an answer from retrieved evidence.
+      Use only the provided evidence. Cite the most relevant source when possible.
+      If evidence is insufficient, say so clearly. Give a concise draft answer.
+    user_template: |
+      Evidence:
+      {evidence}
+
+      Question:
+      {question}
+
+      Draft answer:
   verification:
-    system: null  # NEEDS_VERIFICATION / Phase 9
-    user_template: null
+    system: >-
+      You score how well an answer is supported by the provided evidence.
+      Return only one decimal number between 0 and 1.
+    user_template: |
+      Evidence:
+      {evidence}
+
+      Question:
+      {question}
+
+      Draft answer:
+      {answer}
+
+      Support score (0-1):
 
 uncertainty:
   notes: "Defined in Phase 10 after calibration methodology is fixed."

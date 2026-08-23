@@ -88,6 +88,7 @@ remote_execution:
   strategy: "google_colab_gpu_notebook"
   primary_entrypoint: "notebooks/colab_phase7_smoke.ipynb"
   phase8_entrypoint: "notebooks/colab_phase8_smoke.ipynb"
+  phase9_entrypoint: "notebooks/colab_phase9_smoke.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -123,11 +124,14 @@ rag:
       phase: 8
       name: "single_agent"
     multi_agent:
-      enabled: false  # Phase 9
+      enabled: true
+      phase: 9
+      name: "multi_agent"
+      verification_threshold: 0.5
     multi_agent_uq:
       enabled: false  # Phase 10
-  # Phase 8 validation uses a small subset of the frozen 140 (not the full 420-case run).
   phase8_smoke_n: 3
+  phase9_smoke_n: 3
 
 uncertainty:
   # Threshold MUST be locked on DEV/calibration only (Phase 15). Never tune on test.

@@ -52,7 +52,7 @@ Streamlit app that runs live pipelines on a new question through all three archi
 ## Phase status
 
 **Phase 8 complete — Single-Agent RAG baseline (retrieve + generate; smoke n=3 PASS).**  
-Next implementation phase: Phase 9 (Multi-Agent RAG) — not started.
+Next implementation phase: Phase 10 (Multi-Agent + UQ / abstention) — not started.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`

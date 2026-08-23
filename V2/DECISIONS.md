@@ -135,3 +135,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Implement `single_agent` as retrieve (Phase 6 KB) → baseline prompt → Qwen3-8B generate. Use `RAGCaseResult` matching `storage.raw_result_fields`. Always `decision=ANSWER`; leave confidence/verification/threshold null until Phase 10. Do not implement multi-agent or abstention here.
 
 **Verified smoke:** n=3 frozen questions; real Chroma retrieval + `ollama_dev` generation; status **PASS**. Artefacts: `results/config/phase8_single_agent_smoke.json`, `project_record/evidence/phase8_validation.md`.
+
+## 2026-08-23 — Phase 9 Multi-Agent RAG
+
+**Decision:** Implement `multi_agent` as retrieve (shared Phase 6 KB) → draft → verification (lexical + LLM support score). Populate `verification_result` and set `confidence` to verification score. Always `decision=ANSWER`; no self-consistency, combined UQ, or abstention (Phase 10). Do not rebuild or duplicate the knowledge base.
+
+**Verified smoke:** n=3 frozen questions; real retrieval + mock draft/verify LLM; status **PASS**; run_id `phase9_20260823T130745Z_22fab337`. Artefacts: `results/config/phase9_multi_agent_smoke.json`, `project_record/evidence/phase9_validation.md`.

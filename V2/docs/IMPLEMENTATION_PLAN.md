@@ -7,7 +7,7 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | --- | --- |
 | Last updated | 2026-08-22 |
 | Current completed phase | **Phase 8** |
-| Next implementation phase | Phase 9 — Multi-Agent RAG (not started) |
+| Next implementation phase | Phase 10 — Multi-Agent + UQ / abstention (not started) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -176,7 +176,11 @@ Phases 1–7 chronology and evidence: `V2/project_record/PROJECT_MASTER_RECORD.m
 
 ---
 
-## Phase 9 — Multi-Agent RAG (next; not started)
+## Phase 9 — Multi-Agent RAG (complete)
+
+Retrieve → draft → verify. See `docs/phase9_multi_agent.md`.
+
+## Phase 10 — Multi-Agent + UQ / abstention (next; not started)
 
 ## Git workflow (all phases)
 
