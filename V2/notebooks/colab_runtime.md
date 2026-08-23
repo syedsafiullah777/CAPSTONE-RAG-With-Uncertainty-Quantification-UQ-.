@@ -48,6 +48,8 @@ Notebook: `notebooks/colab_phase11_live.ipynb`
 
 Uses the same `run_live_comparison()` as Streamlit. Does **not** run the 140-question benchmark.
 
+Manual browser demo (sections 8–10): starts `app/streamlit_app.py` with `V2_LIVE_BACKEND=llama_cpp` and prints a temporary `*.trycloudflare.com` URL. Do not use mock. Run section 10 only after the manual test.
+
 ---
 
 ## Workflow: GitHub → Colab (no Drive upload for code)

@@ -7,6 +7,7 @@ Does not look up precomputed benchmark answers.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -185,11 +186,15 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Runtime")
+        backend_options = ["auto", "ollama_dev", "llama_cpp", "mock"]
+        env_backend = os.environ.get("V2_LIVE_BACKEND", "auto").strip().lower()
+        if env_backend not in backend_options:
+            env_backend = "auto"
         backend_name = st.selectbox(
             "LLM backend",
-            options=["auto", "ollama_dev", "llama_cpp", "mock"],
-            index=0,
-            help="mock is for UI/testing only and does not replace a real LLM. Colab/GPU: llama_cpp.",
+            options=backend_options,
+            index=backend_options.index(env_backend),
+            help="Colab live demo sets V2_LIVE_BACKEND=llama_cpp. mock is for UI/testing only.",
         )
         if backend_name == "mock":
             st.warning("Mock backend is for UI/testing only. It must not be treated as a real RAG answer.")
