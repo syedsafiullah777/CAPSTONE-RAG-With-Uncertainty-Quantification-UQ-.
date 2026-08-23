@@ -40,7 +40,9 @@ Design and Evaluation of a Multi-Agent Retrieval-Augmented Generation Framework 
 
 ## Live artefact
 
-Streamlit app that runs live pipelines on a new question through all three architectures (not precomputed benchmark lookup). Implemented in a later phase.
+Streamlit app that runs live pipelines on a new question through all three architectures (not precomputed benchmark lookup).
+
+Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Examiner requirements (summary)
 
@@ -51,8 +53,8 @@ Streamlit app that runs live pipelines on a new question through all three archi
 
 ## Phase status
 
-**Phase 8 complete — Single-Agent RAG baseline (retrieve + generate; smoke n=3 PASS).**  
-Next implementation phase: Phase 10 (Multi-Agent + UQ / abstention) — not started.
+**Phase 11 complete — Streamlit live artefact (three independent architectures; local smoke PASS).**  
+Next: pilot / calibration threshold lock / 420-case benchmark — not started.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -86,4 +88,7 @@ Next implementation phase: Phase 10 (Multi-Agent + UQ / abstention) — not star
 - Phase 7 notes: `V2/docs/phase7_qwen_backend.md`
 - Phase 7 smoke: `V2/results/config/phase7_smoke_generate.json`
 - Phase 7 fingerprint: `V2/results/config/phase7_runtime_fingerprint.json`
+- Phase 11 live app: `V2/app/streamlit_app.py`
+- Phase 11 notes: `V2/docs/phase11_live_artefact.md`
+- Phase 11 evidence: `V2/project_record/evidence/phase11_validation.md`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

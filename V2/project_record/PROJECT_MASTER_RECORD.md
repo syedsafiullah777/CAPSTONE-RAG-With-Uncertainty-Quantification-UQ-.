@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-23 |
-| Current completed phase | **Phase 9** |
-| Next phase (not started) | Phase 10 — Multi-Agent RAG + UQ / abstention |
+| Current completed phase | **Phase 11** |
+| Next phase (not started) | Phase 12+ — pilot / calibration lock / 420-case benchmark |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -57,7 +57,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 8 run ID | `phase8_20260823T124009Z_70a29b9f` | `phase8_single_agent_smoke.json` |
 | Phase 8 git commit (Colab) | `846c143` | `phase8_runtime_fingerprint.json` |
 | Primary compute | Standard Google Colab GPU notebooks | notebook entrypoint |
-| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` (model); `notebooks/colab_phase8_smoke.ipynb` (single-agent); `notebooks/colab_phase9_smoke.ipynb` (multi-agent) | — |
+| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` (model); `notebooks/colab_phase8_smoke.ipynb` (single-agent); `notebooks/colab_phase9_smoke.ipynb` (multi-agent); `notebooks/colab_phase10_smoke.ipynb` (multi-agent + UQ) | — |
 | Colab Phase 9 smoke | **PASS** (2026-08-23T13:51:40Z) | `phase9_smoke_test.json` |
 | Phase 9 run ID | `phase9_20260823T134858Z_6260bf43` | `phase9_multi_agent_smoke.json` |
 | Phase 9 git commit (Colab) | `e749fab` | `phase9_runtime_fingerprint.json` |
@@ -66,19 +66,26 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 7 artefacts | `phase7_runtime_fingerprint.json`, `phase7_smoke_test.json` | — |
 | Phase 8 artefacts | `phase8_runtime_fingerprint.json`, `phase8_smoke_test.json`, `phase8_single_agent_smoke.json` | local copy verified |
 | Phase 9 artefacts | `phase9_runtime_fingerprint.json`, `phase9_smoke_test.json`, `phase9_multi_agent_smoke.json` | local copy verified |
+| Colab Phase 10 smoke | **PASS** (2026-08-23T14:10:15Z) | `phase10_smoke_test.json` |
+| Phase 10 run ID | `phase10_20260823T140737Z_ab9b33d4` | `phase10_multi_agent_uq_smoke.json` |
+| Phase 10 git commit (Colab) | `2f3882e` | `phase10_runtime_fingerprint.json` |
+| Phase 10 artefacts | `phase10_runtime_fingerprint.json`, `phase10_smoke_test.json`, `phase10_multi_agent_uq_smoke.json` | local copy verified |
+| Phase 11 live artefact | `app/streamlit_app.py` via `run_live_comparison()` | local smoke PASS |
+| Colab Phase 11 live | **NEEDS VERIFICATION** | `notebooks/colab_phase11_live.ipynb` |
+| Phase 11 artefacts | `phase11_runtime_fingerprint.json`, `phase11_smoke_test.json`, `phase11_live_smoke.json` | local copy verified |
 
 ### Architectures
 
 1. **Single-Agent RAG** — implemented (Phase 8); local + Colab smoke **PASS** (n=3 each)
 2. **Multi-Agent RAG** — implemented (Phase 9); local + Colab smoke **PASS** (n=3 each)
-3. Multi-Agent + UQ / abstention — not started (Phase 10)
+3. **Multi-Agent + UQ / abstention** — implemented (Phase 10); local + Colab smoke **PASS** (n=3 each); architecture `multi_agent_uq`
 
 **NEEDS VERIFICATION / later phases:** confidence method weights; whether Arch3 reuses Arch2 draft/verify; dense vs hybrid retrieval; judge configuration.
 
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **49 passed** (Phases 1–9 + storage/backup + index preflight)
+- Result: **65 passed** (Phases 1–11 + storage/backup + index preflight + live failure display)
 
 ### Storage / backup (project infrastructure)
 
@@ -91,7 +98,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase9_validation.md` |
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase11_validation.md` |
 | Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 | Phase 8 smoke JSON | `results/config/phase8_smoke_test.json` (local copy; gitignored by default) |
 
@@ -116,6 +123,9 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 15. **Phase 8 Colab retrieval fix (2026-08-23):** Option B — rebuild Chroma on Colab via `build_index.py` (HF PDF download); index preflight (`validate_index_preflight`); `notebooks/colab_phase8_smoke.ipynb`. Mac Chroma DB not copied.
 16. **Phase 8 Colab Single-Agent smoke verified (2026-08-23):** Tesla T4 + `llama_cpp` + Qwen3-8B Q4_K_M → **PASS**; run_id `phase8_20260823T124009Z_70a29b9f`; git `846c143`; 3/3 questions, 4 evidence chunks each; retrieval + generation succeeded. Evidence: `phase8_smoke_test.json`, `phase8_single_agent_smoke.json`, `phase8_runtime_fingerprint.json`. Colab KB manifest at `knowledge_base/index/index_manifest.json` on Colab/Drive — **not** stale `results/config/phase6_index_manifest.json` (Mac paths).
 17. **Phase 9 Multi-Agent RAG (2026-08-23):** Retrieve → draft → verify (lexical + LLM support score). Architecture `multi_agent`; reuses Phase 6 KB + Qwen3 backend factory; `verification_result` populated; `decision=ANSWER`; no abstention/UQ. Local smoke n=3 **PASS** (mock); Colab T4 `llama_cpp` smoke n=3 **PASS**; run_id `phase9_20260823T134858Z_6260bf43`; git `e749fab`.
+18. **Phase 10 Multi-Agent + UQ / abstention (2026-08-23):** Extends Phase 9 with combined confidence = mean(retrieval_score, verification_score); binary gate `ANSWER | ABSTAIN`; no self-consistency. Architecture `multi_agent_uq`. Smoke threshold 0.55 (not locked). Colab T4 `llama_cpp` smoke n=3 **PASS**; run_id `phase10_20260823T140737Z_ab9b33d4`; git `2f3882e`; 3/3 ANSWER at smoke threshold.
+19. **Phase 11 Streamlit live artefact (2026-08-23):** One app runs the three completed pipelines independently on a fresh question or a frozen test case. Shared Phase 6 KB + one backend instance; not a benchmark lookup. Local smoke (mock + real retrieval) **PASS**; run_id `phase11_20260823T222633Z_90aab3d6`; Streamlit HTTP 200. Original plan item “result schema + logging” was already delivered in Phases 8–10 via `RAGCaseResult`.
+20. **Phase 11 live failure display (2026-08-23):** Live artefact must not show ANSWER when retrieval or generation fails (empty evidence, empty generation, or exception such as ProxyError 403). Live layer sets ERROR/UNAVAILABLE, shows the actual error, clears fabricated answers and confidence. Mock remains UI/testing only. Phase 8–10 architecture modules unchanged.
 
 ---
 
@@ -514,12 +524,104 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 10 — Multi-Agent RAG + UQ / abstention
+
+- **Date:** 2026-08-23
+- **Objective:** Third architecture: Multi-Agent pipeline plus combined UQ and confidence-based abstention (`ANSWER | ABSTAIN`) for RQ2/RQ3.
+- **Why required:** Completes the three independent RAG architectures for the 420-case benchmark; enables abstention when combined confidence is below threshold.
+- **Work completed:**
+  - `run_multi_agent_uq()`: retrieve → draft → verify → combined confidence → abstention gate
+  - `compute_combined_confidence()`: mean(retrieval_score, verification_score) — no self-consistency
+  - `apply_abstention_decision()`: ANSWER returns draft; ABSTAIN returns abstention message (draft preserved in `configuration.draft_answer`)
+  - Smoke script `scripts/smoke_multi_agent_uq.py`; Colab notebook `notebooks/colab_phase10_smoke.ipynb`
+  - Local smoke **n=3** → **PASS** (mock)
+  - **Colab validation (verified 2026-08-23T14:10:15Z):**
+    - Status: **PASS** (`phase10_smoke_test.json`)
+    - Run ID: `phase10_20260823T140737Z_ab9b33d4`
+    - Git commit at run: `2f3882e`
+    - GPU: Tesla T4; backend: `llama_cpp`; threshold: 0.55 (smoke only)
+    - Per-case: 3/3 — 4 evidence chunks each; uncertainty_result populated; all `ANSWER` (confidence 0.715–0.813 ≥ 0.55)
+- **Technical decisions:**
+  - Architecture id: `multi_agent_uq`; case key `multi_agent_uq:{question_id}`
+  - Reuse Phase 6 index/retriever/embeddings/top_k and Phase 9 draft/verify unchanged
+  - UQ method: `mean_retrieval_verification`
+  - Threshold priority: CLI override → locked `confidence_threshold` → `smoke_threshold` (0.55)
+  - No self-consistency (V1 cost/variance issue); no Warning tier (binary ANSWER | ABSTAIN)
+  - Final benchmark threshold must be locked on dev calibration (Phase 14), never on frozen test 140
+- **Files created/modified:**
+  - `V2/src/rag/uncertainty.py`, `multi_agent_uq.py`, `schema.py`, `__init__.py`
+  - `V2/scripts/smoke_multi_agent_uq.py`, `V2/tests/test_phase10_multi_agent_uq.py`
+  - `V2/config/experiment.yaml`, `V2/config/prompts.yaml`
+  - `V2/docs/phase10_multi_agent_uq.md`, `V2/notebooks/colab_phase10_smoke.ipynb`, `V2/notebooks/colab_runtime.md`
+  - `V2/results/config/phase10_*.json`, `phase10_multi_agent_uq_smoke.jsonl`
+- **Tests/validation:**
+  - Unit: UQ scoring, abstention gate, mock pipeline, schema fields
+  - Live smoke: 3/3 PASS locally and Colab
+  - Full suite: **55 passed**
+- **Actual outcome:** All three architectures implemented and Colab-verified on T4. UQ gate populates confidence, threshold, and decision on every case. Abstention not triggered on n=3 smoke subset (high confidence); gate behaviour verified in unit tests. Frozen sets unchanged.
+- **Problems encountered:** Qwen3 draft verbosity (carried from Phase 9); no ABSTAIN cases in n=3 smoke (confidence above smoke threshold).
+- **Problems resolved:** N/A — Colab smoke executed successfully.
+- **Remaining issues:** Locked threshold not created (Phase 14 calibration); full 420-case runner not started; optional prompt/`max_new_tokens` tuning.
+- **Dissertation relevance:** Third architecture for controlled RQ1/RQ2/RQ3 comparison; abstention provenance in raw results.
+- **Evidence:** `V2/results/config/phase10_smoke_test.json`, `phase10_multi_agent_uq_smoke.json`, `phase10_runtime_fingerprint.json`, `docs/phase10_multi_agent_uq.md`
+- **Validation evidence:** `V2/project_record/evidence/phase10_validation.md`
+- **Backup status (Phase 10 Colab verification):**
+  - Colab: verified run — user executed `notebooks/colab_phase10_smoke.ipynb`
+  - Google Drive: user-reported save via notebook cell 7 → `MyDrive/MSc-RAG/configs/phase10/` — **NEEDS VERIFICATION** of exact paths on Drive
+  - Local: verified — `V2/results/config/phase10_*.json` present (user copied from Colab); project record + evidence updated 2026-08-23
+  - GitHub: Colab run at git `2f3882e`; `results/config/phase10_*.json` gitignored; recommend commit master record + `phase10_validation.md` + Phase 10 source
+
+---
+
+## Phase 11 — Streamlit live artefact
+
+- **Date:** 2026-08-23
+- **Objective:** Integrate the three completed RAG architectures into a single Streamlit live artefact that executes real pipelines on a fresh user question (or a frozen test case).
+- **Why required:** Examiner live demonstration; same V2 code path as benchmark mode; show evidence, verification, confidence, threshold, and ANSWER/ABSTAIN.
+- **Work completed:**
+  - `run_live_comparison()` runs `single_agent`, `multi_agent`, and `multi_agent_uq` independently on the same original question
+  - Shared Phase 6 KB + one loaded backend instance; no KB rebuild
+  - Streamlit app `app/streamlit_app.py` with frozen-case picker and fresh-question input
+  - Per-architecture display: evidence, scores/metadata, answer, verification, confidence, threshold, decision, latency/runtime
+  - Smoke: 1 frozen (`finqa_test_1000`) + 1 fresh question
+  - Local smoke **PASS**; Streamlit HTTP **200**
+- **Technical decisions:**
+  - No architecture chaining; each pipeline retrieves and generates from the original question
+  - Not a precomputed lookup
+  - UQ threshold in the UI is the smoke/demo value only (not the locked benchmark threshold)
+  - Original plan Phase 11 (schema/logging) already exists as `RAGCaseResult` / raw-result fields from Phases 8–10; this phase implements the live artefact originally listed as Phase 12
+- **Files created/modified:**
+  - `V2/src/rag/live.py`, `V2/src/rag/__init__.py`
+  - `V2/app/streamlit_app.py`, `V2/app/__init__.py`
+  - `V2/scripts/smoke_live_artefact.py`, `V2/tests/test_phase11_live_artefact.py`
+  - `V2/docs/phase11_live_artefact.md`
+  - `V2/config/experiment.yaml`, `V2/requirements.txt`, `V2/.gitignore`
+  - `V2/results/config/phase11_*.json`
+- **Tests/validation:**
+  - Unit: independence, frozen loader, fresh IDs, schema fields, failure display — **10 passed**
+  - Live smoke: 2 comparisons × 3 architectures — **PASS**; run_id `phase11_20260823T222633Z_90aab3d6`
+  - Full suite: **65 passed**
+  - Streamlit start: HTTP 200 at `http://127.0.0.1:8501`
+- **Actual outcome:** Live artefact uses the real V2 RAG modules and existing KB. Frozen 140 / calibration 40 unchanged. V1 unchanged.
+- **Problems encountered:** Failed live runs (empty evidence / ProxyError 403) still showed Decision=ANSWER and could display a mock answer. Browser click-through of the Run button was not executed in this agent environment (HTTP start verified only).
+- **Problems resolved:** Live-only `normalize_live_case()` maps failed retrieval/generation to ERROR/UNAVAILABLE, shows the actual error, clears fabricated answers and confidence. Mock labelled UI/testing only; default backend is `auto`. Phase 8–10 architecture modules not changed.
+- **Remaining issues:** Locked threshold not created (calibration); 420-case runner not started; **Colab T4 `llama_cpp` live validation NEEDS VERIFICATION** via `notebooks/colab_phase11_live.ipynb`. A ProxyError 403 during embedding download is an environment/network issue — the app now reports it instead of treating it as ANSWER.
+- **Dissertation relevance:** Live artefact evidence for examiner demonstration of all three architectures.
+- **Evidence:** `V2/results/config/phase11_smoke_test.json`, `phase11_live_smoke.json`, `docs/phase11_live_artefact.md`
+- **Validation evidence:** `V2/project_record/evidence/phase11_validation.md`
+- **Backup status (Phase 11):**
+  - Colab: N/A for this local live-artefact phase
+  - Google Drive: **NEEDS VERIFICATION** — live session JSONL would go to `results/raw/live_sessions.jsonl` then Drive if a Colab/demo session is archived
+  - Local: verified — `V2/app/streamlit_app.py`; `V2/results/config/phase11_*.json`; project record + evidence updated 2026-08-23
+  - GitHub: Phase 11 source **uncommitted**; recommend commit app + runner + tests + evidence; `results/raw/` gitignored
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 10 | Multi-Agent + UQ / abstention | Not started |
-| 11+ | Schema logging expansion, Streamlit, pilot, calibration lock, 420 benchmark, stats | Not started |
+| 12+ | Pilot, calibration / threshold lock, 420-case benchmark, metrics, statistics | Not started |
 
 ---
 

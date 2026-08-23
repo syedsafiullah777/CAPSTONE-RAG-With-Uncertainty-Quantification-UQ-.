@@ -38,6 +38,16 @@ Notebook: `notebooks/colab_phase10_smoke.ipynb`
 
 Uses `uncertainty.smoke_threshold` (0.55) for verification only — not the locked benchmark threshold.
 
+## Phase 11 — Live artefact (`llama_cpp`, one fresh question)
+
+Notebook: `notebooks/colab_phase11_live.ipynb`
+
+1. Clone → install → restore KB from Drive (or rebuild)
+2. Preflight → `smoke_live_artefact.py --backend llama_cpp --fresh-only`
+3. Save to `MyDrive/MSc-RAG/configs/phase11/`
+
+Uses the same `run_live_comparison()` as Streamlit. Does **not** run the 140-question benchmark.
+
 ---
 
 ## Workflow: GitHub → Colab (no Drive upload for code)

@@ -147,3 +147,17 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Implement `multi_agent_uq` as Phase 9 pipeline plus combined confidence = mean(retrieval_score, verification_score) and binary gate `ANSWER | ABSTAIN`. No self-consistency (V1 cost/variance issue). Smoke uses `uncertainty.smoke_threshold` (0.55) only — final threshold locked on dev calibration (Phase 14), never on frozen test 140. Preserve draft in `configuration.draft_answer` when abstaining.
 
 **Colab entrypoint:** `notebooks/colab_phase10_smoke.ipynb` → `smoke_multi_agent_uq.py --backend llama_cpp --limit 3`.
+
+**Verified Colab smoke:** n=3 frozen questions; T4 `llama_cpp`; status **PASS**; run_id `phase10_20260823T140737Z_ab9b33d4`; git `2f3882e`; threshold 0.55 (smoke); all cases `ANSWER`. Artefacts: `results/config/phase10_multi_agent_uq_smoke.json`, `project_record/evidence/phase10_validation.md`.
+
+## 2026-08-23 — Phase 11 Streamlit live artefact
+
+**Decision:** Implement one Streamlit app that calls the three existing V2 pipelines independently on the same original question (fresh or frozen). Reuse the Phase 6 KB and one backend instance. Do not look up precomputed answers, rebuild the KB, or change frozen sets. Treat original-plan “schema/logging” as already delivered by `RAGCaseResult`.
+
+**Verified smoke:** 1 frozen + 1 fresh question; 3 architectures each; mock LLM + real retrieval; status **PASS**; run_id `phase11_20260823T222633Z_90aab3d6`. Streamlit HTTP 200. Artefacts: `results/config/phase11_live_smoke.json`, `project_record/evidence/phase11_validation.md`.
+
+## 2026-08-23 — Phase 11 live failure display
+
+**Decision:** In the live artefact only, treat missing evidence, empty generation, or a runtime exception (including ProxyError 403) as ERROR/UNAVAILABLE. Do not display ANSWER, do not keep a mock/fabricated answer, and do not assign confidence. Mock remains a UI/testing backend only.
+
+**Verified:** `tests/test_phase11_live_artefact.py` **10 passed**; full suite **65 passed**. Phase 8–10 pipeline modules unchanged.

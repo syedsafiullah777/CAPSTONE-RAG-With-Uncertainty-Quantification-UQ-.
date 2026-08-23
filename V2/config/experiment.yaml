@@ -90,6 +90,7 @@ remote_execution:
   phase8_entrypoint: "notebooks/colab_phase8_smoke.ipynb"
   phase9_entrypoint: "notebooks/colab_phase9_smoke.ipynb"
   phase10_entrypoint: "notebooks/colab_phase10_smoke.ipynb"
+  phase11_entrypoint: "notebooks/colab_phase11_live.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -137,6 +138,7 @@ rag:
   phase8_smoke_n: 3
   phase9_smoke_n: 3
   phase10_smoke_n: 3
+  phase11_smoke_n: 2  # 1 frozen + 1 fresh live comparison
 
 uncertainty:
   # Final threshold MUST be locked on DEV/calibration only (Phase 14). Never tune on test.
@@ -254,6 +256,8 @@ storage:
   live_artefact:
     use_actual_v2_rag_code: true
     precomputed_benchmark_lookup_for_fresh_questions: false
+    app_entrypoint: "app/streamlit_app.py"
+    phase: 11
     shared_pipelines:
       - benchmark_mode
       - live_demonstration_mode

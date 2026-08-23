@@ -5,9 +5,9 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-22 |
-| Current completed phase | **Phase 8** |
-| Next implementation phase | Phase 10 — Multi-Agent + UQ / abstention (not started) |
+| Last updated | 2026-08-23 |
+| Current completed phase | **Phase 11** |
+| Next implementation phase | Pilot / calibration lock / 420-case benchmark (not started) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -138,10 +138,10 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 6 | Knowledge base | ✅ Complete | `evidence/phase6_validation.md` |
 | 7 | Qwen3-8B backend | ✅ Complete | `evidence/phase7_validation.md` (Colab GPU **NEEDS VERIFICATION**) |
 | 8 | Single-Agent RAG baseline | ✅ Complete | `evidence/phase8_validation.md` |
-| 9 | Multi-Agent RAG | ⬜ Not started | `evidence/phase9_validation.md` |
-| 10 | Multi-Agent + UQ / abstention | ⬜ Not started | `evidence/phase10_validation.md` |
-| 11 | Result schema + logging | ⬜ Not started | evidence + raw JSONL paths |
-| 12 | Streamlit live artefact | ⬜ Not started | live validation evidence |
+| 9 | Multi-Agent RAG | ✅ Complete | `evidence/phase9_validation.md` |
+| 10 | Multi-Agent + UQ / abstention | ✅ Complete | `evidence/phase10_validation.md` |
+| 11 | Streamlit live artefact (schema already in Phases 8–10) | ✅ Complete | `evidence/phase11_validation.md` |
+| 12 | Streamlit live artefact | ✅ Absorbed into Phase 11 | `evidence/phase11_validation.md` |
 | 13 | Pilot run | ⬜ Not started | concise summary → raw/checkpoints on Drive |
 | 14 | Calibration / threshold lock | ⬜ Not started | calibration evidence |
 | 15 | 420-case benchmark | ⬜ Not started | summary only; raw in `results/raw/` |
@@ -180,7 +180,13 @@ Phases 1–7 chronology and evidence: `V2/project_record/PROJECT_MASTER_RECORD.m
 
 Retrieve → draft → verify. See `docs/phase9_multi_agent.md`.
 
-## Phase 10 — Multi-Agent + UQ / abstention (next; not started)
+## Phase 10 — Multi-Agent + UQ / abstention (complete)
+
+See `docs/phase10_multi_agent_uq.md`.
+
+## Phase 11 — Streamlit live artefact (complete)
+
+See `docs/phase11_live_artefact.md`. Original-plan schema/logging is `RAGCaseResult` from Phases 8–10.
 
 ## Git workflow (all phases)
 

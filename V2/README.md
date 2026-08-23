@@ -2,7 +2,7 @@
 
 Clean development area for the revised MSc AI capstone artefact.
 
-**Phase status:** Phase 7 complete. See `project_record/PROJECT_MASTER_RECORD.md`.
+**Phase status:** Phase 11 complete. See `project_record/PROJECT_MASTER_RECORD.md`.
 
 ## Storage / backup
 
@@ -28,7 +28,7 @@ V1 (everything outside `V2/`) is **reference-only** and must not be modified as 
 V2/
 ├── config/           experiment + prompt YAML
 ├── src/              Python package (foundation in Phase 1)
-├── app/              Streamlit live artefact (later)
+├── app/              Streamlit live artefact (`streamlit_app.py`)
 ├── scripts/          CLI entrypoints (later)
 ├── data/             raw / processed / calibration / final
 ├── knowledge_base/   documents + vector index (later)
@@ -50,6 +50,14 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 pytest -q
 ```
+
+## Live artefact (Phase 11)
+
+```bash
+PYTHONPATH=. streamlit run app/streamlit_app.py
+```
+
+Uses the existing Phase 6 knowledge base and the three V2 RAG pipelines. Sidebar backend: `mock` (UI check), `ollama_dev` (local Qwen), `llama_cpp` (Colab GPU).
 
 Import check:
 
