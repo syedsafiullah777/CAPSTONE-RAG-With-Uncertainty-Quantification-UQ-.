@@ -243,7 +243,7 @@ Add a preflight check in smoke/benchmark entrypoints: if `index_manifest.json` r
 
 Colab workflow: clone → install → `build_index.py --distractors 50` → preflight → Phase 8 smoke.
 
-**Colab T4 verification:** **NEEDS VERIFICATION** — run notebook after pushing to GitHub.
+**Colab T4 verification:** **PASS** (2026-08-23T12:42:22Z) — run_id `phase8_20260823T124009Z_70a29b9f`; evidence in `phase8_smoke_test.json`, `phase8_single_agent_smoke.json`, `phase8_runtime_fingerprint.json`.
 
 ---
 

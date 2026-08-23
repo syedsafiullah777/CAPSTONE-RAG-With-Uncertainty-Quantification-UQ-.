@@ -5,16 +5,17 @@
 | Phase | 8 — Single-Agent RAG baseline |
 | Evidence file | `project_record/evidence/phase8_validation.md` |
 | Last updated | 2026-08-23 |
+| Phase 8 status | **Complete** (local + Colab verified) |
 
 ## Summary
 
 | # | Test name | Status | Evidence path |
 | --- | --- | --- | --- |
 | 1 | Unit/integration (schema, prompts, mock pipeline) | **PASS** | `tests/test_phase8_single_agent.py` |
-| 2 | Full pytest suite | **PASS** | 43 passed (2026-08-23 local run) |
-| 3 | Live single-agent smoke — local Mac (3 frozen questions) | **PASS** | `results/config/phase8_smoke_test.json` |
+| 2 | Full pytest suite | **PASS** | 43 passed (2026-08-23) |
+| 3 | Live single-agent smoke — local Mac (3 frozen questions) | **PASS** | local run 2026-08-22 (`ollama_dev`) |
 | 4 | Index preflight validation | **PASS** | `scripts/validate_kb_index.py` |
-| 5 | Colab Single-Agent RAG smoke — T4 `llama_cpp` (n=3) | **NEEDS VERIFICATION** | Run `notebooks/colab_phase8_smoke.ipynb` |
+| 5 | Colab Single-Agent RAG smoke — T4 `llama_cpp` (n=3) | **PASS** | `results/config/phase8_smoke_test.json` |
 
 ---
 
@@ -56,24 +57,16 @@
 | --- | --- |
 | Date/time (UTC) | 2026-08-22T16:45:59 |
 | Phase | 8 |
-| Test name | `phase8_single_agent_smoke` |
+| Test name | `phase8_single_agent_smoke` (local) |
 | Command | `PYTHONPATH=. python scripts/smoke_single_agent.py --backend ollama_dev --limit 3` |
-| Environment | Local Mac; Phase 6 Chroma KB; Ollama `qwen3:8b` (`think=False`); device `mps_capable_host` |
+| Environment | Local Mac; Phase 6 Chroma KB; Ollama `qwen3:8b` (`think=False`) |
 | Expected | Each case: non-empty retrieved_evidence (top_k=4), non-empty answer, no error |
-| Actual (observed) | **PASS** — 3/3 cases; architecture `single_agent`; run_id `phase8_20260822T164524Z_bd962134` |
+| Actual (observed) | **PASS** — 3/3; run_id `phase8_20260822T164524Z_bd962134` |
 | Status | **PASS** |
 | Error | — |
-| Output path | `results/config/phase8_single_agent_smoke.json`, `phase8_smoke_test.json` |
+| Note | Superseded for official GPU path by Colab run below; retained as local dev evidence |
 
-**Per-case (observed):**
-
-| question_id | n_evidence | top score | answer preview |
-| --- | --- | --- | --- |
-| finqa_test_1000 | 4 | 0.8718 | non-empty (S&P ROI / Snap-on); top file `pdf/SNA/2013/page_34.pdf` |
-| finqa_test_1012 | 4 | 0.7765 | non-empty |
-| finqa_test_1017 | 4 | 0.8166 | non-empty |
-
-### 4. Index preflight validation (Colab fix)
+### 4. Index preflight validation
 
 | Field | Value |
 | --- | --- |
@@ -83,36 +76,56 @@
 | Command | `PYTHONPATH=. python scripts/validate_kb_index.py`; `pytest tests/test_index_preflight.py -v` |
 | Environment | Local Mac; existing Phase 6 Chroma index |
 | Expected | Manifest `chunks` matches `collection.count()`; empty-index fixture fails with actionable error |
-| Actual (observed) | Preflight **PASS** — expected=1239, actual=1239; unit tests **3 passed** (incl. empty-index failure case) |
+| Actual (observed) | Preflight **PASS** — expected=1239, actual=1239; unit tests **3 passed** |
 | Status | **PASS** |
 | Error | — |
 | Output path | `src/retrieval/preflight.py`, `scripts/validate_kb_index.py` |
 
-### 5. Colab Single-Agent RAG smoke — T4 `llama_cpp` (n=3)
+### 5. Colab Single-Agent RAG smoke — T4 `llama_cpp` (n=3) — **official GPU validation**
 
 | Field | Value |
 | --- | --- |
-| Date/time (UTC) | — |
+| Date/time (UTC) | **2026-08-23T12:42:22Z** |
 | Phase | 8 |
 | Test name | `phase8_colab_single_agent_smoke` |
-| Command | Run all cells in `notebooks/colab_phase8_smoke.ipynb` |
-| Environment | Google Colab GPU (T4); clone → `build_index.py --distractors 50` → preflight → `smoke_single_agent.py --backend llama_cpp --limit 3` |
-| Expected | Index rebuild 1239 chunks; preflight PASS; each case n_evidence=4, non-empty answer; `phase8_smoke_test.json` status PASS |
-| Actual (observed) | **Not run from this environment** — Colab execution required |
-| Status | **NEEDS VERIFICATION** |
+| Command | `notebooks/colab_phase8_smoke.ipynb` → `build_index.py --distractors 50` → preflight → `smoke_single_agent.py --backend llama_cpp --limit 3` |
+| Environment | Google Colab GPU **Tesla T4**; CUDA; Python 3.13.15; `llama_cpp` 0.3.35 |
+| Model | **Qwen3-8B** Q4_K_M (`bartowski/Qwen_Qwen3-8B-GGUF`) |
+| Git commit | **846c143** |
+| Run ID | **phase8_20260823T124009Z_70a29b9f** |
+| Expected | Index rebuild 1239 chunks; preflight PASS; each case n_evidence=4, non-empty answer, no error |
+| Actual (observed) | **PASS** — 3/3 questions; 4 evidence chunks each; retrieval + generation succeeded |
+| Status | **PASS** |
 | Error | — |
-| Output path | `results/config/phase8_smoke_test.json` (after Colab run) |
 
-**Colab workflow (Option B — no Mac DB copy):**
+**Evidence files (authoritative):**
 
-1. `scripts/build_index.py --distractors 50` — downloads FinQA PDFs from Hugging Face, rebuilds Chroma
-2. `scripts/validate_kb_index.py` — manifest vs `collection.count()`
-3. `scripts/smoke_single_agent.py --backend llama_cpp --limit 3` — preflight runs again before cases
+| Role | Path |
+| --- | --- |
+| PASS status | `results/config/phase8_smoke_test.json` |
+| Per-case raw results | `results/config/phase8_single_agent_smoke.json` |
+| Runtime / GPU | `results/config/phase8_runtime_fingerprint.json` |
+| Colab KB manifest | `knowledge_base/index/index_manifest.json` on Colab/Drive (rebuilt session) — **not** `results/config/phase6_index_manifest.json` (stale Mac copy) |
+
+**KB rebuild (Colab Option B):**
+
+- Index path at smoke time: `/content/capstone-rag/V2/knowledge_base/index`
+- 230 docs / 1239 chunks (same schema as Phase 6 Mac build)
+- Preflight passed before smoke
+
+**Per-case (observed from `phase8_single_agent_smoke.json`):**
+
+| question_id | n_evidence | top score | latency (s) | error |
+| --- | --- | --- | --- | --- |
+| finqa_test_1000 | 4 | 0.8718 | ~79.8 | none |
+| finqa_test_1012 | 4 | 0.7765 | ~20.2 | none |
+| finqa_test_1017 | 4 | 0.8166 | ~21.0 | none |
 
 **Notes:**
+
 - Frozen 140 / calibration 40 **not modified**.
 - Retrieval config unchanged (top_k=4, `finqa_source_pdfs`, BGE).
-- Diagnosis: `project_record/evidence/phase8_colab_retrieval_diagnosis.md`
+- Diagnosis of prior Colab failure: `project_record/evidence/phase8_colab_retrieval_diagnosis.md`
 
 ---
 
