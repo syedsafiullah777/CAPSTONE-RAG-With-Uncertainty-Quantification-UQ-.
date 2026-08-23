@@ -16,6 +16,7 @@ from src.models.types import LLMBackend
 from src.rag.multi_agent import _generate_with_retry
 from src.rag.prompts import build_multi_agent_draft_prompt, build_multi_agent_verification_prompt
 from src.rag.schema import ARCHITECTURE_MULTI_AGENT_UQ, RAGCaseResult
+from src.rag.text_utils import clean_generated_answer
 from src.rag.uncertainty import (
     apply_abstention_decision,
     compute_combined_confidence,
@@ -130,7 +131,7 @@ def run_multi_agent_uq(
             max_new_tokens=max_new_tokens,
             top_p=top_p,
         )
-        draft_answer = (draft_gen.text or "").strip()
+        draft_answer = clean_generated_answer(draft_gen.text or "")
         model_name = draft_gen.model
         quant = draft_gen.quantisation
         backend_used = draft_gen.backend

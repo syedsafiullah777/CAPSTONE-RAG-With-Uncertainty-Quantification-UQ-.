@@ -71,7 +71,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 10 git commit (Colab) | `2f3882e` | `phase10_runtime_fingerprint.json` |
 | Phase 10 artefacts | `phase10_runtime_fingerprint.json`, `phase10_smoke_test.json`, `phase10_multi_agent_uq_smoke.json` | local copy verified |
 | Phase 11 live artefact | `app/streamlit_app.py` via `run_live_comparison()` | local smoke PASS |
-| Colab Phase 11 live | **FAIL** (latest): Mac Streamlit `llama_cpp` + `mps_capable_host` + `gpu=null` + `127.0.0.1:8501`; T4 re-run **NEEDS VERIFICATION** | user report + `notebooks/colab_phase11_live.ipynb` |
+| Colab Phase 11 live | **PASS** (user-reported T4 / Qwen3-8B / three architectures); raw UQ 0.7688 / 0.55 / ANSWER | user report 2026-08-24 |
 | Phase 11 artefacts | `phase11_runtime_fingerprint.json`, `phase11_smoke_test.json`, `phase11_live_smoke.json` | local copy verified |
 
 ### Architectures
@@ -85,7 +85,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **73 passed** (Phases 1–11 + storage/backup + index preflight + live failure display + runtime guard)
+- Result: **77 passed** (Phases 1–11 + UQ display + verification rationale + insufficient-evidence question)
 
 ### Storage / backup (project infrastructure)
 
@@ -127,7 +127,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 19. **Phase 11 Streamlit live artefact (2026-08-23):** One app runs the three completed pipelines independently on a fresh question or a frozen test case. Shared Phase 6 KB + one backend instance; not a benchmark lookup. Local smoke (mock + real retrieval) **PASS**; run_id `phase11_20260823T222633Z_90aab3d6`; Streamlit HTTP 200. Original plan item “result schema + logging” was already delivered in Phases 8–10 via `RAGCaseResult`.
 20. **Phase 11 live failure display (2026-08-23):** Live artefact must not show ANSWER when retrieval or generation fails (empty evidence, empty generation, or exception such as ProxyError 403). Live layer sets ERROR/UNAVAILABLE, shows the actual error, clears fabricated answers and confidence. Mock remains UI/testing only. Phase 8–10 architecture modules unchanged.
 21. **Phase 11 Colab live-demo connection (2026-08-24):** The reported live demo (`backend=mock`, `device=mps_capable_host`, `ProxyError: 403 Forbidden`) was the local Mac Streamlit process, not Colab T4/`llama_cpp`. The live-demo notebook now verifies CUDA/T4, GGUF, and a non-empty Chroma index, starts Streamlit **inside Colab** with `V2_LIVE_BACKEND=llama_cpp` + `V2_FORBID_MOCK=1`, and refuses Darwin/mock fallback. A Colab T4 URL + fresh-question smoke result is still **NEEDS VERIFICATION**.
-22. **Phase 11 Colab live-demo launch (2026-08-24):** A later UI still showed `backend=llama_cpp` with `device=mps_capable_host`, `gpu=null`, ~0.01s latency, and `127.0.0.1:8501`. That is Mac Streamlit with `llama_cpp` selected, not Colab. Launch now uses Colab `proxyPort` + iframe (no cloudflared). Streamlit refuses `llama_cpp` on Darwin. Section 5 runs frozen `finqa_test_1000` on the Colab GPU. Colab T4 result still **NEEDS VERIFICATION**.
+22. **Phase 11 Colab live-demo launch (2026-08-24):** A later UI still showed `backend=llama_cpp` with `device=mps_capable_host`, `gpu=null`, ~0.01s latency, and `127.0.0.1:8501`. That is Mac Streamlit with `llama_cpp` selected, not Colab. Launch now uses Colab `proxyPort` + iframe (no cloudflared). Streamlit refuses `llama_cpp` on Darwin. Section 5 runs frozen `finqa_test_1000` on the Colab GPU. Subsequent Colab T4 live execution was **user-reported PASS**.
+23. **Phase 11 prompt / verification / UQ display (2026-08-24):** Generation prompts tightened (concise final answer, no instruction echo). Verification status + rationale are derived from the same scores. UQ zeros in Streamlit were a display/mapping issue (`st.metric` + schema not reading `uncertainty_result`); calculated values were 0.7688 / 0.55 / ANSWER. Display now shows the calculated confidence and `0.55 (smoke/demo — NOT LOCKED)`. Insufficient-evidence live question (SpaceX FY2025) identified; local mock smoke produced genuine UQ **ABSTAIN** at confidence 0.5351 < 0.55. Methodology unchanged. Threshold lock / 420-case benchmark not started.
 
 ---
 
@@ -702,6 +703,48 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Google Drive: **NEEDS VERIFICATION** — no T4 `phase11_colab_live_demo.json`
   - Local: verified — notebook, Streamlit lock, tests, evidence, master record updated 2026-08-24
   - GitHub: launch-fix files **uncommitted**; Colab clone will not see them until push to `cursor/empty-v2-workspace`
+
+---
+
+## Phase 11 — Prompt, verification, and UQ display refinements
+
+- **Date:** 2026-08-24
+- **Objective:** Tighten live answers and verification consistency; fix UQ confidence/threshold showing as 0; add an insufficient-evidence live question for a genuine ABSTAIN demonstration.
+- **Why required:** Colab T4 live succeeded, but answers were verbose/self-referential, verification text could contradict status, and Streamlit showed confidence=0 / threshold=0 while raw UQ was 0.7688 / 0.55 / ANSWER.
+- **Work completed:**
+  - Generation prompts now ask for one concise final answer and forbid instruction echo
+  - `clean_generated_answer()` strips `<think>` blocks and instruction echo
+  - Verification `status` + `rationale` are derived from the same scores
+  - `parse_unit_score` ignores “between 0 and 1” instruction echoes
+  - Live layer copies `uncertainty_result.confidence` onto `RAGCaseResult.confidence`; missing confidence → `n/a` / UNAVAILABLE, never 0
+  - Streamlit displays confidence/threshold as text (not `st.metric`); smoke threshold labelled **NOT LOCKED**
+  - Live insufficient-evidence question: SpaceX FY2025 GAAP / Starship cadence (not in frozen 140/40)
+- **Technical decisions:**
+  - UQ method unchanged: mean(retrieval_score, verification_score); gate unchanged
+  - Do not force ABSTAIN; do not lock the threshold; do not start the 420-case benchmark
+- **Files created/modified:**
+  - `V2/config/prompts.yaml`, `V2/src/rag/prompts.py`, `V2/src/rag/text_utils.py`, `V2/src/rag/verification.py`
+  - `V2/src/rag/single_agent.py`, `V2/src/rag/multi_agent.py`, `V2/src/rag/multi_agent_uq.py` (cleanup only)
+  - `V2/src/rag/live.py`, `V2/app/streamlit_app.py`, `V2/scripts/smoke_live_artefact.py`
+  - `V2/tests/test_phase9_multi_agent.py`, `V2/tests/test_phase11_live_artefact.py`
+  - `V2/project_record/evidence/phase11_validation.md`, `V2/project_record/PROJECT_MASTER_RECORD.md`
+- **Tests/validation:**
+  - Full suite **77 passed**
+  - Mock live smoke (real KB) **PASS** — run_id `phase11_20260823T235810Z_134d0128`
+  - Known-good `finqa_test_1000` UQ **ANSWER** at confidence 0.6185 ≥ 0.55
+  - Insufficient SpaceX/2025 UQ **ABSTAIN** at confidence 0.5351 < 0.55 (not forced)
+- **Actual outcome:** Display now shows calculated UQ values. Smoke/demo threshold is labelled NOT LOCKED. Frozen sets and V1 unchanged.
+- **Problems encountered:** `st.metric` rendered 0–1 UQ scores as 0; mock smoke failed once under a sandboxed ProxyError 403 (retried with network).
+- **Problems resolved:** Schema exposure + markdown display; verification rationale tied to status.
+- **Remaining issues:** Re-run the refined prompts/display on Colab T4/Qwen3-8B is **NEEDS VERIFICATION**. Calibration / threshold lock / 420-case benchmark not started.
+- **Dissertation relevance:** RQ2/RQ3 live demo must show the real confidence, an honest NOT LOCKED threshold, and a genuine ABSTAIN example.
+- **Evidence/source file paths:** `V2/results/config/phase11_live_smoke.json`, `V2/src/rag/live.py`
+- **Validation evidence:** `V2/project_record/evidence/phase11_validation.md`
+- **Backup status:**
+  - Colab: user-reported T4 live PASS (pre-refinement); refined run **NEEDS VERIFICATION**
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — smoke JSON, tests, evidence, master record updated 2026-08-24
+  - GitHub: these refinement files **uncommitted**
 
 ---
 

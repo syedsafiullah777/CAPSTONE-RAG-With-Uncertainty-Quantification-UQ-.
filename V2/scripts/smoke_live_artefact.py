@@ -17,7 +17,14 @@ if str(V2_ROOT) not in sys.path:
 from src.config import get_path, load_experiment_config, project_root
 from src.models.fingerprint import collect_fingerprint
 from src.models.runtime_guard import mock_forbidden, verify_live_llama_cpp_runtime
-from src.rag.live import LIVE_ARCHITECTURES, load_frozen_questions, run_live_comparison
+from src.rag.live import (
+    INSUFFICIENT_EVIDENCE_QUESTION,
+    INSUFFICIENT_EVIDENCE_QUESTION_ID,
+    KNOWN_GOOD_QUESTION_ID,
+    LIVE_ARCHITECTURES,
+    load_frozen_questions,
+    run_live_comparison,
+)
 from src.retrieval.index import COLLECTION_NAME
 from src.retrieval.preflight import IndexPreflightError, validate_index_preflight
 from src.utils import create_run_id, get_logger, setup_logging
@@ -99,33 +106,42 @@ def main() -> int:
         args.backend = "llama_cpp"
         print(json.dumps({"runtime_lock": runtime}, indent=2))
 
-    frozen = load_frozen_questions(limit=1)
-    if not frozen:
+    frozen_rows = load_frozen_questions()
+    if not frozen_rows:
         raise SystemExit("Frozen 140 CSV produced no questions")
-    frozen_row = frozen[0]
+    known_good = next((row for row in frozen_rows if row["id"] == KNOWN_GOOD_QUESTION_ID), frozen_rows[0])
 
     model_cfg = dict(config.section("model"))
     model_cfg["backend"] = args.backend
     fingerprint = collect_fingerprint(model_config=model_cfg, project_root=str(project_root()))
 
     jobs = []
-    if not args.fresh_only:
+    if args.fresh_only:
         jobs.append(
             {
-                "question": frozen_row["question"],
-                "question_id": frozen_row["id"],
-                "question_source": "frozen",
-                "reference_answer": frozen_row.get("program_answer"),
+                "question": FRESH_QUESTION,
+                "question_id": None,
+                "question_source": "fresh",
+                "reference_answer": None,
             }
         )
-    jobs.append(
-        {
-            "question": FRESH_QUESTION,
-            "question_id": None,
-            "question_source": "fresh",
-            "reference_answer": None,
-        }
-    )
+    else:
+        jobs.append(
+            {
+                "question": known_good["question"],
+                "question_id": known_good["id"],
+                "question_source": "frozen",
+                "reference_answer": known_good.get("program_answer"),
+            }
+        )
+        jobs.append(
+            {
+                "question": INSUFFICIENT_EVIDENCE_QUESTION,
+                "question_id": INSUFFICIENT_EVIDENCE_QUESTION_ID,
+                "question_source": "insufficient",
+                "reference_answer": None,
+            }
+        )
 
     comparisons = []
     failures = 0
@@ -183,7 +199,7 @@ def main() -> int:
         expected=(
             "1 fresh question through 3 independent architectures with evidence and answers"
             if args.fresh_only
-            else "1 frozen + 1 fresh question; each runs 3 independent architectures with evidence and answers"
+            else "known-good FinQA + insufficient-evidence live question; 3 independent architectures each"
         ),
         actual=f"n={len(comparisons)} failures={failures} status={smoke_payload['status']}",
         status="PASS" if failures == 0 else "FAIL",  # type: ignore[arg-type]

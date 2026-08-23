@@ -5,21 +5,24 @@
 | Phase | 11 — Streamlit live artefact |
 | Evidence file | `project_record/evidence/phase11_validation.md` |
 | Last updated | 2026-08-24 |
-| Phase 11 status | **Implementation complete**; Colab T4 live-demo launch **not yet verified**. Latest observed UI was Mac Streamlit (`llama_cpp` + `mps_capable_host` + `127.0.0.1:8501`). |
+| Phase 11 status | Colab T4 live execution **user-reported PASS** (Qwen3-8B, all three architectures). Prompt / verification / UQ-display refinements locally validated (mock). |
 
 ## Summary
 
 | # | Test name | Status | Evidence path |
 | --- | --- | --- | --- |
 | 1 | Unit/integration (live runner, independence, frozen loader, failure display) | **PASS** | `tests/test_phase11_live_artefact.py` |
-| 2 | Full pytest suite | **PASS** | 73 passed (2026-08-24) |
+| 2 | Full pytest suite | **PASS** | 77 passed (2026-08-24) |
 | 3 | Live artefact smoke — frozen + fresh questions | **PASS** | `results/config/phase11_smoke_test.json` |
 | 4 | Streamlit HTTP start | **PASS** | `http://127.0.0.1:8501` returned 200 |
 | 5 | Live failure display (empty evidence / ProxyError) | **PASS** | `tests/test_phase11_live_artefact.py` |
-| 6 | Colab live comparison — T4 `llama_cpp` (fresh question) | **NEEDS VERIFICATION** | `notebooks/colab_phase11_live.ipynb` |
+| 6 | Colab live comparison — T4 `llama_cpp` | **PASS** (user-reported) | raw UQ confidence 0.7688 / threshold 0.55 / ANSWER; UI zeros diagnosed as display/mapping |
 | 7 | Runtime guard (no silent mock; macOS rejected) | **PASS** | `tests/test_runtime_guard.py` |
 | 8 | Observed Streamlit live-demo connection (first report) | **FAIL** (Mac mock, not Colab T4) | `backend=mock`, `device=mps_capable_host`, `ProxyError: 403 Forbidden` |
 | 9 | Observed Streamlit live-demo launch (second report) | **FAIL** (Mac Streamlit, not Colab T4) | `backend=llama_cpp`, `device=mps_capable_host`, `gpu=null`, latency ~0.01s, URL `127.0.0.1:8501` |
+| 10 | UQ confidence/threshold display diagnosis + fix | **PASS** (local tests) | `tests/test_phase11_live_artefact.py` |
+| 11 | Known-good + insufficient-evidence live smoke (mock, real KB) | **PASS** | `results/config/phase11_live_smoke.json` |
+| 12 | Colab T4 re-run after prompt/display refinements | **NEEDS VERIFICATION** | `notebooks/colab_phase11_live.ipynb` |
 
 ---
 
@@ -115,8 +118,8 @@
 | Command | `notebooks/colab_phase11_live.ipynb` → restore KB → `smoke_live_artefact.py --backend llama_cpp --fresh-only` |
 | Environment | Google Colab GPU Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M (expected — same as Phases 8–10) |
 | Expected | One fresh question; three independent architectures; n_evidence>0; non-empty answers or explicit ERROR/UNAVAILABLE; backend `llama_cpp` not mock |
-| Actual (observed) | **Not run from this environment** — Colab GPU notebook must be executed manually |
-| Status | **NEEDS VERIFICATION** |
+| Actual (observed) | **User-reported PASS** on Colab Tesla T4 + `llama_cpp` + Qwen3-8B; all three architectures. Raw UQ: confidence ≈ **0.7688**, threshold **0.55**, decision **ANSWER**. Streamlit cards were reported as confidence=0 / threshold=0 (display bug; see test 10). |
+| Status | **PASS** (user-reported Colab execution). Display fix validated locally. |
 | Error | — |
 
 **Runbook (user action required after this launch fix is on GitHub):**
@@ -167,8 +170,50 @@
 | Environment / device / GPU | **Observed:** `backend=llama_cpp`, `device=mps_capable_host`, `gpu=null`, latency ~0.01s, URL `127.0.0.1:8501` |
 | Expected | Streamlit process on Colab T4; Colab `proxyPort` URL; displayed device `cuda` and the actual GPU name |
 | Actual (observed) | Browser reached the **local Mac** Streamlit server. `llama_cpp` was selected on the Mac, so backend looked correct, but device/GPU/latency/URL prove it was not Colab. |
-| Status | **FAIL** for the Colab live-demo launch. Notebook now uses Colab `proxyPort` + iframe; Streamlit refuses `llama_cpp` on Darwin; selecting localhost is called out as wrong. Re-run on Colab GPU after push is **NEEDS VERIFICATION**. |
+| Status | **FAIL** for that Mac localhost session. A later Colab T4 run was **user-reported PASS**. |
 | Error | — |
+
+### 10. UQ confidence/threshold display diagnosis
+
+| Field | Value |
+| --- | --- |
+| Date/time (UTC) | 2026-08-24 |
+| Phase | 11 |
+| Test name | `test_uq_display_uses_calculated_confidence_not_zero` |
+| Command | `PYTHONPATH=. pytest tests/test_phase11_live_artefact.py tests/test_phase9_multi_agent.py -q` |
+| Environment | Local Mac; `V2/.venv` |
+| Expected | Raw UQ 0.7688 / 0.55 displayed as those values, not 0; missing confidence → `n/a`; smoke threshold labelled NOT LOCKED |
+| Actual (observed) | **Diagnosis:** calculated UQ values were real (`confidence=0.7688`, `threshold=0.55`, `decision=ANSWER`). The zeros were a **UI rendering / schema-exposure** problem: `st.metric` can show 0–1 floats as 0, and the cards read `result.confidence` / `result.threshold` instead of the UQ payload. They were **not** actual calculated zeros. **Fix:** expose `uncertainty_result.confidence` on the schema; display via markdown (`0.7688`, `0.5500 (smoke/demo — NOT LOCKED)`); never substitute 0 for a missing score. Tests **PASS**. |
+| Status | **PASS** |
+| Error | — |
+
+### 11. Known-good + insufficient-evidence live smoke (mock, real Phase 6 KB)
+
+| Field | Value |
+| --- | --- |
+| Date/time (UTC) | **2026-08-23T23:58:19Z** |
+| Phase | 11 |
+| Test name | `phase11_live_artefact_smoke` |
+| Command | `PYTHONPATH=. python scripts/smoke_live_artefact.py --backend mock` |
+| Environment | Local Mac; mock LLM; real Chroma KB (preflight 1239/1239) |
+| Expected | `finqa_test_1000` + SpaceX/2025 insufficient question; 3 architectures each; UQ display helpers; no forced abstention |
+| Actual (observed) | **PASS** — run_id `phase11_20260823T235810Z_134d0128`; 2/2 comparisons |
+| Status | **PASS** |
+| Error | — |
+| Output path | `results/config/phase11_live_smoke.json`, `phase11_smoke_test.json` |
+
+**Observed per architecture (mock backend — not Colab T4):**
+
+| source | architecture | n_ev | ret_max | UQ confidence | displayed threshold | decision |
+| --- | --- | --- | --- | --- | --- | --- |
+| frozen `finqa_test_1000` | single_agent | 4 | 0.8718 | n/a | n/a | ANSWER |
+| frozen `finqa_test_1000` | multi_agent | 4 | 0.8718 | n/a (verify 0.425 WEAK_EVIDENCE; rationale matches status) | n/a | ANSWER |
+| frozen `finqa_test_1000` | multi_agent_uq | 4 | 0.8718 | **0.6185** | 0.5500 (smoke/demo — NOT LOCKED) | **ANSWER** |
+| insufficient SpaceX/2025 | single_agent | 4 | 0.6626 | n/a | n/a | ANSWER |
+| insufficient SpaceX/2025 | multi_agent | 4 | 0.6626 | n/a (verify 0.425 WEAK_EVIDENCE) | n/a | ANSWER |
+| insufficient SpaceX/2025 | multi_agent_uq | 4 | 0.6626 | **0.5351** | 0.5500 (smoke/demo — NOT LOCKED) | **ABSTAIN** |
+
+Insufficient-evidence UQ ABSTAIN was produced by the existing rule (`0.5351 < 0.55`), not forced. Retrieval support was weaker than the known-good case (ret_max 0.66 vs 0.87). Mock answers are not Qwen3 answers.
 
 **Notes:**
 
@@ -178,8 +223,9 @@
 - Benchmark was **not** started.
 - Mock is now forbidden when `V2_FORBID_MOCK=1` or `V2_LIVE_BACKEND=llama_cpp`. The live-demo notebook sets both and refuses Darwin/`mps_capable_host`.
 - Live layer (`normalize_live_case`) maps failed retrieval/generation to ERROR/UNAVAILABLE, clears fabricated answers and confidence. Phase 8–10 pipeline modules unchanged.
-- A Colab T4 `llama_cpp` live URL + `finqa_test_1000` result has **not** been observed from this Mac environment. Do not treat `127.0.0.1:8501` / `mps_capable_host` as GPU validation.
-- Tunnel method is now Colab `google.colab.kernel.proxyPort(8501)` + iframe (no cloudflared).
+- Colab T4 live execution was **user-reported PASS** (Qwen3-8B, all three architectures). Raw UQ on that run: confidence ≈ 0.7688, threshold 0.55, decision ANSWER. A re-run after these prompt/display changes is **NEEDS VERIFICATION**.
+- Frozen 140 / calibration 40 **not modified**. V1 **not modified**. Benchmark and threshold-lock **not started**.
+- Tunnel method remains Colab `google.colab.kernel.proxyPort(8501)` + iframe.
 
 ---
 

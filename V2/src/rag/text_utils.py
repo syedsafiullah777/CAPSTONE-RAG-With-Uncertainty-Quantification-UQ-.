@@ -1,9 +1,46 @@
-"""Lightweight text helpers for verification scoring."""
+"""Lightweight text helpers for verification scoring and generation cleanup."""
 
 from __future__ import annotations
 
 import re
 from typing import Iterable
+
+_THINK_BLOCK = re.compile(r"<think>.*?</think>", re.IGNORECASE | re.DOTALL)
+_INSTRUCTION_ECHO = re.compile(
+    r"between\s+0(?:\.0+)?\s+and\s+1(?:\.0+)?|\b0\s*(?:to|-|/)\s*1\b",
+    re.IGNORECASE,
+)
+_PROMPT_CHARS_SUFFIX = re.compile(r"\s*\|\s*prompt_chars=\d+\s*$")
+_ECHO_LINE = re.compile(
+    r"^(you are (answering|a financial)|use only the provided|give a concise|"
+    r"do not repeat|if the evidence|cite the most|write only the|"
+    r"return only|reply with only).*$",
+    re.IGNORECASE,
+)
+
+
+def clean_generated_answer(text: str) -> str:
+    """Strip thinking blocks and instruction echo. Does not change RAG architecture."""
+    cleaned = _THINK_BLOCK.sub(" ", text or "")
+    cleaned = _PROMPT_CHARS_SUFFIX.sub("", cleaned)
+    lines = []
+    for line in cleaned.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            if lines:
+                lines.append("")
+            continue
+        if _ECHO_LINE.match(stripped):
+            continue
+        if stripped.lower() in {"answer:", "draft answer:", "final answer:", "support score:"}:
+            continue
+        for prefix in ("final answer:", "draft answer:", "answer:"):
+            if stripped.lower().startswith(prefix):
+                stripped = stripped[len(prefix) :].strip()
+                break
+        if stripped:
+            lines.append(stripped)
+    return "\n".join(lines).strip()
 
 
 def token_overlap(reference: str, candidate: str) -> float:
@@ -20,11 +57,20 @@ def average(values: Iterable[float]) -> float:
 
 
 def parse_unit_score(text: str) -> float | None:
-    """Extract a 0–1 score from model output."""
-    raw = (text or "").strip()
+    """Extract a 0–1 score from model output.
+
+    Ignores instruction echoes such as "between 0 and 1" so a repeated
+    prompt cannot become a contradictory 0.0 support score.
+    """
+    raw = clean_generated_answer(text or "")
     if not raw:
         return None
-    match = re.search(r"(\d+(?:\.\d+)?)", raw)
+    cleaned = _INSTRUCTION_ECHO.sub(" ", raw)
+    decimals = [float(m) for m in re.findall(r"\b(0\.\d+|1\.0+|1)\b", cleaned)]
+    if decimals:
+        value = decimals[-1]
+        return max(0.0, min(1.0, value))
+    match = re.search(r"(\d+(?:\.\d+)?)", cleaned)
     if not match:
         return None
     try:
@@ -33,4 +79,31 @@ def parse_unit_score(text: str) -> float | None:
         return None
     if value > 1.0 and value <= 100.0:
         value = value / 100.0
+    if value in {0.0, 1.0} and _INSTRUCTION_ECHO.search(raw):
+        return None
     return max(0.0, min(1.0, value))
+
+
+def build_verification_rationale(
+    *,
+    status: str,
+    verification_score: float,
+    lexical_score: float,
+    llm_score: float | None,
+    verification_threshold: float,
+) -> str:
+    """Status and rationale are derived from the same scores (no free-text contradiction)."""
+    llm_part = "n/a" if llm_score is None else f"{llm_score:.4f}"
+    if status == "VERIFIED":
+        return (
+            f"VERIFIED: combined verification score {verification_score:.4f} "
+            f"meets the informational threshold {verification_threshold:.2f} "
+            f"(lexical={lexical_score:.4f}, llm={llm_part}). "
+            f"This status describes evidence support only; it does not rewrite the draft answer."
+        )
+    return (
+        f"WEAK_EVIDENCE: combined verification score {verification_score:.4f} "
+        f"is below the informational threshold {verification_threshold:.2f} "
+        f"(lexical={lexical_score:.4f}, llm={llm_part}). "
+        f"This status describes evidence support only; it does not rewrite the draft answer."
+    )

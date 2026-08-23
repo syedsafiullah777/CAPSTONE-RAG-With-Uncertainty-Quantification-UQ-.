@@ -26,13 +26,18 @@ from src.models.runtime_guard import (
 )
 from src.rag.live import (
     ARCHITECTURE_LABELS,
+    INSUFFICIENT_EVIDENCE_QUESTION,
+    INSUFFICIENT_EVIDENCE_QUESTION_ID,
     LIVE_ARCHITECTURES,
     LIVE_FAILURE_DECISIONS,
+    format_confidence_display,
     format_optional,
+    format_threshold_display,
     load_frozen_questions,
+    resolve_displayed_confidence,
     run_live_comparison,
 )
-from src.rag.schema import RAGCaseResult
+from src.rag.schema import ARCHITECTURE_MULTI_AGENT_UQ, RAGCaseResult
 from src.retrieval.index import COLLECTION_NAME
 from src.retrieval.preflight import IndexPreflightError, validate_index_preflight
 from src.utils import create_run_id
@@ -109,7 +114,8 @@ def render_architecture(result: RAGCaseResult) -> None:
         st.caption("No answer (run failed). Nothing was fabricated.")
         col_a, col_b, col_c, col_d = st.columns(4)
         col_a.metric("Confidence", "n/a")
-        col_b.metric("Threshold", format_optional(result.threshold))
+        col_b.markdown("**Threshold**")
+        col_b.write(format_threshold_display(result))
         col_c.metric("Latency (s)", format_optional(result.latency_seconds))
         col_d.metric("Evidence chunks", str(len(result.retrieved_evidence or [])))
         st.markdown("**Verification**")
@@ -136,9 +142,15 @@ def render_architecture(result: RAGCaseResult) -> None:
     st.markdown("**Generated answer**")
     st.write(result.answer)
 
+    if result.architecture == ARCHITECTURE_MULTI_AGENT_UQ and resolve_displayed_confidence(result) is None:
+        st.error("UQ confidence could not be calculated. Displaying n/a — this is not a valid 0.0 confidence.")
+
     col_a, col_b, col_c, col_d = st.columns(4)
-    col_a.metric("Confidence", format_optional(result.confidence))
-    col_b.metric("Threshold", format_optional(result.threshold))
+    # Do not use st.metric for 0–1 scores: Streamlit can render 0.7688 / 0.55 as 0.
+    col_a.markdown("**Confidence**")
+    col_a.write(format_confidence_display(result))
+    col_b.markdown("**Threshold**")
+    col_b.write(format_threshold_display(result))
     col_c.metric("Latency (s)", format_optional(result.latency_seconds))
     col_d.metric("Evidence chunks", str(len(result.retrieved_evidence or [])))
 
@@ -150,17 +162,30 @@ def render_architecture(result: RAGCaseResult) -> None:
         st.write(
             {
                 "status": verify.get("status"),
+                "rationale": verify.get("rationale"),
                 "verification_score": verify.get("verification_score"),
                 "lexical_score": verify.get("lexical_score"),
                 "llm_score": verify.get("llm_score"),
                 "verification_threshold": verify.get("verification_threshold"),
             }
         )
+        if verify.get("rationale") and not str(verify.get("rationale", "")).startswith(str(verify.get("status") or "")):
+            st.error("Verification status and rationale are inconsistent.")
 
     uq = (result.configuration or {}).get("uncertainty_result")
     if uq:
         st.markdown("**Uncertainty**")
-        st.write(uq)
+        st.write(
+            {
+                "method": uq.get("method"),
+                "retrieval_score": uq.get("retrieval_score"),
+                "verification_score": uq.get("verification_score"),
+                "confidence": uq.get("confidence"),
+                "displayed_confidence": format_confidence_display(result),
+                "displayed_threshold": format_threshold_display(result),
+                "decision": result.decision,
+            }
+        )
 
     st.markdown("**Runtime**")
     st.write(
@@ -230,13 +255,14 @@ def main() -> None:
             if backend_name in {"ollama", "ollama_dev"}:
                 st.warning("Ollama is local-dev only. The Colab live demo must use llama_cpp.")
         threshold = st.number_input(
-            "UQ smoke threshold",
+            "UQ smoke/demo threshold (NOT LOCKED)",
             min_value=0.0,
             max_value=1.0,
             value=default_threshold,
             step=0.05,
-            help="Demo/smoke only. The locked benchmark threshold is not set yet and must be calibrated on the 40-question DEV set.",
+            help="Smoke/demo gate only. The experimental threshold is NOT LOCKED and must be calibrated later on the 40-question DEV set.",
         )
+        st.caption("Threshold status: **NOT LOCKED**. This is not the final research threshold.")
         save_raw = st.checkbox("Append raw result to results/raw/live_sessions.jsonl", value=True)
         st.caption("Frozen 140 / calibration 40 are not modified.")
 
@@ -249,13 +275,26 @@ def main() -> None:
             st.error(str(exc))
             st.stop()
 
-    source = st.radio("Question source", options=["Fresh question", "Frozen test case"], horizontal=True)
+    source = st.radio(
+        "Question source",
+        options=["Fresh question", "Frozen test case", "Insufficient-evidence demo"],
+        horizontal=True,
+    )
     frozen = _cached_frozen_questions()
     reference_answer = None
     question_id = None
     question_source = "fresh"
 
-    if source == "Frozen test case":
+    if source == "Insufficient-evidence demo":
+        question = INSUFFICIENT_EVIDENCE_QUESTION
+        question_id = INSUFFICIENT_EVIDENCE_QUESTION_ID
+        question_source = "insufficient"
+        st.warning(
+            "This question is outside the FinQA source-PDF corpus. "
+            "It is for demonstrating weak support / possible ABSTAIN. Abstention is not forced."
+        )
+        st.write(question)
+    elif source == "Frozen test case":
         labels = [f"{row['id']}: {row['question'][:90]}" for row in frozen]
         chosen = st.selectbox("Frozen 140 question", options=labels)
         row = frozen[labels.index(chosen)]
@@ -336,8 +375,8 @@ def main() -> None:
             {
                 "Architecture": ARCHITECTURE_LABELS.get(architecture, architecture),
                 "Decision": data.get("decision"),
-                "Confidence": None if failed else data.get("confidence"),
-                "Threshold": data.get("threshold"),
+                "Confidence": "n/a" if failed else format_confidence_display(RAGCaseResult(**data)),
+                "Threshold": format_threshold_display(RAGCaseResult(**data)),
                 "Verification": None if failed else verify.get("verification_score"),
                 "n_evidence": len(data.get("retrieved_evidence") or []),
                 "Latency (s)": data.get("latency_seconds"),

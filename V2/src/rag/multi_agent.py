@@ -15,6 +15,7 @@ from src.models.fingerprint import collect_fingerprint
 from src.models.types import GenerationResult, LLMBackend
 from src.rag.prompts import build_multi_agent_draft_prompt, build_multi_agent_verification_prompt
 from src.rag.schema import ARCHITECTURE_MULTI_AGENT, RAGCaseResult
+from src.rag.text_utils import clean_generated_answer
 from src.rag.verification import compute_verification_result
 from src.retrieval.retriever import retrieve
 from src.utils import create_run_id
@@ -121,7 +122,7 @@ def run_multi_agent(
             max_new_tokens=max_new_tokens,
             top_p=top_p,
         )
-        answer = (draft_gen.text or "").strip()
+        answer = clean_generated_answer(draft_gen.text or "")
         model_name = draft_gen.model
         quant = draft_gen.quantisation
         backend_used = draft_gen.backend

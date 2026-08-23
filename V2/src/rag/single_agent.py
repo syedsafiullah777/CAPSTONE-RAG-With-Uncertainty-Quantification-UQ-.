@@ -16,6 +16,7 @@ from src.models.fingerprint import collect_fingerprint
 from src.models.types import LLMBackend
 from src.rag.prompts import build_baseline_prompt
 from src.rag.schema import ARCHITECTURE_SINGLE_AGENT, RAGCaseResult
+from src.rag.text_utils import clean_generated_answer
 from src.retrieval.retriever import retrieve
 from src.utils import create_run_id
 
@@ -84,7 +85,7 @@ def run_single_agent(
             max_new_tokens=int(model_cfg.get("max_new_tokens") or 512),
             top_p=model_cfg.get("top_p"),
         )
-        answer = (gen.text or "").strip()
+        answer = clean_generated_answer(gen.text or "")
         # One retry if the backend returns empty text (seen with some local Ollama/Qwen3 runs).
         if not answer:
             gen = llm.generate(
@@ -93,7 +94,7 @@ def run_single_agent(
                 max_new_tokens=int(model_cfg.get("max_new_tokens") or 512),
                 top_p=model_cfg.get("top_p"),
             )
-            answer = (gen.text or "").strip()
+            answer = clean_generated_answer(gen.text or "")
         model_name = gen.model
         quant = gen.quantisation
         backend_used = gen.backend

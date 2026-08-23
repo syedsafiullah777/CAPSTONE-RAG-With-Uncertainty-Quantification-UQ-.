@@ -9,9 +9,10 @@ from src.retrieval.retriever import RetrievedChunk
 
 
 DEFAULT_BASELINE_SYSTEM = (
-    "You are answering questions about financial documents. "
-    "Use only the provided evidence. If the evidence is insufficient, say so clearly. "
-    "Give a concise final answer."
+    "Answer the financial question using only the evidence below. "
+    "Write one concise factual answer. Do not repeat these instructions, "
+    "do not describe your reasoning, and do not write self-referential text. "
+    "If the evidence does not contain the answer, write exactly: Evidence is insufficient."
 )
 
 DEFAULT_BASELINE_USER = """Evidence:
@@ -20,12 +21,13 @@ DEFAULT_BASELINE_USER = """Evidence:
 Question:
 {question}
 
-Answer:"""
+Final answer:"""
 
 DEFAULT_MULTI_AGENT_DRAFT_SYSTEM = (
-    "You are a financial document analyst drafting an answer from retrieved evidence. "
-    "Use only the provided evidence. Cite the most relevant source when possible. "
-    "If evidence is insufficient, say so clearly. Give a concise draft answer."
+    "Draft a financial answer using only the evidence below. "
+    "Write one concise factual answer. Do not repeat these instructions, "
+    "do not describe your reasoning, and do not write self-referential text. "
+    "If the evidence does not contain the answer, write exactly: Evidence is insufficient."
 )
 
 DEFAULT_MULTI_AGENT_DRAFT_USER = """Evidence:
@@ -34,11 +36,12 @@ DEFAULT_MULTI_AGENT_DRAFT_USER = """Evidence:
 Question:
 {question}
 
-Draft answer:"""
+Final answer:"""
 
 DEFAULT_MULTI_AGENT_VERIFY_SYSTEM = (
-    "You score how well an answer is supported by the provided evidence. "
-    "Return only one decimal number between 0 and 1."
+    "Score how well the draft answer is supported by the evidence. "
+    "Reply with only one number from 0.00 to 1.00. "
+    "Do not repeat these instructions and do not write words before or after the number."
 )
 
 DEFAULT_MULTI_AGENT_VERIFY_USER = """Evidence:
@@ -50,7 +53,7 @@ Question:
 Draft answer:
 {answer}
 
-Support score (0-1):"""
+Support score:"""
 
 
 def format_evidence(chunks: list[RetrievedChunk] | list[dict[str, Any]]) -> str:

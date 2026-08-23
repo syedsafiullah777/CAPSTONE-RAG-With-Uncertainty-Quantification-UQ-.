@@ -44,6 +44,14 @@ DECISION_ERROR = "ERROR"
 DECISION_UNAVAILABLE = "UNAVAILABLE"
 LIVE_FAILURE_DECISIONS = {DECISION_ERROR, DECISION_UNAVAILABLE}
 
+KNOWN_GOOD_QUESTION_ID = "finqa_test_1000"
+THRESHOLD_NOT_LOCKED = "NOT LOCKED"
+INSUFFICIENT_EVIDENCE_QUESTION = (
+    "What was SpaceX's audited GAAP net income for fiscal year 2025, "
+    "and how many Starship orbital launches did the company complete that year?"
+)
+INSUFFICIENT_EVIDENCE_QUESTION_ID = "live_insufficient_evidence"
+
 
 @dataclass
 class LiveComparison:
@@ -71,6 +79,37 @@ def format_optional(value: Any) -> str:
     if isinstance(value, float):
         return f"{value:.4f}"
     return str(value)
+
+
+def resolve_displayed_confidence(result: RAGCaseResult) -> float | None:
+    """Expose the calculated UQ confidence. Never invent 0 for a missing value."""
+    if result.architecture == ARCHITECTURE_MULTI_AGENT_UQ:
+        uq = (result.configuration or {}).get("uncertainty_result") or {}
+        if uq.get("confidence") is not None:
+            return float(uq["confidence"])
+        if result.confidence is not None:
+            return float(result.confidence)
+        return None
+    return None if result.confidence is None else float(result.confidence)
+
+
+def format_confidence_display(result: RAGCaseResult) -> str:
+    value = resolve_displayed_confidence(result)
+    if value is None:
+        return "n/a"
+    return f"{value:.4f}"
+
+
+def format_threshold_display(result: RAGCaseResult) -> str:
+    """Smoke/demo threshold is never shown as a locked experimental threshold."""
+    if result.architecture != ARCHITECTURE_MULTI_AGENT_UQ:
+        return "n/a"
+    source = (result.configuration or {}).get("threshold_source")
+    if source == "locked" and result.threshold is not None:
+        return f"{float(result.threshold):.4f} (locked)"
+    if result.threshold is None:
+        return THRESHOLD_NOT_LOCKED
+    return f"{float(result.threshold):.4f} (smoke/demo — {THRESHOLD_NOT_LOCKED})"
 
 
 def live_run_failed(result: RAGCaseResult) -> bool:
@@ -119,6 +158,15 @@ def normalize_live_case(result: RAGCaseResult) -> RAGCaseResult:
         result.confidence = None
         result.verification_result = None
         return result
+
+    if result.architecture == ARCHITECTURE_MULTI_AGENT_UQ:
+        uq = (result.configuration or {}).get("uncertainty_result") or {}
+        if uq.get("confidence") is not None:
+            result.confidence = float(uq["confidence"])
+        elif result.confidence is None:
+            result.decision = DECISION_UNAVAILABLE
+            result.error = "UQ confidence could not be calculated; not a valid zero-confidence result."
+            result.confidence = None
 
     return result
 

@@ -10,7 +10,7 @@ from src.models.mock_backend import MockBackend
 from src.rag.prompts import build_multi_agent_draft_prompt, build_multi_agent_verification_prompt
 from src.rag.schema import ARCHITECTURE_MULTI_AGENT, RAGCaseResult
 from src.rag.multi_agent import run_multi_agent
-from src.rag.text_utils import parse_unit_score, token_overlap
+from src.rag.text_utils import clean_generated_answer, parse_unit_score, token_overlap
 from src.rag.verification import compute_verification_result
 from src.retrieval.retriever import RetrievedChunk
 
@@ -32,17 +32,29 @@ def _sample_chunk() -> RetrievedChunk:
     )
 
 
+def test_clean_generated_answer_strips_think_and_echo() -> None:
+    raw = (
+        "<think>I should follow the instructions</think>\n"
+        "You are answering questions about financial documents.\n"
+        "Final answer: 45.51\n"
+        "| prompt_chars=99"
+    )
+    assert clean_generated_answer(raw) == "45.51"
+
+
 def test_token_overlap_and_parse_score() -> None:
     assert token_overlap("interest expense 270.4", "Interest expense net 270.4 million") > 0.0
     assert parse_unit_score("0.85") == 0.85
     assert parse_unit_score("Support score: 0.72") == 0.72
+    assert parse_unit_score("Return only a number between 0 and 1.\n0.64") == 0.64
+    assert parse_unit_score("between 0 and 1") is None
 
 
 def test_multi_agent_prompts() -> None:
     chunk = _sample_chunk()
     draft = build_multi_agent_draft_prompt("What changed?", [chunk])
     verify = build_multi_agent_verification_prompt("What changed?", "0.93% increase", [chunk])
-    assert "Draft answer" in draft
+    assert "Final answer" in draft
     assert "Support score" in verify
     assert "270.4" in draft
 
@@ -59,6 +71,8 @@ def test_compute_verification_result_with_mock_backend() -> None:
     assert 0.0 <= result["verification_score"] <= 1.0
     assert result["status"] in {"VERIFIED", "WEAK_EVIDENCE"}
     assert result["llm_score"] == 0.85
+    assert result["rationale"]
+    assert result["rationale"].startswith(result["status"])
 
 
 def test_multi_agent_pipeline_with_mock_backend_and_fake_retrieve() -> None:

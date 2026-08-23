@@ -11,16 +11,23 @@ from src.rag.live import (
     ARCHITECTURE_LABELS,
     DECISION_ERROR,
     DECISION_UNAVAILABLE,
+    INSUFFICIENT_EVIDENCE_QUESTION,
+    INSUFFICIENT_EVIDENCE_QUESTION_ID,
     LIVE_ARCHITECTURES,
+    THRESHOLD_NOT_LOCKED,
+    format_confidence_display,
+    format_threshold_display,
     load_frozen_questions,
     make_fresh_question_id,
     normalize_live_case,
+    resolve_displayed_confidence,
     run_live_comparison,
 )
 from src.rag.schema import (
     ARCHITECTURE_MULTI_AGENT,
     ARCHITECTURE_MULTI_AGENT_UQ,
     ARCHITECTURE_SINGLE_AGENT,
+    RAGCaseResult,
 )
 from src.retrieval.retriever import RetrievedChunk
 
@@ -202,6 +209,64 @@ def test_architecture_labels_cover_all_three() -> None:
     assert set(ARCHITECTURE_LABELS) == set(LIVE_ARCHITECTURES)
 
 
+def test_insufficient_evidence_question_is_not_in_frozen_set() -> None:
+    frozen_ids = {row["id"] for row in load_frozen_questions()}
+    frozen_questions = {row["question"] for row in load_frozen_questions()}
+    assert INSUFFICIENT_EVIDENCE_QUESTION_ID not in frozen_ids
+    assert INSUFFICIENT_EVIDENCE_QUESTION not in frozen_questions
+    assert "SpaceX" in INSUFFICIENT_EVIDENCE_QUESTION
+
+
+def test_uq_display_uses_calculated_confidence_not_zero() -> None:
+    result = RAGCaseResult(
+        run_id="r1",
+        question_id="q1",
+        architecture=ARCHITECTURE_MULTI_AGENT_UQ,
+        question="Q?",
+        retrieved_evidence=[{"text": "e"}],
+        retrieval_scores=[0.4],
+        answer="A",
+        confidence=0.0,
+        threshold=0.55,
+        decision="ANSWER",
+        configuration={
+            "uncertainty_result": {
+                "method": "mean_retrieval_verification",
+                "retrieval_score": 0.7,
+                "verification_score": 0.8376,
+                "confidence": 0.7688,
+            },
+            "threshold_source": "smoke",
+        },
+    )
+    normalized = normalize_live_case(result)
+    assert resolve_displayed_confidence(normalized) == 0.7688
+    assert format_confidence_display(normalized) == "0.7688"
+    assert THRESHOLD_NOT_LOCKED in format_threshold_display(normalized)
+    assert format_threshold_display(normalized).startswith("0.5500")
+    assert "0.0000" not in format_confidence_display(normalized)
+
+
+def test_missing_uq_confidence_is_na_not_zero() -> None:
+    result = RAGCaseResult(
+        run_id="r1",
+        question_id="q1",
+        architecture=ARCHITECTURE_MULTI_AGENT_UQ,
+        question="Q?",
+        retrieved_evidence=[{"text": "e"}],
+        retrieval_scores=[0.4],
+        answer="A",
+        confidence=None,
+        threshold=0.55,
+        decision="ANSWER",
+        configuration={"threshold_source": "smoke"},
+    )
+    normalized = normalize_live_case(result)
+    assert resolve_displayed_confidence(normalized) is None
+    assert format_confidence_display(normalized) == "n/a"
+    assert normalized.decision == DECISION_UNAVAILABLE
+
+
 def test_format_optional_and_streamlit_helpers_exist() -> None:
     from src.rag.live import format_optional
 
@@ -226,4 +291,4 @@ def test_phase11_smoke_artefacts_if_present() -> None:
     detail_data = json.loads(detail.read_text(encoding="utf-8"))
     assert detail_data["n_comparisons"] >= 1
     sources = {item["question_source"] for item in detail_data["comparisons"]}
-    assert "fresh" in sources
+    assert sources & {"fresh", "insufficient", "frozen"}

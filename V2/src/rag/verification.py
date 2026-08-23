@@ -6,7 +6,7 @@ from typing import Any
 
 from src.models.types import LLMBackend
 from src.rag.prompts import build_multi_agent_verification_prompt, format_evidence
-from src.rag.text_utils import average, parse_unit_score, token_overlap
+from src.rag.text_utils import average, build_verification_rationale, parse_unit_score, token_overlap
 from src.retrieval.retriever import RetrievedChunk
 
 
@@ -46,10 +46,18 @@ def compute_verification_result(
         verification_score = lexical_score
 
     status = "VERIFIED" if verification_score >= verification_threshold else "WEAK_EVIDENCE"
+    rationale = build_verification_rationale(
+        status=status,
+        verification_score=verification_score,
+        lexical_score=lexical_score,
+        llm_score=llm_score,
+        verification_threshold=verification_threshold,
+    )
     return {
         "verification_score": verification_score,
         "lexical_score": lexical_score,
         "llm_score": llm_score,
         "verification_threshold": verification_threshold,
         "status": status,
+        "rationale": rationale,
     }
