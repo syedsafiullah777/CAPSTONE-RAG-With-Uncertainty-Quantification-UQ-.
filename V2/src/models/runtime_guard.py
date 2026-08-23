@@ -16,10 +16,20 @@ class LiveRuntimeError(RuntimeError):
     """Raised when the live demo is not on Colab CUDA + llama_cpp."""
 
 
+def is_colab_runtime() -> bool:
+    """True only on a Linux Colab VM (`/content`), never on the Mac."""
+    return Path("/content").exists() and platform.system() == "Linux"
+
+
 def mock_forbidden() -> bool:
     return os.environ.get("V2_FORBID_MOCK", "").strip() == "1" or (
         os.environ.get("V2_LIVE_BACKEND", "").strip().lower() == "llama_cpp"
     )
+
+
+def live_demo_locked() -> bool:
+    """Colab live demo: force llama_cpp. Also locked when the env vars are set."""
+    return mock_forbidden() or is_colab_runtime()
 
 
 def assert_not_mock_backend(backend_name: str | None) -> None:

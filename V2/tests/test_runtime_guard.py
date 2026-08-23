@@ -9,7 +9,14 @@ import pytest
 from src.models.factory import create_backend
 from src.models.llama_cpp_backend import LlamaCppBackend
 from src.models.mock_backend import MockBackend
-from src.models.runtime_guard import LiveRuntimeError, assert_not_mock_backend, mock_forbidden, verify_live_llama_cpp_runtime
+from src.models.runtime_guard import (
+    LiveRuntimeError,
+    assert_not_mock_backend,
+    is_colab_runtime,
+    live_demo_locked,
+    mock_forbidden,
+    verify_live_llama_cpp_runtime,
+)
 from src.rag.live import run_live_comparison
 
 
@@ -42,6 +49,21 @@ def test_factory_still_allows_mock_without_guard(monkeypatch: pytest.MonkeyPatch
     monkeypatch.delenv("V2_LIVE_BACKEND", raising=False)
     backend = create_backend({"backend": "mock"})
     assert isinstance(backend, MockBackend)
+
+
+def test_colab_helpers_false_on_macos(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("V2_FORBID_MOCK", raising=False)
+    monkeypatch.delenv("V2_LIVE_BACKEND", raising=False)
+    if platform.system() == "Darwin":
+        assert is_colab_runtime() is False
+        assert live_demo_locked() is False
+
+
+def test_factory_forces_llama_cpp_over_ollama_when_forbidden(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("V2_FORBID_MOCK", "1")
+    backend = create_backend({"backend": "ollama_dev"})
+    assert isinstance(backend, LlamaCppBackend)
+    assert backend.name == "llama_cpp"
 
 
 def test_verify_live_runtime_rejects_macos() -> None:

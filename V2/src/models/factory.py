@@ -32,6 +32,8 @@ def create_backend(model_cfg: dict[str, Any] | None = None) -> LLMBackend:
         return MockBackend()
 
     if backend in {"ollama", "ollama_dev"}:
+        if mock_forbidden():
+            raise LiveRuntimeError("Local Ollama is forbidden for the Colab live demo. Use llama_cpp.")
         return OllamaBackend(model=str(cfg.get("ollama_model") or "qwen3:8b"))
 
     if backend in {"llama_cpp", "llamacpp", "gguf", "colab"}:

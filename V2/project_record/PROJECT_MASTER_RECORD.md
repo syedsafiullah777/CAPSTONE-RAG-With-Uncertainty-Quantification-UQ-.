@@ -71,7 +71,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 10 git commit (Colab) | `2f3882e` | `phase10_runtime_fingerprint.json` |
 | Phase 10 artefacts | `phase10_runtime_fingerprint.json`, `phase10_smoke_test.json`, `phase10_multi_agent_uq_smoke.json` | local copy verified |
 | Phase 11 live artefact | `app/streamlit_app.py` via `run_live_comparison()` | local smoke PASS |
-| Colab Phase 11 live | **FAIL** observed as Mac `mock` / `mps_capable_host` / ProxyError 403; T4 `llama_cpp` re-run **NEEDS VERIFICATION** | user report + `notebooks/colab_phase11_live.ipynb` |
+| Colab Phase 11 live | **FAIL** (latest): Mac Streamlit `llama_cpp` + `mps_capable_host` + `gpu=null` + `127.0.0.1:8501`; T4 re-run **NEEDS VERIFICATION** | user report + `notebooks/colab_phase11_live.ipynb` |
 | Phase 11 artefacts | `phase11_runtime_fingerprint.json`, `phase11_smoke_test.json`, `phase11_live_smoke.json` | local copy verified |
 
 ### Architectures
@@ -85,7 +85,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **71 passed** (Phases 1–11 + storage/backup + index preflight + live failure display + runtime guard)
+- Result: **73 passed** (Phases 1–11 + storage/backup + index preflight + live failure display + runtime guard)
 
 ### Storage / backup (project infrastructure)
 
@@ -127,6 +127,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 19. **Phase 11 Streamlit live artefact (2026-08-23):** One app runs the three completed pipelines independently on a fresh question or a frozen test case. Shared Phase 6 KB + one backend instance; not a benchmark lookup. Local smoke (mock + real retrieval) **PASS**; run_id `phase11_20260823T222633Z_90aab3d6`; Streamlit HTTP 200. Original plan item “result schema + logging” was already delivered in Phases 8–10 via `RAGCaseResult`.
 20. **Phase 11 live failure display (2026-08-23):** Live artefact must not show ANSWER when retrieval or generation fails (empty evidence, empty generation, or exception such as ProxyError 403). Live layer sets ERROR/UNAVAILABLE, shows the actual error, clears fabricated answers and confidence. Mock remains UI/testing only. Phase 8–10 architecture modules unchanged.
 21. **Phase 11 Colab live-demo connection (2026-08-24):** The reported live demo (`backend=mock`, `device=mps_capable_host`, `ProxyError: 403 Forbidden`) was the local Mac Streamlit process, not Colab T4/`llama_cpp`. The live-demo notebook now verifies CUDA/T4, GGUF, and a non-empty Chroma index, starts Streamlit **inside Colab** with `V2_LIVE_BACKEND=llama_cpp` + `V2_FORBID_MOCK=1`, and refuses Darwin/mock fallback. A Colab T4 URL + fresh-question smoke result is still **NEEDS VERIFICATION**.
+22. **Phase 11 Colab live-demo launch (2026-08-24):** A later UI still showed `backend=llama_cpp` with `device=mps_capable_host`, `gpu=null`, ~0.01s latency, and `127.0.0.1:8501`. That is Mac Streamlit with `llama_cpp` selected, not Colab. Launch now uses Colab `proxyPort` + iframe (no cloudflared). Streamlit refuses `llama_cpp` on Darwin. Section 5 runs frozen `finqa_test_1000` on the Colab GPU. Colab T4 result still **NEEDS VERIFICATION**.
 
 ---
 
@@ -660,6 +661,47 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Google Drive: **NEEDS VERIFICATION** — no new Colab `phase11_*.json` from a T4 live demo
   - Local: verified — guard, notebook, tests, evidence, master record updated 2026-08-24
   - GitHub: connection-fix files **uncommitted** at the time of this record; Colab clone will not see the fix until they are pushed to `cursor/empty-v2-workspace`
+
+---
+
+## Phase 11 — Colab live-demo launch (proxy URL)
+
+- **Date:** 2026-08-24
+- **Objective:** Start Streamlit inside the Colab T4 runtime and expose it with Colab's built-in port proxy so the browser cannot land on the Mac `127.0.0.1:8501` process.
+- **Why the phase was required:** After the first connection fix, the UI still showed `backend=llama_cpp`, `device=mps_capable_host`, `gpu=null`, ~0.01s latency, and `127.0.0.1:8501`. That is local Streamlit with `llama_cpp` selected, not Colab CUDA.
+- **Work completed:**
+  - Notebook section 5 runs frozen `finqa_test_1000` through all three architectures on Colab GPU and writes `phase11_colab_live_demo.json`
+  - Notebook section 8 starts `app/streamlit_app.py` on the Colab VM with CORS/XSRF disabled for the Colab proxy
+  - Tunnel: `google.colab.kernel.proxyPort(8501)` + `serve_kernel_port_as_iframe` (no cloudflared)
+  - Streamlit refuses `llama_cpp` on Darwin; Colab runtime always locks `llama_cpp` (no mock/Ollama)
+  - Selecting `mps_capable_host` results after a run stops the page
+- **Technical decisions:**
+  - Simplest Colab-native proxy; do not add extra tunnel binaries
+  - Do not change RAG architectures; do not start the benchmark; do not modify V1 or frozen 140/40
+- **Files created/modified:**
+  - `V2/notebooks/colab_phase11_live.ipynb`
+  - `V2/app/streamlit_app.py`
+  - `V2/src/models/runtime_guard.py`
+  - `V2/src/models/factory.py`
+  - `V2/tests/test_runtime_guard.py`
+  - `V2/project_record/evidence/phase11_validation.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+- **Tests/validation:**
+  - Full suite **73 passed**
+  - Known-good FinQA question `finqa_test_1000` on Colab T4 — **NEEDS VERIFICATION** (cannot be executed from this Mac)
+  - Observed user UI — **FAIL** (Mac `127.0.0.1:8501`)
+- **Actual outcome:** Launch path no longer prints a Mac localhost URL as the demo link. No Colab T4 PASS is claimed. `finqa_test_1000` was not run on T4 from this environment.
+- **Problems encountered:** User opened Streamlit's local bind address on the Mac; cloudflared was easy to skip in favour of `127.0.0.1:8501`.
+- **Problems resolved:** Colab `proxyPort` + iframe; Darwin `llama_cpp` refused in the app.
+- **Remaining issues:** Push this fix, re-run the notebook on Colab GPU, save `phase11_colab_live_demo.json` with actual CUDA/GPU fields.
+- **Dissertation relevance:** Live demo must display the real Colab GPU, not `mps_capable_host`.
+- **Evidence/source file paths:** `V2/notebooks/colab_phase11_live.ipynb`, `V2/app/streamlit_app.py`
+- **Validation evidence:** `V2/project_record/evidence/phase11_validation.md`
+- **Backup status (Phase 11 launch fix):**
+  - Colab: **not re-run** after this launch fix
+  - Google Drive: **NEEDS VERIFICATION** — no T4 `phase11_colab_live_demo.json`
+  - Local: verified — notebook, Streamlit lock, tests, evidence, master record updated 2026-08-24
+  - GitHub: launch-fix files **uncommitted**; Colab clone will not see them until push to `cursor/empty-v2-workspace`
 
 ---
 
