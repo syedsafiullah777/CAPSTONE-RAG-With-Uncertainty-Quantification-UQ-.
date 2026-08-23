@@ -1,6 +1,26 @@
-# Colab Phase 7 smoke — instructions
+# Colab GPU notebooks — instructions
+
+## Phase 7 — model smoke only
 
 Notebook: `notebooks/colab_phase7_smoke.ipynb`
+
+Verifies Qwen3-8B `llama_cpp` generation on Colab GPU. Does **not** build the knowledge base.
+
+## Phase 8 — Single-Agent RAG smoke (recommended)
+
+Notebook: `notebooks/colab_phase8_smoke.ipynb`
+
+Includes **Option B** retrieval fix:
+
+1. Clone V2 from GitHub
+2. Install dependencies
+3. Run `scripts/build_index.py --distractors 50` — downloads FinQA source PDFs from Hugging Face and rebuilds Chroma on Colab (does **not** copy the Mac database)
+4. Run `scripts/validate_kb_index.py` — preflight: manifest chunk count vs `collection.count()`
+5. Run `scripts/smoke_single_agent.py --backend llama_cpp --limit 3`
+
+Success: `results/config/phase8_smoke_test.json` → `"status": "PASS"` and each case has `n_evidence=4`.
+
+---
 
 ## Workflow: GitHub → Colab (no Drive upload for code)
 
@@ -58,7 +78,10 @@ Update `project_record/evidence/phase7_validation.md` with the Colab result.
 
 ## Optional: save results to Drive
 
-Run **section 5** in the notebook to copy JSON outputs to `My Drive/MSc-RAG/configs/phase7/` (Drive is for **results backup**, not for syncing source code).
+- Phase 7: section 5 in `colab_phase7_smoke.ipynb` → `My Drive/MSc-RAG/configs/phase7/`
+- Phase 8: section 7 in `colab_phase8_smoke.ipynb` → `My Drive/MSc-RAG/configs/phase8/`
+
+Drive is for **results backup**, not for syncing source code or the Chroma index.
 
 ## Before git commit
 

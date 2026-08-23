@@ -87,10 +87,11 @@ model:
 remote_execution:
   strategy: "google_colab_gpu_notebook"
   primary_entrypoint: "notebooks/colab_phase7_smoke.ipynb"
+  phase8_entrypoint: "notebooks/colab_phase8_smoke.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
-  # Next validation step:
-  colab_gpu_verification: "PASS"  # verified 2026-08-22 Tesla T4 llama_cpp; see results/config/phase7_smoke_test.json
+  colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
+  phase8_colab_retrieval_fix: "rebuild_index_on_colab"  # Option B — build_index.py before smoke
   preserves:
     - "Qwen3-8B"
     - "src/models backend abstraction"

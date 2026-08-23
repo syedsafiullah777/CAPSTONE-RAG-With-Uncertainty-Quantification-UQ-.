@@ -5,7 +5,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-22 |
+| Last updated | 2026-08-23 |
 | Current completed phase | **Phase 8** |
 | Next phase (not started) | Phase 9 — Multi-Agent RAG |
 | V1 status | Reference-only (never modified by V2 work) |
@@ -55,7 +55,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Colab smoke status | **PASS** (2026-08-22T16:23:06Z) | `phase7_smoke_test.json` |
 | Generation | Non-empty; starts with `4`; latency ~15.37s; finish_reason `length` | smoke JSON |
 | Primary compute | Standard Google Colab GPU notebooks | notebook entrypoint |
-| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` | — |
+| Colab entrypoint | `notebooks/colab_phase7_smoke.ipynb` (model); `notebooks/colab_phase8_smoke.ipynb` (RAG) | — |
 | Local Mac | Dev/control; optional `ollama_dev` smoke | earlier local PASS |
 | Paid LLM API | Not used / not required | — |
 | Fingerprint artefact | `results/config/phase7_runtime_fingerprint.json` | — |
@@ -63,7 +63,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Architectures
 
-1. **Single-Agent RAG** — implemented (Phase 8); smoke **PASS** (n=3)
+1. **Single-Agent RAG** — implemented (Phase 8); local smoke **PASS** (n=3); Colab smoke **NEEDS VERIFICATION**
 2. Multi-Agent RAG — not started (Phase 9)
 3. Multi-Agent + UQ / abstention — not started (Phase 10)
 
@@ -72,7 +72,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **40 passed** (Phases 1–8 + storage/backup tests)
+- Result: **43 passed** (Phases 1–8 + storage/backup + index preflight)
 
 ### Storage / backup (project infrastructure)
 
@@ -105,7 +105,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 11. **Validation evidence (2026-08-22):** `project_record/evidence/phaseN_validation.md` after every major phase; actual PASS/FAIL/NEEDS VERIFICATION only; `phase7_smoke_test.json` for machine-readable smoke evidence.
 12. **Phase 7 GGUF filename correction (2026-08-22):** `gguf_filename` must be `Qwen_Qwen3-8B-Q4_K_M.gguf` on `bartowski/Qwen_Qwen3-8B-GGUF` (was incorrectly `Qwen3-8B-Q4_K_M.gguf`). Verified on HF Hub API.
 13. **Phase 7 Colab GPU smoke verified (2026-08-22):** Tesla T4 + `llama_cpp` + Q4_K_M GGUF → **PASS**. Evidence: `results/config/phase7_smoke_test.json`, `phase7_runtime_fingerprint.json`.
-14. **Phase 8 Single-Agent RAG (2026-08-22):** Retrieve from Phase 6 KB + generate via Qwen3-8B backend; common `RAGCaseResult` schema; no multi-agent/UQ. Smoke n=3 **PASS** (`ollama_dev` local generation + real retrieval).
+14. **Phase 8 Single-Agent RAG (2026-08-22):** Retrieve from Phase 6 KB + generate via Qwen3-8B backend; common `RAGCaseResult` schema; no multi-agent/UQ. Local smoke n=3 **PASS** (`ollama_dev` + real retrieval).
+15. **Phase 8 Colab retrieval fix (2026-08-23):** Option B — rebuild Chroma on Colab via `build_index.py` (HF PDF download); index preflight (`validate_index_preflight`); `notebooks/colab_phase8_smoke.ipynb`. Mac Chroma DB not copied. Colab T4 `llama_cpp` smoke **NEEDS VERIFICATION** (run notebook after push).
 
 ---
 
@@ -407,6 +408,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Baseline always `decision=ANSWER`; `confidence`/`verification_result`/`threshold` left null
   - Reuse Phase 6 index (`finqa_source_pdfs`, top_k=4) and Phase 7 backend factory
   - Empty-generation one-shot retry in `run_single_agent`
+  - **Colab retrieval fix (2026-08-23):** `src/retrieval/preflight.py`, `scripts/validate_kb_index.py`, `notebooks/colab_phase8_smoke.ipynb`; preflight in `smoke_single_agent.py` and `build_index.py`
 - **Files created/modified:**
   - `V2/src/rag/schema.py`, `prompts.py`, `single_agent.py`, `__init__.py`
   - `V2/scripts/smoke_single_agent.py`, `V2/tests/test_phase8_single_agent.py`
@@ -420,15 +422,22 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Actual outcome:** Single-Agent RAG works end-to-end on the shared KB. Example: `finqa_test_1000` top hit `pdf/SNA/2013/page_34.pdf` (score ~0.87). Frozen sets unchanged. No multi-agent/UQ.
 - **Problems encountered:** Local Ollama Qwen3 sometimes returned empty `content` when thinking mode was enabled.
 - **Problems resolved:** Pass `think=False` to Ollama chat; empty-answer retry in pipeline.
-- **Remaining issues:** Colab `llama_cpp` single-agent smoke not re-run in this session (**optional NEEDS VERIFICATION** for GPU parity); Multi-Agent / UQ not started; full 420-case runner not started.
-- **Dissertation relevance:** Controlled baseline for RQ1; provenance-bearing retrieval + logged generation.
-- **Evidence:** `V2/results/config/phase8_single_agent_smoke.json`, `phase8_smoke_test.json`, `docs/phase8_single_agent.md`
+- **Remaining issues:** Colab Phase 8 `llama_cpp` smoke **NEEDS VERIFICATION** — run `notebooks/colab_phase8_smoke.ipynb` on T4 after pushing this fix; Multi-Agent / UQ not started; full 420-case runner not started.
+- **Colab retrieval fix (2026-08-23):**
+  - Root cause: Chroma index gitignored; GitHub clone had empty collection (see `phase8_colab_retrieval_diagnosis.md`)
+  - Fix: Option B — `build_index.py` on Colab downloads FinQA PDFs from HF and rebuilds index
+  - Preflight: `src/retrieval/preflight.py`, `scripts/validate_kb_index.py`; integrated into `build_index.py` and `smoke_single_agent.py`
+  - Notebook: `notebooks/colab_phase8_smoke.ipynb` (clone → install → build → preflight → smoke n=3)
+  - Local validation: preflight **PASS** (1239/1239 chunks); pytest **43 passed**
+  - Colab remote smoke: **NEEDS VERIFICATION**
+- **Dissertation relevance:** Controlled baseline for RQ1; provenance-bearing retrieval + logged generation; Colab-reproducible KB rebuild path.
+- **Evidence:** `V2/results/config/phase8_single_agent_smoke.json`, `phase8_smoke_test.json`, `docs/phase8_single_agent.md`, `project_record/evidence/phase8_colab_retrieval_diagnosis.md`
 - **Validation evidence:** `V2/project_record/evidence/phase8_validation.md`
 - **Backup status:**
-  - Colab: N/A for this smoke (local ollama_dev + real KB)
+  - Colab: **NEEDS VERIFICATION** — run `colab_phase8_smoke.ipynb`; optional Drive copy to `MSc-RAG/configs/phase8/`
   - Google Drive: **NEEDS VERIFICATION**
-  - Local: verified — Phase 8 smoke artefacts under `V2/results/config/`
-  - GitHub: recommended commit `Phase 8: implement single-agent RAG baseline`
+  - Local: verified — preflight + pytest; prior local ollama smoke artefacts under `V2/results/config/`
+  - GitHub: recommended commit `Phase 8: Colab KB rebuild + preflight + phase8 notebook`
 
 ---
 

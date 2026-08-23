@@ -13,8 +13,9 @@ if str(V2_ROOT) not in sys.path:
     sys.path.insert(0, str(V2_ROOT))
 
 from src.config import get_path, load_experiment_config
-from src.retrieval.index import build_knowledge_base
+from src.retrieval.index import COLLECTION_NAME, build_knowledge_base
 from src.retrieval.pdf_fetch import collect_corpus_targets, download_pdfs
+from src.retrieval.preflight import IndexPreflightError, validate_index_preflight
 from src.retrieval.retriever import retrieve
 from src.utils import create_run_id, get_logger, setup_logging
 
@@ -137,6 +138,22 @@ def main() -> int:
     demo_path.write_text(json.dumps(demo, indent=2) + "\n", encoding="utf-8")
     log.info("Retrieval demo saved %s hits=%s", demo_path, len(hits))
 
+    collection_name = str(config.get("retrieval", "collection_name", default=COLLECTION_NAME))
+    try:
+        preflight = validate_index_preflight(
+            index_dir,
+            manifest_path=index_dir / "index_manifest.json",
+            collection_name=collection_name,
+        )
+    except IndexPreflightError as exc:
+        log.error("Post-build preflight failed: %s", exc)
+        raise SystemExit(str(exc)) from exc
+    log.info(
+        "Index preflight PASS expected=%s actual=%s",
+        preflight["expected_chunks"],
+        preflight["actual_count"],
+    )
+
     print(
         json.dumps(
             {
@@ -146,6 +163,7 @@ def main() -> int:
                 "download_failed": manifest["download"]["failed_count"],
                 "index_manifest": str(index_dir / "index_manifest.json"),
                 "retrieval_demo": str(demo_path),
+                "preflight": preflight,
             },
             indent=2,
         )

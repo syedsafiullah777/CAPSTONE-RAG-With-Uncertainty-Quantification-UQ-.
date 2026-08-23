@@ -17,6 +17,8 @@ if str(V2_ROOT) not in sys.path:
 from src.config import get_path, load_experiment_config, project_root
 from src.models.fingerprint import collect_fingerprint
 from src.rag.single_agent import run_single_agent
+from src.retrieval.index import COLLECTION_NAME
+from src.retrieval.preflight import IndexPreflightError, validate_index_preflight
 from src.utils import create_run_id, get_logger, setup_logging
 from src.utils.evidence import ValidationRecord, summarize_environment
 
@@ -48,6 +50,11 @@ def main() -> int:
         help="CSV of questions (default: frozen 140; only first --limit used)",
     )
     parser.add_argument("--out-dir", default=None, help="Output directory under results/")
+    parser.add_argument(
+        "--skip-preflight",
+        action="store_true",
+        help="Skip Chroma index preflight (not recommended for Colab smoke)",
+    )
     args = parser.parse_args()
 
     config = load_experiment_config()
@@ -60,6 +67,28 @@ def main() -> int:
         file=True,
     )
     log = get_logger(run_id=run_id, phase="phase8", architecture="single_agent")
+
+    retrieval_cfg = config.section("retrieval")
+    index_dir = get_path(config, "kb_index")
+    manifest_rel = str(retrieval_cfg.get("index_manifest") or "knowledge_base/index/index_manifest.json")
+    manifest_file = (project_root() / manifest_rel).resolve()
+    collection_name = str(retrieval_cfg.get("collection_name") or COLLECTION_NAME)
+
+    if not args.skip_preflight:
+        try:
+            preflight = validate_index_preflight(
+                index_dir,
+                manifest_path=manifest_file,
+                collection_name=collection_name,
+            )
+            log.info(
+                "Index preflight PASS expected=%s actual=%s",
+                preflight["expected_chunks"],
+                preflight["actual_count"],
+            )
+        except IndexPreflightError as exc:
+            log.error("Index preflight FAIL: %s", exc)
+            raise SystemExit(str(exc)) from exc
 
     model_cfg = dict(config.section("model"))
     if args.backend:
