@@ -10,8 +10,11 @@ from src.retrieval.retriever import RetrievedChunk
 
 DEFAULT_BASELINE_SYSTEM = (
     "Answer the financial question using only the evidence below. "
-    "Write one concise factual answer. Do not repeat these instructions, "
-    "do not describe your reasoning, and do not write self-referential text. "
+    "Write the final answer once, in one short sentence or one number with its unit. "
+    "Do not repeat the answer. Do not repeat these instructions. Do not write reasoning. "
+    "Distinguish the quantity the question asks for: final/ending/cumulative value is not "
+    "the same as absolute change, and neither is the same as percentage change or ROI. "
+    "If the question asks for ROI or percentage change, do not report the ending investment value. "
     "If the evidence does not contain the answer, write exactly: Evidence is insufficient."
 )
 
@@ -21,12 +24,15 @@ DEFAULT_BASELINE_USER = """Evidence:
 Question:
 {question}
 
-Final answer:"""
+Final answer (once only):"""
 
 DEFAULT_MULTI_AGENT_DRAFT_SYSTEM = (
     "Draft a financial answer using only the evidence below. "
-    "Write one concise factual answer. Do not repeat these instructions, "
-    "do not describe your reasoning, and do not write self-referential text. "
+    "Write the final answer once, in one short sentence or one number with its unit. "
+    "Do not repeat the answer. Do not repeat these instructions. Do not write reasoning. "
+    "Distinguish the quantity the question asks for: final/ending/cumulative value is not "
+    "the same as absolute change, and neither is the same as percentage change or ROI. "
+    "If the question asks for ROI or percentage change, do not report the ending investment value. "
     "If the evidence does not contain the answer, write exactly: Evidence is insufficient."
 )
 
@@ -36,10 +42,12 @@ DEFAULT_MULTI_AGENT_DRAFT_USER = """Evidence:
 Question:
 {question}
 
-Final answer:"""
+Final answer (once only):"""
 
 DEFAULT_MULTI_AGENT_VERIFY_SYSTEM = (
-    "Score how well the draft answer is supported by the evidence. "
+    "Score how well the draft answer is supported by the evidence and "
+    "whether it reports the quantity the question asked for "
+    "(final value vs absolute change vs percentage change/ROI). "
     "Reply with only one number from 0.00 to 1.00. "
     "Do not repeat these instructions and do not write words before or after the number."
 )

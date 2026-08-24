@@ -18,6 +18,7 @@ from src.config import get_path, load_experiment_config, project_root
 from src.models.fingerprint import collect_fingerprint
 from src.models.runtime_guard import mock_forbidden, verify_live_llama_cpp_runtime
 from src.rag.live import (
+    ADDITIONAL_NUMERICAL_QUESTION_ID,
     INSUFFICIENT_EVIDENCE_QUESTION,
     INSUFFICIENT_EVIDENCE_QUESTION_ID,
     KNOWN_GOOD_QUESTION_ID,
@@ -110,6 +111,7 @@ def main() -> int:
     if not frozen_rows:
         raise SystemExit("Frozen 140 CSV produced no questions")
     known_good = next((row for row in frozen_rows if row["id"] == KNOWN_GOOD_QUESTION_ID), frozen_rows[0])
+    extra_numerical = next((row for row in frozen_rows if row["id"] == ADDITIONAL_NUMERICAL_QUESTION_ID), None)
 
     model_cfg = dict(config.section("model"))
     model_cfg["backend"] = args.backend
@@ -134,6 +136,15 @@ def main() -> int:
                 "reference_answer": known_good.get("program_answer"),
             }
         )
+        if extra_numerical:
+            jobs.append(
+                {
+                    "question": extra_numerical["question"],
+                    "question_id": extra_numerical["id"],
+                    "question_source": "frozen",
+                    "reference_answer": extra_numerical.get("program_answer"),
+                }
+            )
         jobs.append(
             {
                 "question": INSUFFICIENT_EVIDENCE_QUESTION,
@@ -199,7 +210,7 @@ def main() -> int:
         expected=(
             "1 fresh question through 3 independent architectures with evidence and answers"
             if args.fresh_only
-            else "known-good FinQA + insufficient-evidence live question; 3 independent architectures each"
+            else "finqa_test_1000 + finqa_test_1012 + insufficient-evidence; 3 independent architectures each"
         ),
         actual=f"n={len(comparisons)} failures={failures} status={smoke_payload['status']}",
         status="PASS" if failures == 0 else "FAIL",  # type: ignore[arg-type]

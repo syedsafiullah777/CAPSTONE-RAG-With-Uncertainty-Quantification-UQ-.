@@ -129,6 +129,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 21. **Phase 11 Colab live-demo connection (2026-08-24):** The reported live demo (`backend=mock`, `device=mps_capable_host`, `ProxyError: 403 Forbidden`) was the local Mac Streamlit process, not Colab T4/`llama_cpp`. The live-demo notebook now verifies CUDA/T4, GGUF, and a non-empty Chroma index, starts Streamlit **inside Colab** with `V2_LIVE_BACKEND=llama_cpp` + `V2_FORBID_MOCK=1`, and refuses Darwin/mock fallback. A Colab T4 URL + fresh-question smoke result is still **NEEDS VERIFICATION**.
 22. **Phase 11 Colab live-demo launch (2026-08-24):** A later UI still showed `backend=llama_cpp` with `device=mps_capable_host`, `gpu=null`, ~0.01s latency, and `127.0.0.1:8501`. That is Mac Streamlit with `llama_cpp` selected, not Colab. Launch now uses Colab `proxyPort` + iframe (no cloudflared). Streamlit refuses `llama_cpp` on Darwin. Section 5 runs frozen `finqa_test_1000` on the Colab GPU. Subsequent Colab T4 live execution was **user-reported PASS**.
 23. **Phase 11 prompt / verification / UQ display (2026-08-24):** Generation prompts tightened (concise final answer, no instruction echo). Verification status + rationale are derived from the same scores. UQ zeros in Streamlit were a display/mapping issue (`st.metric` + schema not reading `uncertainty_result`); calculated values were 0.7688 / 0.55 / ANSWER. Display now shows the calculated confidence and `0.55 (smoke/demo — NOT LOCKED)`. Insufficient-evidence live question (SpaceX FY2025) identified; local mock smoke produced genuine UQ **ABSTAIN** at confidence 0.5351 < 0.55. Methodology unchanged. Threshold lock / 420-case benchmark not started.
+24. **Phase 11 output-quality (2026-08-24):** Prompts now distinguish final/ending value vs absolute change vs ROI/percentage change, and require the answer once. `clean_generated_answer` collapses repeated sentences. Retrieval, UQ method, and smoke threshold 0.55 NOT LOCKED unchanged. Additional numerical live case: frozen `finqa_test_1012`. Local mock smoke 3/3 **PASS**; Colab T4/Qwen3 re-run **NEEDS VERIFICATION**. Phase 12 not started.
 
 ---
 
@@ -745,6 +746,42 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Google Drive: **NEEDS VERIFICATION**
   - Local: verified — smoke JSON, tests, evidence, master record updated 2026-08-24
   - GitHub: these refinement files **uncommitted**
+
+---
+
+## Phase 11 — Output-quality (no-repeat, ROI vs value)
+
+- **Date:** 2026-08-24
+- **Objective:** Stop Multi-Agent/UQ answer repetition and incorrect final-value vs ROI answers without changing retrieval or UQ.
+- **Why required:** Colab T4/Qwen3-8B live was working, but answers could repeat and a numerical question could report ending investment value instead of ROI.
+- **Work completed:**
+  - Prompts require one answer and distinguish final value / absolute change / ROI or percentage change
+  - `collapse_repeated_answers()` keeps one copy of a repeated sentence
+  - Verification still scores support, now including whether the asked quantity type is reported (same score formula)
+  - Notebook/smoke now include `finqa_test_1000`, `finqa_test_1012`, and the insufficient-evidence question
+- **Technical decisions:** Retrieval, model, architectures, UQ method, and smoke threshold 0.55 NOT LOCKED unchanged. Frozen 140/40 and V1 unchanged.
+- **Files created/modified:**
+  - `V2/config/prompts.yaml`, `V2/src/rag/prompts.py`, `V2/src/rag/text_utils.py`
+  - `V2/src/rag/live.py`, `V2/scripts/smoke_live_artefact.py`, `V2/notebooks/colab_phase11_live.ipynb`
+  - `V2/tests/test_phase9_multi_agent.py`, `V2/tests/test_phase11_live_artefact.py`
+  - `V2/project_record/evidence/phase11_validation.md`, `V2/project_record/PROJECT_MASTER_RECORD.md`
+- **Tests/validation:**
+  - Full suite **77 passed**
+  - Mock smoke **PASS** — run_id `phase11_20260824T003215Z_9a838089`
+  - UQ: 1000 ANSWER 0.6185; 1012 ANSWER 0.5886; insufficient ABSTAIN 0.5351
+  - Colab T4/Qwen3-8B after this fix — **NEEDS VERIFICATION**
+- **Actual outcome:** Output handling is stricter. Mock answers cannot prove Qwen3 numerical correctness. Phase 12 not started.
+- **Problems encountered:** Qwen3 can tile the same answer; ROI vs cumulative value confusion on Snap-on S&P graph questions.
+- **Problems resolved:** Prompt quantity rules + repeat collapse. UQ behaviour left as-is.
+- **Remaining issues:** Re-run `notebooks/colab_phase11_live.ipynb` on Colab T4 to confirm Qwen3 answers are concise and use ROI/percentage where asked.
+- **Dissertation relevance:** Live answers must be examiner-readable and numerically well-specified.
+- **Evidence/source file paths:** `V2/results/config/phase11_live_smoke.json`
+- **Validation evidence:** `V2/project_record/evidence/phase11_validation.md`
+- **Backup status:**
+  - Colab: output-quality T4 re-run **NEEDS VERIFICATION**
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — tests, mock smoke, notebook, evidence updated 2026-08-24
+  - GitHub: output-quality files **uncommitted**
 
 ---
 

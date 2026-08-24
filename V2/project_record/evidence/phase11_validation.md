@@ -5,7 +5,7 @@
 | Phase | 11 — Streamlit live artefact |
 | Evidence file | `project_record/evidence/phase11_validation.md` |
 | Last updated | 2026-08-24 |
-| Phase 11 status | Colab T4 live execution **user-reported PASS** (Qwen3-8B, all three architectures). Prompt / verification / UQ-display refinements locally validated (mock). |
+| Phase 11 status | Colab T4 live **user-reported working**. Output-quality prompt/cleanup fix locally validated (mock). T4 re-run after this fix **NEEDS VERIFICATION**. |
 
 ## Summary
 
@@ -23,6 +23,7 @@
 | 10 | UQ confidence/threshold display diagnosis + fix | **PASS** (local tests) | `tests/test_phase11_live_artefact.py` |
 | 11 | Known-good + insufficient-evidence live smoke (mock, real KB) | **PASS** | `results/config/phase11_live_smoke.json` |
 | 12 | Colab T4 re-run after prompt/display refinements | **NEEDS VERIFICATION** | `notebooks/colab_phase11_live.ipynb` |
+| 13 | Output-quality: no-repeat + ROI vs value prompts; 3-question mock smoke | **PASS** (local mock) | `results/config/phase11_live_smoke.json` |
 
 ---
 
@@ -214,6 +215,21 @@
 | insufficient SpaceX/2025 | multi_agent_uq | 4 | 0.6626 | **0.5351** | 0.5500 (smoke/demo — NOT LOCKED) | **ABSTAIN** |
 
 Insufficient-evidence UQ ABSTAIN was produced by the existing rule (`0.5351 < 0.55`), not forced. Retrieval support was weaker than the known-good case (ret_max 0.66 vs 0.87). Mock answers are not Qwen3 answers.
+
+### 13. Output-quality prompt + repeat collapse (pre-Phase 12)
+
+| Field | Value |
+| --- | --- |
+| Date/time (UTC) | **2026-08-24T00:32:23Z** |
+| Phase | 11 |
+| Test name | `phase11_output_quality_no_repeat_roi` |
+| Command | `PYTHONPATH=. pytest tests/test_phase9_multi_agent.py tests/test_phase11_live_artefact.py -q` then `python scripts/smoke_live_artefact.py --backend mock` |
+| Environment | Local Mac; mock LLM; real Chroma KB |
+| Expected | One-copy answers; prompts distinguish ROI / final value / change; UQ method and 0.55 NOT LOCKED unchanged; 3 questions |
+| Actual (observed) | Full suite **77 passed**. Smoke **PASS** — run_id `phase11_20260824T003215Z_9a838089`; 3/3 comparisons. UQ: `finqa_test_1000` ANSWER 0.6185; `finqa_test_1012` ANSWER 0.5886; insufficient **ABSTAIN** 0.5351. Threshold display `0.5500 (smoke/demo — NOT LOCKED)`. Repeat-collapse unit test: three copies of “The ROI is 45.51%.” → one copy. |
+| Status | **PASS** (local mock). Colab T4/Qwen3-8B re-run of this output-quality fix is **NEEDS VERIFICATION**. |
+| Error | — |
+| Output path | `results/config/phase11_live_smoke.json` |
 
 **Notes:**
 

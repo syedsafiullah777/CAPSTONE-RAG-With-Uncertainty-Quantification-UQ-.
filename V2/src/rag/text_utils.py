@@ -19,8 +19,31 @@ _ECHO_LINE = re.compile(
 )
 
 
+def _normalize_span(text: str) -> str:
+    return re.sub(r"\s+", " ", text.strip().lower()).rstrip(" .;:")
+
+
+def collapse_repeated_answers(text: str) -> str:
+    """Keep one copy when the model repeats the same answer sentence or line."""
+    if not (text or "").strip():
+        return ""
+    parts = [p.strip() for p in re.split(r"(?<=[.!?])\s+|\n+", text.strip()) if p.strip()]
+    unique: list[str] = []
+    seen: set[str] = set()
+    for part in parts:
+        key = _normalize_span(part)
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        unique.append(part)
+    return " ".join(unique).strip()
+
+
 def clean_generated_answer(text: str) -> str:
-    """Strip thinking blocks and instruction echo. Does not change RAG architecture."""
+    """Strip thinking blocks, instruction echo, and repeated answers.
+
+    Does not change RAG architecture or retrieval.
+    """
     cleaned = _THINK_BLOCK.sub(" ", text or "")
     cleaned = _PROMPT_CHARS_SUFFIX.sub("", cleaned)
     lines = []
@@ -40,7 +63,7 @@ def clean_generated_answer(text: str) -> str:
                 break
         if stripped:
             lines.append(stripped)
-    return "\n".join(lines).strip()
+    return collapse_repeated_answers("\n".join(lines).strip())
 
 
 def token_overlap(reference: str, candidate: str) -> float:

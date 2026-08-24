@@ -8,11 +8,13 @@ from unittest.mock import patch
 from src.config import load_experiment_config, project_root
 from src.models.mock_backend import MockBackend
 from src.rag.live import (
+    ADDITIONAL_NUMERICAL_QUESTION_ID,
     ARCHITECTURE_LABELS,
     DECISION_ERROR,
     DECISION_UNAVAILABLE,
     INSUFFICIENT_EVIDENCE_QUESTION,
     INSUFFICIENT_EVIDENCE_QUESTION_ID,
+    KNOWN_GOOD_QUESTION_ID,
     LIVE_ARCHITECTURES,
     THRESHOLD_NOT_LOCKED,
     format_confidence_display,
@@ -215,6 +217,8 @@ def test_insufficient_evidence_question_is_not_in_frozen_set() -> None:
     assert INSUFFICIENT_EVIDENCE_QUESTION_ID not in frozen_ids
     assert INSUFFICIENT_EVIDENCE_QUESTION not in frozen_questions
     assert "SpaceX" in INSUFFICIENT_EVIDENCE_QUESTION
+    assert KNOWN_GOOD_QUESTION_ID in frozen_ids
+    assert ADDITIONAL_NUMERICAL_QUESTION_ID in frozen_ids
 
 
 def test_uq_display_uses_calculated_confidence_not_zero() -> None:

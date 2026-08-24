@@ -40,6 +40,8 @@ def test_clean_generated_answer_strips_think_and_echo() -> None:
         "| prompt_chars=99"
     )
     assert clean_generated_answer(raw) == "45.51"
+    repeated = "The ROI is 45.51%. The ROI is 45.51%. The ROI is 45.51%."
+    assert clean_generated_answer(repeated) == "The ROI is 45.51%."
 
 
 def test_token_overlap_and_parse_score() -> None:
@@ -57,6 +59,9 @@ def test_multi_agent_prompts() -> None:
     assert "Final answer" in draft
     assert "Support score" in verify
     assert "270.4" in draft
+    assert "ROI" in draft
+    assert "ending investment value" in draft
+    assert "percentage change" in verify
 
 
 def test_compute_verification_result_with_mock_backend() -> None:
