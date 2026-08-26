@@ -1109,18 +1109,19 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Tests/validation:** `PYTHONPATH=. pytest tests/test_phase15_benchmark.py -q` → **6 passed** (2026-08-27, after empty raw/checkpoint folders). 420-case job not run. Full suite not re-run in this session (last recorded 105 passed through Phase 14).
 - **Actual outcome:** Notebook and runner exist for the official 420-case Colab job. Execution is **not launched**.
 - **Problems encountered:** None during notebook creation. A previous 9-case raw store must not be used as `--resume-latest` for 420 — separate `phase15_benchmark` job prefix addresses this.
-- **Problems resolved:** Separate Phase 15 raw/checkpoint/config Drive paths. Local empty folders `results/raw/phase15_benchmark/` and `results/checkpoints/phase15_benchmark/` created 2026-08-27 (no 420 results written).
+- **Problems resolved:** Separate Phase 15 raw/checkpoint/config Drive paths. On 2026-08-27, user-copied Colab files were moved from `results/raw/phase15_benchmark/{cases,checkpoint,summary}` into `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/` (SHA-256 unchanged). Checkpoint copy: `results/checkpoints/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4.json`.
 - **Remaining issues:** Push Phase 15 to GitHub, then run `notebooks/colab_phase15_full_benchmark.ipynb` on Colab GPU. Do not re-run the 9-case notebook instead. Google Drive Phase 15 archive does not exist until the run starts.
 - **Dissertation relevance:** The official test evaluation is 140 × 3 at T=0.65, not the 9-case engineering check.
 - **Evidence/source file paths:**
   - `V2/notebooks/colab_phase15_full_benchmark.ipynb`
   - `V2/scripts/run_full_benchmark.py`
   - `V2/docs/phase15_full_benchmark.md`
+  - `V2/results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl`
 - **Validation evidence:** `V2/project_record/evidence/phase15_validation.md`
 - **Backup status:**
   - Colab: 420-case job **not launched**
   - Google Drive: Phase 15 raw/checkpoints **do not exist yet**
-  - Local: verified — notebook, entrypoint, tests, docs, empty `results/raw/phase15_benchmark/` and `results/checkpoints/phase15_benchmark/`
+  - Local: verified — canonical raw store `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/` (420-line JSONL; SHA-256 unchanged from the misplaced copy)
   - GitHub: Phase 15 files **uncommitted** (push required before Colab clone)
 
 ---

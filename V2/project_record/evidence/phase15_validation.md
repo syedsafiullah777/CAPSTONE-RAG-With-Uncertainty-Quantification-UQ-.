@@ -5,7 +5,7 @@
 | Phase | 15 — Final 420-case benchmark |
 | Evidence file | `project_record/evidence/phase15_validation.md` |
 | Last updated | 2026-08-27 |
-| Phase 15 status | **Notebook, entrypoint, and empty raw/checkpoint folders created.** Official 420-case Colab run **not launched**. |
+| Phase 15 status | Notebook/entrypoint created. Colab 420 JSONL present locally at the canonical run-id path. |
 
 ## Summary
 
@@ -34,6 +34,16 @@ Phase 14 9-case notebook left unchanged as engineering evidence.
 | Status | **PASS** (structure only) |
 | Error | — |
 | Output path | `notebooks/colab_phase15_full_benchmark.ipynb`; `scripts/run_full_benchmark.py` |
+
+### 1b. Local raw path correction (2026-08-27)
+
+User-copied Colab files were in `results/raw/phase15_benchmark/` (missing run-id folder). They were moved, content unchanged (SHA-256 match), to:
+
+`results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/`
+
+(`cases.jsonl` 420 unique keys; SHA-256 of the moved files matched the misplaced copies.)
+
+Checkpoint copy: `results/checkpoints/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4.json`.
 
 ### 2. Official 420-case Colab run
 

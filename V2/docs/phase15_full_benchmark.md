@@ -34,10 +34,12 @@ Mock backends are refused. Drive incremental sync uses `V2_DRIVE_ROOT=/content/d
 
 Raw store: `results/raw/phase15_benchmark/{run_id}/` (separate from Phase 14's `phase14_benchmark/`).
 
-Empty local placeholders (no 420 results yet):
+Colab T4 run (copied locally; files were moved into the run-id folder on 2026-08-27 — content unchanged):
 
-- `results/raw/phase15_benchmark/`
-- `results/checkpoints/phase15_benchmark/`
+- `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl`
+- `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/checkpoint.json`
+- `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/summary.json`
+- `results/checkpoints/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4.json`
 
 ## Recovery
 
