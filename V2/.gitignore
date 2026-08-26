@@ -87,6 +87,9 @@ knowledge_base/index/**
 !results/config/phase14_runtime_fingerprint.json
 !results/config/phase14_smoke_test.json
 !results/config/phase14_benchmark_summary.json
+!results/config/phase15_runtime_fingerprint.json
+!results/config/phase15_smoke_test.json
+!results/config/phase15_benchmark_summary.json
 !project_record/evidence/**
 !project_record/evidence/artifacts/**
 

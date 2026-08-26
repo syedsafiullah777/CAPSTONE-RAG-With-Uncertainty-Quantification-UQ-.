@@ -94,6 +94,7 @@ remote_execution:
   phase12_entrypoint: "notebooks/colab_phase12_pilot.ipynb"
   phase13_entrypoint: "notebooks/colab_phase13_calibration.ipynb"
   phase14_entrypoint: "notebooks/colab_phase14_benchmark_validation.ipynb"
+  phase15_entrypoint: "notebooks/colab_phase15_full_benchmark.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp

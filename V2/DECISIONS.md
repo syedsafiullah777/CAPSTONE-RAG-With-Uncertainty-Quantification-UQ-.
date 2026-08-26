@@ -182,4 +182,12 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** Prepare the 140×3 runner but execute only 3 frozen-test questions × 3 independent architectures = 9 cases. Load T=0.65 from `threshold.lock.json`. Never recalibrate. CLI refuses `--allow-full-420`. Incremental JSONL + checkpoint/resume + Drive sync when `V2_DRIVE_ROOT` is set.
 
-**Verified local:** mock 9/9 **PASS** after retry; run_id `phase14_20260826T195616Z_f9550cce`; T=0.65 LOCKED; UQ 3/3 ABSTAIN (mock confidence < 0.65). Resume skipped 9. Colab T4 9-case **NEEDS VERIFICATION**. Full 420 not launched.
+**Verified local:** mock 9/9 **PASS** after retry; run_id `phase14_20260826T195616Z_f9550cce`; T=0.65 LOCKED; UQ 3/3 ABSTAIN (mock confidence < 0.65). Resume skipped 9.
+
+**Verified Colab T4 (2026-08-26):** 9/9 PASS; run_id `phase14_20260826T200828Z_e91e588d`; Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M. Keep as engineering evidence. Full 420 not launched from this 9-case job.
+
+## 2026-08-26 — Phase 15 final 420-case notebook
+
+**Decision:** Create a dedicated Colab notebook and CLI for the official 140 × 3 = 420 evaluation. Keep the Phase 14 9-case notebook unchanged. Use locked T=0.65, Qwen3-8B Q4_K_M, `llama_cpp`, Colab GPU, shared Phase 6 KB, and a separate `phase15_benchmark` raw store. Do not execute 420 during notebook creation.
+
+**Verified:** Notebook/entrypoint structure tests only. Frozen 140/40, T, V1, RAG modules, and retrieval unmodified. Official Colab 420 run **not launched**.

@@ -2,7 +2,7 @@
 
 Clean development area for the revised MSc AI capstone artefact.
 
-**Phase status:** Phase 14 local 9-case validation complete (T=0.65 locked). Full 420-case benchmark not launched. See `project_record/PROJECT_MASTER_RECORD.md`.
+**Phase status:** Phase 15 notebook/entrypoint created. Official 420-case Colab run **not launched**. Phase 14 9-case remains engineering evidence. See `project_record/PROJECT_MASTER_RECORD.md`.
 
 ## Storage / backup
 
@@ -90,7 +90,19 @@ PYTHONPATH=. python scripts/run_benchmark.py --backend mock --n-questions 3
 # notebooks/colab_phase14_benchmark_validation.ipynb
 ```
 
-3 frozen test questions × 3 architectures = 9 cases. Locked T=0.65. Does **not** launch the 420-case benchmark.
+3 frozen test questions × 3 architectures = 9 cases. Locked T=0.65. Engineering evidence only. Does **not** launch the 420-case benchmark.
+
+## Final 420-case benchmark (Phase 15)
+
+```bash
+# Colab GPU only — do not run on the Mac:
+# notebooks/colab_phase15_full_benchmark.ipynb
+# PYTHONPATH=. python scripts/run_full_benchmark.py --backend llama_cpp
+# After disconnect:
+# PYTHONPATH=. python scripts/run_full_benchmark.py --backend llama_cpp --resume-latest
+```
+
+140 frozen test questions × 3 architectures = **420** cases. Locked T=0.65. Mock refused. Execution **not launched** during notebook creation.
 
 Import check:
 

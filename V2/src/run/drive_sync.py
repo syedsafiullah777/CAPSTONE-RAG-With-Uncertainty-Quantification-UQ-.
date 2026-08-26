@@ -14,9 +14,13 @@ from typing import Any
 
 DRIVE_ENV = "V2_DRIVE_ROOT"
 DEFAULT_COLAB_DRIVE = Path("/content/drive/MyDrive/MSc-RAG")
-RAW_REL = "results/raw/phase14_benchmark"
-CHECKPOINT_REL = "checkpoints/phase14_benchmark"
-CONFIG_REL = "configs/phase14"
+
+
+def _job_rels(job: str) -> tuple[str, str, str]:
+    """Return (raw_rel, checkpoint_rel, config_rel) under the Drive root."""
+    name = job.strip("/") or "phase14_benchmark"
+    phase = "phase15" if name.startswith("phase15") else "phase14"
+    return f"results/raw/{name}", f"checkpoints/{name}", f"configs/{phase}"
 
 
 def drive_root() -> Path | None:
@@ -34,12 +38,14 @@ def sync_benchmark_run(
     *,
     run_id: str,
     checkpoint_copy: Path | None = None,
+    job: str = "phase14_benchmark",
 ) -> dict[str, Any]:
     """Copy raw JSONL + checkpoint into Drive. No-op if Drive is absent."""
     root = drive_root()
     if root is None:
         return {"synced": False, "reason": "Drive root not mounted"}
-    dest = root / RAW_REL / run_id
+    raw_rel, ckpt_rel, _cfg_rel = _job_rels(job)
+    dest = root / raw_rel / run_id
     dest.mkdir(parents=True, exist_ok=True)
     copied: list[str] = []
     for name in ("cases.jsonl", "checkpoint.json", "summary.json"):
@@ -48,28 +54,30 @@ def sync_benchmark_run(
             shutil.copy2(src, dest / name)
             copied.append(name)
     if checkpoint_copy is not None and Path(checkpoint_copy).is_file():
-        ckpt_dest = root / CHECKPOINT_REL
+        ckpt_dest = root / ckpt_rel
         ckpt_dest.mkdir(parents=True, exist_ok=True)
         shutil.copy2(checkpoint_copy, ckpt_dest / Path(checkpoint_copy).name)
         copied.append(f"checkpoint_copy:{Path(checkpoint_copy).name}")
-    return {"synced": True, "dest": str(dest), "copied": copied}
+    return {"synced": True, "dest": str(dest), "copied": copied, "job": job}
 
 
-def sync_benchmark_configs(config_dir: Path) -> dict[str, Any]:
+def sync_benchmark_configs(config_dir: Path, *, job: str = "phase14_benchmark") -> dict[str, Any]:
     root = drive_root()
     if root is None:
         return {"synced": False, "reason": "Drive root not mounted"}
-    dest = root / CONFIG_REL
+    _raw_rel, _ckpt_rel, config_rel = _job_rels(job)
+    dest = root / config_rel
     dest.mkdir(parents=True, exist_ok=True)
+    phase = "phase15" if job.startswith("phase15") else "phase14"
     copied: list[str] = []
     for name in (
-        "phase14_runtime_fingerprint.json",
-        "phase14_smoke_test.json",
-        "phase14_benchmark_summary.json",
+        f"{phase}_runtime_fingerprint.json",
+        f"{phase}_smoke_test.json",
+        f"{phase}_benchmark_summary.json",
         "threshold.lock.json",
     ):
         src = Path(config_dir) / name
         if src.is_file():
             shutil.copy2(src, dest / name)
             copied.append(name)
-    return {"synced": True, "dest": str(dest), "copied": copied}
+    return {"synced": True, "dest": str(dest), "copied": copied, "job": job}

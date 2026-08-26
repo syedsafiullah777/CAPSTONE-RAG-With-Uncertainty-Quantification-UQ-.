@@ -16,7 +16,9 @@ The 9-case run is **finished**. Keep it as **supporting engineering evidence**. 
 
 Colab subset: `finqa_test_1000`, `1012`, `1017` × three independent architectures. UQ: 2 ANSWER + 1 ABSTAIN (`finqa_test_1000`, confidence 0.5032 < 0.65).
 
-## Next execution — final 420-case benchmark (not launched)
+## Next execution — Phase 15 final 420-case benchmark (not launched)
+
+Notebook: `notebooks/colab_phase15_full_benchmark.ipynb` (see `docs/phase15_full_benchmark.md`). Keep `notebooks/colab_phase14_benchmark_validation.ipynb` unchanged.
 
 **140 frozen test questions × 3 architectures = 420 cases.**
 

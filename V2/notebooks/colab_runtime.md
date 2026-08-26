@@ -59,7 +59,19 @@ Notebook: `notebooks/colab_phase14_benchmark_validation.ipynb`
 3. Incremental Drive sync via `V2_DRIVE_ROOT=/content/drive/MyDrive/MSc-RAG`
 4. Save to `MyDrive/MSc-RAG/results/raw/phase14_benchmark/` and `configs/phase14/`
 
-Uses locked T=0.65. Does **not** launch the 420-case benchmark. Resume with `--resume-latest`.
+Uses locked T=0.65. Does **not** launch the 420-case benchmark. Resume with `--resume-latest`. Keep this notebook as engineering evidence; do not re-run it instead of Phase 15.
+
+## Phase 15 — Final 420-case benchmark (`llama_cpp`, T=0.65 locked)
+
+Notebook: `notebooks/colab_phase15_full_benchmark.ipynb`
+
+1. Clone → install → restore KB from Drive (or rebuild) → restore `threshold.lock.json` if needed
+2. Preflight → lock check T=0.65 → `run_full_benchmark.py --backend llama_cpp`
+3. Incremental Drive sync via `V2_DRIVE_ROOT=/content/drive/MyDrive/MSc-RAG`
+4. If interrupted: `--resume-latest` (do not start from question 1)
+5. Save to `MyDrive/MSc-RAG/results/raw/phase15_benchmark/` and `configs/phase15/`
+
+Official evaluation: **140 × 3 = 420** cases. Mock refused. Do not re-run the Phase 14 9-case notebook instead of this job.
 
 ---
 

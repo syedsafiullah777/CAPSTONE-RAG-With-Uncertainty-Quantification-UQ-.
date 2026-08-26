@@ -25,7 +25,7 @@ Design and Evaluation of a Multi-Agent Retrieval-Augmented Generation Framework 
 - Family: T²-RAGBench (`G4KMU/t2-ragbench`)
 - Subset: FinQA
 - **Verified splits (Phase 2):** train **6251**, dev **883**, test **1147** (total **8281**)
-- Target: **140** frozen test questions × **3** architectures = **420** cases (not selected yet)
+- Target: **140** frozen test questions × **3** architectures = **420** cases (Phase 4 freeze; Phase 15 execution not launched)
 - Calibration/threshold selection: FinQA **dev** only (never the frozen test set)
 - Profile: `V2/docs/dataset_profile.md`, `V2/data/processed/finqa_profile.json`
 
@@ -53,8 +53,7 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Phase status
 
-**Phase 14 local complete — 9-case benchmark validation (T=0.65 locked). Full 420 not launched. Colab T4 9-case NEEDS VERIFICATION.**  
-Next: Colab 9-case T4, then the 420-case benchmark — not started.
+**Phase 15 notebook created — 140 × 3 = 420 Colab execution not launched.** Phase 14 9-case (Colab T4 9/9 PASS) remains engineering evidence. Do not re-run the 9-case notebook.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -100,4 +99,7 @@ Next: Colab 9-case T4, then the 420-case benchmark — not started.
 - Phase 14 notes: `V2/docs/phase14_benchmark.md`
 - Phase 14 evidence: `V2/project_record/evidence/phase14_validation.md`
 - Phase 14 Colab: `V2/notebooks/colab_phase14_benchmark_validation.ipynb`
+- Phase 15 notes: `V2/docs/phase15_full_benchmark.md`
+- Phase 15 evidence: `V2/project_record/evidence/phase15_validation.md`
+- Phase 15 Colab: `V2/notebooks/colab_phase15_full_benchmark.ipynb`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

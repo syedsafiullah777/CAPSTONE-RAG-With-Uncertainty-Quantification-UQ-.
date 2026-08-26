@@ -1,8 +1,7 @@
-"""Phase 14 benchmark runner: frozen 140 × 3 architectures.
+"""Phase 14/15 benchmark runner: frozen 140 × 3 architectures.
 
-Default is the 9-case validation (3 questions × 3 architectures).
-The full 420-case run requires ``allow_full=True`` and is not launched from this phase's notebook.
-Uses the Phase 13 locked threshold. Does not recalibrate. Does not chain architectures.
+Phase 14 default is the 9-case validation. Phase 15 is the official 420-case
+run (``allow_full=True``). Uses the Phase 13 locked threshold. Does not recalibrate.
 """
 
 from __future__ import annotations
@@ -77,7 +76,7 @@ def select_benchmark_questions(
     if allow_full:
         if n != BENCHMARK_N_QUESTIONS:
             raise ValueError(
-                f"Full Phase 14 benchmark must use all {BENCHMARK_N_QUESTIONS} frozen questions "
+                f"Full Phase 15 benchmark must use all {BENCHMARK_N_QUESTIONS} frozen questions "
                 f"({BENCHMARK_N_CASES} cases)."
             )
     elif n > VALIDATION_N_QUESTIONS:
@@ -131,9 +130,10 @@ def annotate_benchmark_result(
     *,
     threshold: float,
     mode: str,
+    phase: int = 14,
 ) -> RAGCaseResult:
     cfg = dict(result.configuration or {})
-    cfg["phase"] = 14
+    cfg["phase"] = phase
     cfg["mode"] = mode
     cfg["threshold_locked"] = True
     cfg["threshold_note"] = THRESHOLD_NOTE
@@ -161,6 +161,7 @@ def error_result(
     threshold: float,
     seed: int | None,
     mode: str,
+    phase: int = 14,
 ) -> RAGCaseResult:
     gpu = fingerprint.get("gpu")
     gpu_name = gpu.get("name") if isinstance(gpu, dict) else gpu
@@ -183,7 +184,7 @@ def error_result(
         case_key=f"{architecture}:{question['id']}",
         threshold=threshold if architecture == ARCHITECTURE_MULTI_AGENT_UQ else None,
     )
-    return annotate_benchmark_result(result, threshold=threshold, mode=mode)
+    return annotate_benchmark_result(result, threshold=threshold, mode=mode, phase=phase)
 
 
 def run_one_case(
@@ -197,6 +198,7 @@ def run_one_case(
     fingerprint: dict[str, Any],
     threshold: float,
     mode: str,
+    phase: int = 14,
 ) -> RAGCaseResult:
     runner = _runner_for(architecture)
     kwargs: dict[str, Any] = {
@@ -211,7 +213,7 @@ def run_one_case(
     if architecture == ARCHITECTURE_MULTI_AGENT_UQ:
         kwargs["threshold"] = threshold
     result = runner(question["question"], **kwargs)
-    return annotate_benchmark_result(result, threshold=threshold, mode=mode)
+    return annotate_benchmark_result(result, threshold=threshold, mode=mode, phase=phase)
 
 
 def resolve_run_dir(
@@ -220,21 +222,23 @@ def resolve_run_dir(
     run_id: str | None,
     resume: str | None,
     resume_latest: bool,
+    job: str = "phase14_benchmark",
+    run_prefix: str = "phase14",
 ) -> tuple[str, Path, bool]:
-    raw_root = get_path(config, "results_raw") / "phase14_benchmark"
+    raw_root = get_path(config, "results_raw") / job
     if resume_latest:
         from src.run.store import latest_run_dir
 
         latest = latest_run_dir(raw_root)
         if latest is None:
-            raise FileNotFoundError(f"No Phase 14 checkpoint under {raw_root}")
+            raise FileNotFoundError(f"No checkpoint under {raw_root}")
         return latest.name, latest, True
     if resume:
         run_dir = raw_root / resume
         if not (run_dir / "checkpoint.json").is_file() and not (run_dir / "cases.jsonl").is_file():
             raise FileNotFoundError(f"Cannot resume; missing store at {run_dir}")
         return resume, run_dir, True
-    rid = run_id or create_run_id("phase14")
+    rid = run_id or create_run_id(run_prefix)
     run_dir = raw_root / rid
     if run_dir.exists() and ((run_dir / "cases.jsonl").is_file() or (run_dir / "checkpoint.json").is_file()):
         raise FileExistsError(
@@ -263,8 +267,7 @@ def run_benchmark(
 ) -> dict[str, Any]:
     """Run or resume the benchmark. Architectures stay independent (no chaining).
 
-    Phase 14 validation uses n_questions=3 (9 cases). The 140-question path is
-    implemented here but the CLI/notebook refuse --allow-full-420.
+    Phase 14 validation: n_questions=3. Phase 15 official run: allow_full=True, n=140.
     """
     cfg = config or load_experiment_config()
     if allow_full and str(backend_name).lower() in {"mock", "test"}:
@@ -280,7 +283,10 @@ def run_benchmark(
     elif n_questions == BENCHMARK_N_QUESTIONS:
         verify_full_subset(questions)
 
-    mode = "benchmark_validation" if n_questions == VALIDATION_N_QUESTIONS else "benchmark"
+    phase_num = 15 if allow_full else 14
+    job = "phase15_benchmark" if allow_full else "phase14_benchmark"
+    run_prefix = "phase15" if allow_full else "phase14"
+    mode = "benchmark" if allow_full else "benchmark_validation"
     question_ids = [row["id"] for row in questions]
     planned = planned_case_keys(question_ids)
     rid, run_dir, is_resume = resolve_run_dir(
@@ -288,10 +294,12 @@ def run_benchmark(
         run_id=run_id,
         resume=resume,
         resume_latest=resume_latest,
+        job=job,
+        run_prefix=run_prefix,
     )
-    checkpoint_copy = get_path(cfg, "results_checkpoints") / "phase14_benchmark" / f"{rid}.json"
+    checkpoint_copy = get_path(cfg, "results_checkpoints") / job / f"{rid}.json"
     store = CaseStore(run_dir, checkpoint_copy=checkpoint_copy)
-    log = get_logger(run_id=rid, phase="phase14", architecture="benchmark")
+    log = get_logger(run_id=rid, phase=run_prefix, architecture="benchmark")
 
     model_cfg = dict(cfg.section("model"))
     model_cfg["backend"] = backend_name
@@ -300,7 +308,7 @@ def run_benchmark(
     llm = backend or create_backend(model_cfg)
 
     meta = {
-        "phase": 14,
+        "phase": phase_num,
         "mode": mode,
         "run_id": rid,
         "backend": backend_name,
@@ -324,6 +332,7 @@ def run_benchmark(
         "modifies_frozen_calibration": False,
         "modifies_threshold_lock": False,
         "allow_full": allow_full,
+        "job": job,
         "resumed": is_resume,
         "skip_preflight": skip_preflight,
         "device": fp.get("device"),
@@ -370,6 +379,7 @@ def run_benchmark(
                 fingerprint=fp,
                 threshold=threshold,
                 mode=mode,
+                phase=phase_num,
             )
         except Exception as exc:  # noqa: BLE001
             result = error_result(
@@ -382,6 +392,7 @@ def run_benchmark(
                 threshold=threshold,
                 seed=seed,
                 mode=mode,
+                phase=phase_num,
             )
             log.info("ERROR case_key=%s error=%s", case_key, result.error)
         written = store.append_result(result)
@@ -407,13 +418,15 @@ def run_benchmark(
             )
         store.write_checkpoint(meta, planned)
         if sync_drive:
-            drive_info = sync_benchmark_run(run_dir, run_id=rid, checkpoint_copy=checkpoint_copy)
+            drive_info = sync_benchmark_run(
+                run_dir, run_id=rid, checkpoint_copy=checkpoint_copy, job=job
+            )
             if drive_info.get("synced"):
                 log.info("Drive sync dest=%s", drive_info.get("dest"))
 
     lock_after_path = Path(lock_file or lock_path())
     if lock_before and lock_after_path.is_file() and lock_after_path.read_text(encoding="utf-8") != lock_before:
-        raise RuntimeError("threshold.lock.json changed during Phase 14. Refusing to continue.")
+        raise RuntimeError("threshold.lock.json changed during the benchmark. Refusing to continue.")
 
     progress = store.progress(planned)
     status = "PASS" if progress["n_completed"] == len(planned) and progress["n_failed"] == 0 else (
@@ -440,7 +453,9 @@ def run_benchmark(
         encoding="utf-8",
     )
     if sync_drive:
-        summary["drive_sync"] = sync_benchmark_run(run_dir, run_id=rid, checkpoint_copy=checkpoint_copy)
+        summary["drive_sync"] = sync_benchmark_run(
+            run_dir, run_id=rid, checkpoint_copy=checkpoint_copy, job=job
+        )
     log.info(
         "Benchmark end status=%s completed=%s failed=%s pending=%s executed=%s skipped=%s T=%.2f LOCKED",
         status,
