@@ -8,6 +8,18 @@ Maximise **selective accuracy** (numeric match of the UQ **draft** to `program_a
 
 T is **not** tuned on the frozen 140 or the Phase 12 pilot.
 
+## Official lock (Colab T4, 2026-08-26)
+
+| Field | Observed value |
+| --- | --- |
+| Run ID | `phase13_20260826T192003Z_7bcd6ed3` |
+| Backend / GPU | `llama_cpp` / Tesla T4 |
+| n | 40 FinQA **dev** (`used_frozen_test_140: false`) |
+| Locked T | **0.65** |
+| Coverage | 0.55 (22 ANSWER / 18 ABSTAIN) |
+| Selective accuracy | 12/22 ≈ 0.5455 |
+| Lock file | `results/config/threshold.lock.json` |
+
 ## What this phase does not do
 
 - Does **not** modify `selected_140_questions.csv` or `calibration_questions.csv`

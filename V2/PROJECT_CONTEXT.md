@@ -53,8 +53,8 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Phase status
 
-**Phase 13 local complete — DEV calibration runner (official T lock NEEDS VERIFICATION).**  
-Next: Colab 40-case lock, then 420-case benchmark — not started.
+**Phase 14 local complete — 9-case benchmark validation (T=0.65 locked). Full 420 not launched. Colab T4 9-case NEEDS VERIFICATION.**  
+Next: Colab 9-case T4, then the 420-case benchmark — not started.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -97,4 +97,7 @@ Next: Colab 40-case lock, then 420-case benchmark — not started.
 - Phase 13 notes: `V2/docs/phase13_calibration_lock.md`
 - Phase 13 evidence: `V2/project_record/evidence/phase13_validation.md`
 - Phase 13 Colab: `V2/notebooks/colab_phase13_calibration.ipynb`
+- Phase 14 notes: `V2/docs/phase14_benchmark.md`
+- Phase 14 evidence: `V2/project_record/evidence/phase14_validation.md`
+- Phase 14 Colab: `V2/notebooks/colab_phase14_benchmark_validation.ipynb`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

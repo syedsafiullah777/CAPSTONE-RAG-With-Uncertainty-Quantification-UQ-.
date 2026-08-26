@@ -84,6 +84,9 @@ knowledge_base/index/**
 !results/config/phase13_smoke_test.json
 !results/config/phase13_calibration_summary.json
 !results/config/threshold.lock.json
+!results/config/phase14_runtime_fingerprint.json
+!results/config/phase14_smoke_test.json
+!results/config/phase14_benchmark_summary.json
 !project_record/evidence/**
 !project_record/evidence/artifacts/**
 

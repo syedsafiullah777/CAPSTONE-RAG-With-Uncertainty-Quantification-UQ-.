@@ -174,4 +174,12 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** Lock T only on the frozen FinQA **dev** 40, architecture `multi_agent_uq`, with a pre-registered rule: maximise selective accuracy subject to coverage ≥ 0.50 (tie: lowest T). Score the UQ draft against `program_answer`. Official `threshold.lock.json` requires `llama_cpp` + CUDA + n=40. Mock writes a candidate only.
 
-**Verified local:** mock n=3 DEV cases **PASS**; run_id `phase13_20260826T190630Z_e3c9b993`; `locked=false`; `threshold.lock.json` absent. Colab 40-case official lock **NEEDS VERIFICATION**. 420-case benchmark not started.
+**Verified local:** mock n=3 DEV cases **PASS**; run_id `phase13_20260826T190630Z_e3c9b993`; `locked=false`; mock cannot write the official lock.
+
+**Verified Colab lock (2026-08-26):** 40/40 T4 `llama_cpp` cases in `results/raw/phase13_calibration/phase13_20260826T192003Z_7bcd6ed3/cases.jsonl`. Official **T=0.65** (`threshold.lock.json`; coverage 0.55; selective accuracy 12/22 ≈ 0.5455). Not tuned on the frozen 140. YAML `confidence_threshold` remains null. 420-case benchmark not started.
+
+## 2026-08-26 — Phase 14 9-case benchmark validation
+
+**Decision:** Prepare the 140×3 runner but execute only 3 frozen-test questions × 3 independent architectures = 9 cases. Load T=0.65 from `threshold.lock.json`. Never recalibrate. CLI refuses `--allow-full-420`. Incremental JSONL + checkpoint/resume + Drive sync when `V2_DRIVE_ROOT` is set.
+
+**Verified local:** mock 9/9 **PASS** after retry; run_id `phase14_20260826T195616Z_f9550cce`; T=0.65 LOCKED; UQ 3/3 ABSTAIN (mock confidence < 0.65). Resume skipped 9. Colab T4 9-case **NEEDS VERIFICATION**. Full 420 not launched.

@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-26 |
-| Current completed phase | **Phase 13** (local runner; official T lock NEEDS VERIFICATION) |
-| Next implementation phase | 420-case benchmark (not started) |
+| Current completed phase | **Phase 14** (9-case validation; T=0.65 locked; full 420 not launched) |
+| Next implementation phase | Full 420-case benchmark (not launched) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -142,8 +142,8 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 10 | Multi-Agent + UQ / abstention | ✅ Complete | `evidence/phase10_validation.md` |
 | 11 | Streamlit live artefact (schema already in Phases 8–10) | ✅ Complete | `evidence/phase11_validation.md` |
 | 12 | Pilot run (6 × 3 = 18 cases) | ✅ Local 18/18 + Colab T4 18/18 PASS (raw JSONL archived) | `evidence/phase12_validation.md` |
-| 13 | Calibration / threshold lock | ✅ Local runner; official Colab lock NEEDS VERIFICATION | `evidence/phase13_validation.md` |
-| 14 | 420-case benchmark | ⬜ Not started | summary only; raw in `results/raw/` |
+| 13 | Calibration / threshold lock | ✅ Complete — T=0.65 locked on Colab T4 DEV 40 | `evidence/phase13_validation.md` |
+| 14 | 420-case benchmark | ✅ Runner + local 9-case PASS; full 420 not launched | `evidence/phase14_validation.md` |
 | 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
 | 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
@@ -191,9 +191,13 @@ See `docs/phase11_live_artefact.md`. Original-plan schema/logging is `RAGCaseRes
 
 See `docs/phase12_pilot.md`. 6 frozen questions × 3 architectures = 18 resumable cases. Colab run_id `phase12_20260826T183704Z_9773516a`.
 
-## Phase 13 — DEV calibration / threshold lock (local complete; Colab lock NEEDS VERIFICATION)
+## Phase 13 — DEV calibration / threshold lock (complete; T=0.65)
 
-See `docs/phase13_calibration_lock.md`. Frozen FinQA **dev** 40; `multi_agent_uq` only. Official lock is Colab T4 only. Does not run the 420-case benchmark.
+See `docs/phase13_calibration_lock.md`. Frozen FinQA **dev** 40; `multi_agent_uq` only. Colab T4 run_id `phase13_20260826T192003Z_7bcd6ed3`. Official lock `results/config/threshold.lock.json`. Does not run the 420-case benchmark.
+
+## Phase 14 — Benchmark runner / 9-case validation (local complete; Colab T4 NEEDS VERIFICATION)
+
+See `docs/phase14_benchmark.md`. 3 frozen questions × 3 architectures = 9 resumable cases at locked T=0.65. Full 420 is prepared but not launched. Local run_id `phase14_20260826T195616Z_f9550cce`.
 
 ## Git workflow (all phases)
 

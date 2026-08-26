@@ -93,6 +93,7 @@ remote_execution:
   phase11_entrypoint: "notebooks/colab_phase11_live.ipynb"
   phase12_entrypoint: "notebooks/colab_phase12_pilot.ipynb"
   phase13_entrypoint: "notebooks/colab_phase13_calibration.ipynb"
+  phase14_entrypoint: "notebooks/colab_phase14_benchmark_validation.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -142,11 +143,14 @@ rag:
   phase10_smoke_n: 3
   phase11_smoke_n: 2  # 1 frozen + 1 fresh live comparison
   phase12_pilot_n: 6  # 6 frozen questions × 3 architectures = 18 cases; not the 420-case benchmark
+  phase14_validation_n: 3  # 3 frozen questions × 3 architectures = 9 cases; full 420 is not launched here
 
 uncertainty:
-  # Final threshold MUST be locked on DEV/calibration only (Phase 13). Never tune on test.
-  confidence_threshold: null  # set via results/config/threshold.lock.json later
-  smoke_threshold: 0.55  # smoke/dev notebook only — NOT the locked benchmark threshold
+  # Official T is results/config/threshold.lock.json (Phase 13 Colab: T=0.65, DEV 40 only).
+  # Keep yaml null so Phase 12 cannot pick up a locked yaml value. Phase 14 must load the lock file.
+  # Never tune on the frozen 140.
+  confidence_threshold: null
+  smoke_threshold: 0.55  # smoke/pilot/live fallback — NOT the locked benchmark threshold
   calibration:
     n: 40
     coverage_floor: 0.50

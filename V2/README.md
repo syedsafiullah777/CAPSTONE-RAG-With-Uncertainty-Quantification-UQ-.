@@ -2,7 +2,7 @@
 
 Clean development area for the revised MSc AI capstone artefact.
 
-**Phase status:** Phase 13 calibration runner complete (official T lock NEEDS VERIFICATION). See `project_record/PROJECT_MASTER_RECORD.md`.
+**Phase status:** Phase 14 local 9-case validation complete (T=0.65 locked). Full 420-case benchmark not launched. See `project_record/PROJECT_MASTER_RECORD.md`.
 
 ## Storage / backup
 
@@ -80,7 +80,17 @@ PYTHONPATH=. python scripts/run_calibration.py --backend mock --n-questions 3
 # notebooks/colab_phase13_calibration.ipynb
 ```
 
-Uses the frozen FinQA **dev** 40 only. Mock cannot write `threshold.lock.json`.
+Uses the frozen FinQA **dev** 40 only. Official lock (Colab T4, 2026-08-26): **T=0.65** in `results/config/threshold.lock.json`. Mock cannot write the lock.
+
+## Benchmark validation (Phase 14)
+
+```bash
+PYTHONPATH=. python scripts/run_benchmark.py --backend mock --n-questions 3
+# Colab T4 (9 cases only):
+# notebooks/colab_phase14_benchmark_validation.ipynb
+```
+
+3 frozen test questions × 3 architectures = 9 cases. Locked T=0.65. Does **not** launch the 420-case benchmark.
 
 Import check:
 

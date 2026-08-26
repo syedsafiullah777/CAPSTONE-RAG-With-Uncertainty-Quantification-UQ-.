@@ -50,6 +50,17 @@ Uses the same `run_live_comparison()` as Streamlit. Does **not** run the 140-que
 
 Manual browser demo (sections 8–10): starts `app/streamlit_app.py` with `V2_LIVE_BACKEND=llama_cpp` and prints a temporary `*.trycloudflare.com` URL. Do not use mock. Run section 10 only after the manual test.
 
+## Phase 14 — 9-case benchmark validation (`llama_cpp`, T=0.65 locked)
+
+Notebook: `notebooks/colab_phase14_benchmark_validation.ipynb`
+
+1. Clone → install → restore KB from Drive (or rebuild) → restore `threshold.lock.json` if needed
+2. Preflight → `run_benchmark.py --backend llama_cpp --n-questions 3`
+3. Incremental Drive sync via `V2_DRIVE_ROOT=/content/drive/MyDrive/MSc-RAG`
+4. Save to `MyDrive/MSc-RAG/results/raw/phase14_benchmark/` and `configs/phase14/`
+
+Uses locked T=0.65. Does **not** launch the 420-case benchmark. Resume with `--resume-latest`.
+
 ---
 
 ## Workflow: GitHub → Colab (no Drive upload for code)

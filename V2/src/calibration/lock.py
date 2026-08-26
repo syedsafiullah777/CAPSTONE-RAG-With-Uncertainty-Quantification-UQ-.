@@ -15,6 +15,7 @@ from src.run.subset import ids_sha256
 LOCK_FILENAME = "threshold.lock.json"
 CANDIDATE_FILENAME = "threshold.candidate.json"
 OFFICIAL_BACKENDS = {"llama_cpp", "transformers"}
+EXPECTED_LOCKED_THRESHOLD = 0.65
 
 
 def lock_path() -> Path:
@@ -119,3 +120,33 @@ def _rel(path: Path) -> str:
         return str(path.resolve().relative_to(project_root()))
     except ValueError:
         return str(path)
+
+
+def load_official_lock(path: Path | None = None) -> dict[str, Any]:
+    """Read-only load of the Phase 13 DEV lock. Never writes or recalibrates."""
+    dest = Path(path) if path is not None else lock_path()
+    if not dest.is_file():
+        raise FileNotFoundError(
+            f"Official threshold lock missing at {dest}. Run Phase 13 Colab lock first."
+        )
+    payload = json.loads(dest.read_text(encoding="utf-8"))
+    if payload.get("locked") is not True:
+        raise RuntimeError("threshold.lock.json is not locked. Phase 14 will not invent a threshold.")
+    if payload.get("used_frozen_test_140") is True:
+        raise RuntimeError("Lock claims the frozen 140 was used. Refusing to run Phase 14.")
+    if str(payload.get("source_split") or "") != "dev":
+        raise RuntimeError("Official lock must have source_split=dev.")
+    if int(payload.get("phase") or 0) < 13:
+        raise RuntimeError("Official lock phase must be >= 13.")
+    threshold = float(payload.get("threshold"))
+    if abs(threshold - EXPECTED_LOCKED_THRESHOLD) > 1e-9:
+        raise RuntimeError(
+            f"Phase 14 requires locked T={EXPECTED_LOCKED_THRESHOLD}, found {threshold}. "
+            "Do not recalibrate or modify the threshold."
+        )
+    payload["threshold"] = threshold
+    return payload
+
+
+def locked_threshold(path: Path | None = None) -> float:
+    return float(load_official_lock(path)["threshold"])
