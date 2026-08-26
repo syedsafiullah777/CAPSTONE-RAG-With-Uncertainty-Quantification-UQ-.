@@ -92,6 +92,7 @@ remote_execution:
   phase10_entrypoint: "notebooks/colab_phase10_smoke.ipynb"
   phase11_entrypoint: "notebooks/colab_phase11_live.ipynb"
   phase12_entrypoint: "notebooks/colab_phase12_pilot.ipynb"
+  phase13_entrypoint: "notebooks/colab_phase13_calibration.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -143,9 +144,16 @@ rag:
   phase12_pilot_n: 6  # 6 frozen questions × 3 architectures = 18 cases; not the 420-case benchmark
 
 uncertainty:
-  # Final threshold MUST be locked on DEV/calibration only (Phase 14). Never tune on test.
+  # Final threshold MUST be locked on DEV/calibration only (Phase 13). Never tune on test.
   confidence_threshold: null  # set via results/config/threshold.lock.json later
   smoke_threshold: 0.55  # smoke/dev notebook only — NOT the locked benchmark threshold
+  calibration:
+    n: 40
+    coverage_floor: 0.50
+    rule: "max_selective_accuracy_coverage_ge_0.50"
+    tie_break: "lowest_threshold"
+    architecture: "multi_agent_uq"
+    lock_file: "results/config/threshold.lock.json"
   method: "mean_retrieval_verification"
   abstention_message: "I cannot answer reliably because supporting evidence is insufficient."
 

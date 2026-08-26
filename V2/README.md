@@ -2,7 +2,7 @@
 
 Clean development area for the revised MSc AI capstone artefact.
 
-**Phase status:** Phase 12 pilot implemented (local 18/18 mock PASS; Colab T4 NEEDS VERIFICATION). See `project_record/PROJECT_MASTER_RECORD.md`.
+**Phase status:** Phase 13 calibration runner complete (official T lock NEEDS VERIFICATION). See `project_record/PROJECT_MASTER_RECORD.md`.
 
 ## Storage / backup
 
@@ -71,6 +71,16 @@ PYTHONPATH=. python scripts/run_pilot.py --backend mock
 ```
 
 6 frozen questions × 3 architectures = 18 cases. Threshold `0.55` smoke/demo — **NOT LOCKED**. Does not run the 420-case benchmark.
+
+## Calibration (Phase 13)
+
+```bash
+PYTHONPATH=. python scripts/run_calibration.py --backend mock --n-questions 3
+# Colab T4 (official lock):
+# notebooks/colab_phase13_calibration.ipynb
+```
+
+Uses the frozen FinQA **dev** 40 only. Mock cannot write `threshold.lock.json`.
 
 Import check:
 

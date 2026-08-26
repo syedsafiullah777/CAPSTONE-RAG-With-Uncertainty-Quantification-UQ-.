@@ -5,9 +5,9 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-24 |
-| Current completed phase | **Phase 12** (local 18/18; Colab T4 NEEDS VERIFICATION) |
-| Next implementation phase | Calibration / threshold lock / 420-case benchmark (not started) |
+| Last updated | 2026-08-26 |
+| Current completed phase | **Phase 13** (local runner; official T lock NEEDS VERIFICATION) |
+| Next implementation phase | 420-case benchmark (not started) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -141,10 +141,9 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 9 | Multi-Agent RAG | ✅ Complete | `evidence/phase9_validation.md` |
 | 10 | Multi-Agent + UQ / abstention | ✅ Complete | `evidence/phase10_validation.md` |
 | 11 | Streamlit live artefact (schema already in Phases 8–10) | ✅ Complete | `evidence/phase11_validation.md` |
-| 12 | Pilot run (6 × 3 = 18 cases) | ✅ Local 18/18; Colab T4 NEEDS VERIFICATION | `evidence/phase12_validation.md` |
-| 13 | Streamlit (original-plan number) | ✅ Absorbed into Phase 11 | `evidence/phase11_validation.md` |
-| 14 | Calibration / threshold lock | ⬜ Not started | calibration evidence |
-| 15 | 420-case benchmark | ⬜ Not started | summary only; raw in `results/raw/` |
+| 12 | Pilot run (6 × 3 = 18 cases) | ✅ Local 18/18 + Colab T4 18/18 PASS (raw JSONL archived) | `evidence/phase12_validation.md` |
+| 13 | Calibration / threshold lock | ✅ Local runner; official Colab lock NEEDS VERIFICATION | `evidence/phase13_validation.md` |
+| 14 | 420-case benchmark | ⬜ Not started | summary only; raw in `results/raw/` |
 | 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
 | 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
@@ -188,9 +187,13 @@ See `docs/phase10_multi_agent_uq.md`.
 
 See `docs/phase11_live_artefact.md`. Original-plan schema/logging is `RAGCaseResult` from Phases 8–10.
 
-## Phase 12 — Pilot (local complete; Colab T4 NEEDS VERIFICATION)
+## Phase 12 — Pilot (complete; Colab T4 18/18 PASS)
 
-See `docs/phase12_pilot.md`. 6 frozen questions × 3 architectures = 18 resumable cases. Smoke threshold 0.55 **NOT LOCKED**. Does not run the 420-case benchmark.
+See `docs/phase12_pilot.md`. 6 frozen questions × 3 architectures = 18 resumable cases. Colab run_id `phase12_20260826T183704Z_9773516a`.
+
+## Phase 13 — DEV calibration / threshold lock (local complete; Colab lock NEEDS VERIFICATION)
+
+See `docs/phase13_calibration_lock.md`. Frozen FinQA **dev** 40; `multi_agent_uq` only. Official lock is Colab T4 only. Does not run the 420-case benchmark.
 
 ## Git workflow (all phases)
 

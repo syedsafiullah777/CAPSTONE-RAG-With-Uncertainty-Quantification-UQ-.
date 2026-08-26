@@ -80,6 +80,10 @@ knowledge_base/index/**
 !results/config/phase12_runtime_fingerprint.json
 !results/config/phase12_smoke_test.json
 !results/config/phase12_pilot_summary.json
+!results/config/phase13_runtime_fingerprint.json
+!results/config/phase13_smoke_test.json
+!results/config/phase13_calibration_summary.json
+!results/config/threshold.lock.json
 !project_record/evidence/**
 !project_record/evidence/artifacts/**
 

@@ -133,5 +133,9 @@ def test_phase5_frozen_artefacts() -> None:
     assert not (cal_q & test_q)
     assert len(cal_q) == 40
 
-    # No threshold lock file yet.
-    assert not (root / "results" / "config" / "threshold.lock.json").exists()
+    lock_path = root / "results" / "config" / "threshold.lock.json"
+    if lock_path.is_file():
+        lock = json.loads(lock_path.read_text(encoding="utf-8"))
+        assert lock.get("used_frozen_test_140") is False
+        assert lock.get("source_split") == "dev"
+        assert int(lock.get("phase") or 0) >= 13

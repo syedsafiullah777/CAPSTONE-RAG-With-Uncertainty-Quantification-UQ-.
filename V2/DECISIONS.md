@@ -166,4 +166,12 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** Run a small reproducible subset of the frozen 140 — first 6 CSV rows (Phase 4 seed-42 order) × 3 independent architectures = 18 cases — to validate checkpoint/resume/raw persistence before calibration lock and the 420-case benchmark. Use `uncertainty.smoke_threshold` 0.55 only, labelled **NOT LOCKED**. Cap the runner at 6 questions. Do not modify the frozen 140/40, lock T, or change the three RAG modules.
 
-**Verified local:** 18/18 mock + real retrieval **PASS**; run_id `phase12_20260824T011511Z_415d75de`; resume-latest skipped 18 duplicates. Colab T4 / Qwen3-8B **NEEDS VERIFICATION**.
+**Verified local:** 18/18 mock + real retrieval **PASS**; run_id `phase12_20260824T011511Z_415d75de`; resume-latest skipped 18 duplicates.
+
+**Verified Colab raw (2026-08-26):** 18 unique T4 cases in `results/raw/phase12_pilot/phase12_20260826T183704Z_9773516a/cases.jsonl`. Latency 21.01–45.58 s. UQ 5 ANSWER + 1 ABSTAIN (`finqa_test_1000`, 0.5032 < 0.55). Threshold NOT LOCKED.
+
+## 2026-08-26 — Phase 13 DEV calibration / threshold lock
+
+**Decision:** Lock T only on the frozen FinQA **dev** 40, architecture `multi_agent_uq`, with a pre-registered rule: maximise selective accuracy subject to coverage ≥ 0.50 (tie: lowest T). Score the UQ draft against `program_answer`. Official `threshold.lock.json` requires `llama_cpp` + CUDA + n=40. Mock writes a candidate only.
+
+**Verified local:** mock n=3 DEV cases **PASS**; run_id `phase13_20260826T190630Z_e3c9b993`; `locked=false`; `threshold.lock.json` absent. Colab 40-case official lock **NEEDS VERIFICATION**. 420-case benchmark not started.

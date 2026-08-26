@@ -5,9 +5,9 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-24 |
-| Current completed phase | **Phase 12** (local 18/18; Colab T4 NEEDS VERIFICATION) |
-| Next phase (not started) | Phase 13+ — calibration / threshold lock / 420-case benchmark |
+| Last updated | 2026-08-26 |
+| Current completed phase | **Phase 13** (local runner; official T lock NEEDS VERIFICATION) |
+| Next phase (not started) | Phase 14+ — 420-case benchmark / metrics / statistics |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -33,7 +33,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Test id SHA-256 | `1a69d93e412097a076e8ec836253b8fff53366aefc5ea5f8998020984f6bbd8a` | `data/final/sampling_manifest.json` |
 | Calibration set | **40** DEV questions, seed **42** | `data/calibration/calibration_questions.csv` |
 | Calibration id SHA-256 | `b229d45331fc18dd7c784175abd37cee3550775f268c843b2417d3f9d2e3aeca` | `data/calibration/calibration_manifest.json` |
-| Threshold lock | **Not created** (`threshold_locked: false`) | calibration manifest |
+| Threshold lock | **Not created** (`threshold.lock.json` absent; mock cannot lock) | Phase 13 candidate only |
 | Knowledge base | **230** source PDFs indexed → **1239** chunks | Colab rebuild: `knowledge_base/index/index_manifest.json` on Colab/Drive (see Phase 8); Mac local manifest is stale |
 | Embedding model | `BAAI/bge-small-en-v1.5` | index manifest |
 | Chunking | size 900 / overlap 150 | index manifest / `experiment.yaml` |
@@ -73,10 +73,15 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 11 live artefact | `app/streamlit_app.py` via `run_live_comparison()` | local smoke PASS |
 | Colab Phase 11 live | **PASS** (user-reported T4 / Qwen3-8B / three architectures); raw UQ 0.7688 / 0.55 / ANSWER | user report 2026-08-24 |
 | Phase 11 artefacts | `phase11_runtime_fingerprint.json`, `phase11_smoke_test.json`, `phase11_live_smoke.json` | local copy verified |
-| Phase 12 pilot | 6 frozen IDs × 3 architectures = 18 cases; checkpoint/resume | local mock 18/18 PASS |
-| Phase 12 run ID | `phase12_20260824T011511Z_415d75de` | `phase12_smoke_test.json` |
-| Colab Phase 12 T4 / Qwen3-8B | **NEEDS VERIFICATION** | `notebooks/colab_phase12_pilot.ipynb` |
-| Phase 12 artefacts | `phase12_runtime_fingerprint.json`, `phase12_smoke_test.json`, `phase12_pilot_summary.json`, raw JSONL under `results/raw/phase12_pilot/` | local copy verified |
+| Phase 12 pilot | 6 frozen IDs × 3 architectures = 18 cases; checkpoint/resume | local mock 18/18 PASS; Colab T4 18/18 PASS |
+| Phase 12 local mock run ID | `phase12_20260824T011511Z_415d75de` | mock raw JSONL |
+| Phase 12 Colab run ID | `phase12_20260826T183704Z_9773516a` | `phase12_smoke_test.json` (copied 2026-08-26) |
+| Colab Phase 12 T4 / Qwen3-8B | **PASS** (2026-08-26T18:44:41Z); Tesla T4; `llama_cpp`; git `162fe3c` | `phase12_pilot_summary.json` |
+| Phase 12 Colab raw JSONL (local) | **present** — 18 unique T4 cases | `results/raw/phase12_pilot/phase12_20260826T183704Z_9773516a/cases.jsonl` |
+| Phase 12 artefacts | `phase12_runtime_fingerprint.json`, `phase12_smoke_test.json`, `phase12_pilot_summary.json` | local config copy verified |
+| Phase 13 calibration | DEV 40 UQ runner; pre-registered T rule; mock cannot lock | local n=3 PASS |
+| Phase 13 run ID | `phase13_20260826T190630Z_e3c9b993` | `phase13_smoke_test.json` |
+| Official `threshold.lock.json` | **not created** | Colab 40-case lock NEEDS VERIFICATION |
 
 ### Architectures
 
@@ -89,7 +94,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **87 passed** (Phases 1–12 including pilot subset/resume/duplicate tests)
+- Result: **94 passed** (Phases 1–13 including DEV-only threshold selection tests)
 
 ### Storage / backup (project infrastructure)
 
@@ -102,7 +107,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase12_validation.md` |
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase13_validation.md` |
 | Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 | Phase 8 smoke JSON | `results/config/phase8_smoke_test.json` (local copy; gitignored by default) |
 
@@ -135,6 +140,9 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 23. **Phase 11 prompt / verification / UQ display (2026-08-24):** Generation prompts tightened (concise final answer, no instruction echo). Verification status + rationale are derived from the same scores. UQ zeros in Streamlit were a display/mapping issue (`st.metric` + schema not reading `uncertainty_result`); calculated values were 0.7688 / 0.55 / ANSWER. Display now shows the calculated confidence and `0.55 (smoke/demo — NOT LOCKED)`. Insufficient-evidence live question (SpaceX FY2025) identified; local mock smoke produced genuine UQ **ABSTAIN** at confidence 0.5351 < 0.55. Methodology unchanged. Threshold lock / 420-case benchmark not started.
 24. **Phase 11 output-quality (2026-08-24):** Prompts now distinguish final/ending value vs absolute change vs ROI/percentage change, and require the answer once. `clean_generated_answer` collapses repeated sentences. Retrieval, UQ method, and smoke threshold 0.55 NOT LOCKED unchanged. Additional numerical live case: frozen `finqa_test_1012`. Local mock smoke 3/3 **PASS**; Colab T4/Qwen3 re-run **NEEDS VERIFICATION**. Phase 12 not started.
 25. **Phase 12 pilot (2026-08-24):** First 6 frozen-140 rows × 3 independent architectures = 18 cases. Runner writes append-only JSONL, checkpoints after each case, resumes by `{architecture}:{question_id}`, skips completed, retries failed, refuses overwrite and n>6. Smoke threshold 0.55 **NOT LOCKED**. Frozen 140/40 and Phase 8–10 architectures unchanged. Local mock 18/18 **PASS** (`phase12_20260824T011511Z_415d75de`); resume skipped 18. Colab T4/Qwen3-8B **NEEDS VERIFICATION**. Calibration lock and 420-case benchmark not started.
+26. **Phase 12 Colab T4 verification (2026-08-26):** User copied Colab config results. Observed: backend `llama_cpp`, device `cuda`, GPU Tesla T4, Qwen3-8B Q4_K_M, run_id `phase12_20260826T183704Z_9773516a`, status **PASS**, 18/18 completed, 0 failed, threshold 0.55 **NOT LOCKED**, git `162fe3c`, recorded 2026-08-26T18:44:41Z. Local `results/raw/` does **not** contain that Colab run directory (only the mock run). Per-case T4 answers/confidence/latency therefore not verified locally. Calibration lock / 420-case benchmark still not started.
+27. **Phase 12 Colab raw JSONL archived (2026-08-26):** User copied raw files. 18 unique T4 cases verified: 4 evidence chunks each, 0 errors, latency 21.01–45.58 s, seed 42. UQ: 5 ANSWER + 1 genuine ABSTAIN on `finqa_test_1000` (confidence 0.5032 < 0.55 NOT LOCKED). Files landed in the old mock folder name; canonical copy is `results/raw/phase12_pilot/phase12_20260826T183704Z_9773516a/`. Mock JSONL in that old folder is no longer present. Phase 13+ not started.
+28. **Phase 13 DEV calibration (2026-08-26):** Pre-registered T rule = max selective accuracy with coverage ≥ 0.50 (tie: lowest T), on frozen FinQA **dev** 40 only, architecture `multi_agent_uq`. Official lock requires `llama_cpp` + CUDA + n=40. Mock n=3 smoke **PASS** (`phase13_20260826T190630Z_e3c9b993`); `threshold.lock.json` **not** written. Frozen 140/40 CSVs unmodified. 420-case benchmark not started. Colab official lock **NEEDS VERIFICATION**.
 
 ---
 
@@ -840,11 +848,114 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 12 — Colab T4 verification
+
+- **Date:** 2026-08-26
+- **Objective:** Record the real Colab T4 / Qwen3-8B pilot after the user copied Phase 12 config results.
+- **Why required:** Local mock 18/18 could not prove T4/`llama_cpp` execution. Config files now contain that run.
+- **Work completed:** Read `phase12_smoke_test.json`, `phase12_pilot_summary.json`, `phase12_runtime_fingerprint.json` (local timestamps 2026-08-26 19:46). Updated evidence and this record. Did not start Phase 13+.
+- **Technical decisions:** Treat the three config files as verified Colab evidence. Do not invent per-case answers or UQ scores without the Colab `cases.jsonl`.
+- **Files created/modified:**
+  - `V2/project_record/evidence/phase12_validation.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+  - `V2/PROJECT_CONTEXT.md`, `V2/README.md`, `V2/docs/IMPLEMENTATION_PLAN.md`, `V2/DECISIONS.md`
+- **Tests/validation:**
+  - Colab summary **PASS** — run_id `phase12_20260826T183704Z_9773516a`; 18/18; Tesla T4; `llama_cpp`; threshold 0.55 NOT LOCKED
+  - Local Colab raw JSONL — **NEEDS VERIFICATION** (directory absent)
+- **Actual outcome:** End-to-end T4 pilot completed according to the copied summary. Raw T4 cases are not in the local archive.
+- **Problems encountered:** Config copy does not include `cases.jsonl` or the Colab checkpoint file.
+- **Problems resolved:** Colab T4 execution is no longer NEEDS VERIFICATION at the summary level.
+- **Remaining issues:** Copy `phase12_20260826T183704Z_9773516a` from Colab or Drive into local `results/raw/phase12_pilot/` and `results/checkpoints/phase12_pilot/`. Drive path still **NEEDS VERIFICATION**. Do not lock the threshold. Do not start the 420-case benchmark.
+- **Dissertation relevance:** Confirms the 18-case pilot ran on the official compute path (Colab T4, Qwen3-8B, `llama_cpp`) with T still unlocked.
+- **Evidence/source file paths:**
+  - `V2/results/config/phase12_smoke_test.json`
+  - `V2/results/config/phase12_pilot_summary.json`
+  - `V2/results/config/phase12_runtime_fingerprint.json`
+- **Validation evidence:** `V2/project_record/evidence/phase12_validation.md`
+- **Backup status:**
+  - Colab: verified from copied config — T4 `llama_cpp` 18/18 **PASS** (`phase12_20260826T183704Z_9773516a`); Colab `/content` is ephemeral
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — three Phase 12 config JSONs; Colab raw JSONL **not copied**
+  - GitHub: config JSONs gitignored by default; evidence/master-record updates uncommitted
+
+---
+
+## Phase 12 — Colab raw JSONL archived
+
+- **Date:** 2026-08-26
+- **Objective:** Archive and inspect the Colab T4 per-case raw results.
+- **Why required:** Config summaries do not contain answers, evidence, confidence, or latency.
+- **Work completed:** Verified 18-line `cases.jsonl` (run_id `phase12_20260826T183704Z_9773516a`, `llama_cpp`, Tesla T4). Copied out of the misnamed mock folder into the matching run-id directory. Updated evidence.
+- **Technical decisions:** Do not treat this 18-case file as the 420-case benchmark or as a threshold lock. Report ABSTAIN as the existing UQ rule.
+- **Files created/modified:**
+  - Canonical raw: `V2/results/raw/phase12_pilot/phase12_20260826T183704Z_9773516a/`
+  - Checkpoint copy: `V2/results/checkpoints/phase12_pilot/phase12_20260826T183704Z_9773516a.json`
+  - `V2/project_record/evidence/phase12_validation.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+- **Tests/validation:** 18 unique keys; schema fields present; 4 chunks each; 0 errors; UQ 5 ANSWER / 1 ABSTAIN; threshold 0.55 NOT LOCKED
+- **Actual outcome:** End-to-end T4 pilot raw results are now local. One UQ abstention on `finqa_test_1000`.
+- **Problems encountered:** Raw files were copied into `phase12_20260824T011511Z_415d75de`, overwriting the local mock JSONL.
+- **Problems resolved:** Canonical Colab run directory created with the correct run_id.
+- **Remaining issues:** Google Drive copy **NEEDS VERIFICATION**. Some generated answers still verbose or self-report “evidence insufficient” while `decision=ANSWER` (Single-Agent / Multi-Agent). Optional later prompt work; not a Phase 13 start.
+- **Dissertation relevance:** Documents real T4 latency (~21–46 s/case), retrieval+verify+UQ behaviour, and that T remains unlocked.
+- **Evidence/source file paths:** `V2/results/raw/phase12_pilot/phase12_20260826T183704Z_9773516a/cases.jsonl`
+- **Validation evidence:** `V2/project_record/evidence/phase12_validation.md`
+- **Backup status:**
+  - Colab: T4 18/18 **PASS**; `/content` ephemeral
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — Colab raw JSONL + checkpoint under the correct run_id
+  - GitHub: raw JSONL gitignored; evidence/master-record updates uncommitted
+
+---
+
+## Phase 13 — DEV calibration / threshold lock
+
+- **Date:** 2026-08-26
+- **Objective:** Select and (on Colab) lock the UQ abstention threshold T on the frozen FinQA **dev** 40-question set, using a pre-registered rule. Never peek at the frozen 140.
+- **Why required:** RQ3 and the 420-case benchmark need a locked T that is not tuned on test.
+- **Work completed:**
+  - Numeric matcher for `program_answer`
+  - Selector: max selective accuracy among T with coverage ≥ 0.50; tie = lowest T
+  - Runner: 40 DEV `multi_agent_uq` cases, checkpoint/resume, no test IDs
+  - Official lock only if `llama_cpp` + CUDA + n=40; mock writes candidate only
+  - Colab notebook `notebooks/colab_phase13_calibration.ipynb`
+- **Technical decisions:** Do not change Phase 8–10 architecture modules. Do not lock from mock. Do not run 420 cases. Score the UQ **draft** (not the abstention message) against gold.
+- **Files created/modified:**
+  - `V2/src/evaluation/numeric.py`
+  - `V2/src/calibration/data.py`, `select.py`, `lock.py`, `runner.py`
+  - `V2/scripts/run_calibration.py`
+  - `V2/tests/test_phase13_calibration.py`
+  - `V2/notebooks/colab_phase13_calibration.ipynb`
+  - `V2/docs/phase13_calibration_lock.md`
+  - `V2/project_record/evidence/phase13_validation.md`
+- **Tests/validation:**
+  - Phase 13 tests **7 passed**; full suite **94 passed**
+  - Local mock n=3 **PASS** — run_id `phase13_20260826T190630Z_e3c9b993`; locked=false
+  - `threshold.lock.json` **absent**
+  - Colab 40-case official lock — **NEEDS VERIFICATION**
+- **Actual outcome:** Calibration runner is ready. T is still **not** officially locked.
+- **Problems encountered:** Mock drafts are not Qwen3 answers, so a mock T (here candidate 0.0 on n=3) must not be frozen.
+- **Problems resolved:** Lock guards refuse mock, Mac MPS, n<40, and frozen-test IDs.
+- **Remaining issues:** Push V2 and run `notebooks/colab_phase13_calibration.ipynb` on Colab T4; copy `threshold.lock.json` + raw JSONL locally. Then Phase 14 (420) can read the lock.
+- **Dissertation relevance:** Documents DEV-only T selection and the coverage/selective-accuracy trade-off before test evaluation.
+- **Evidence/source file paths:**
+  - `V2/results/config/phase13_smoke_test.json`
+  - `V2/results/config/threshold.candidate.json`
+  - `V2/results/raw/phase13_calibration/phase13_20260826T190630Z_e3c9b993/cases.jsonl`
+- **Validation evidence:** `V2/project_record/evidence/phase13_validation.md`
+- **Backup status:**
+  - Colab: official 40-case lock **NEEDS VERIFICATION**
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — tests, mock n=3, candidate (NOT LOCKED), evidence, master record
+  - GitHub: Phase 13 files **uncommitted**
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 13+ | Calibration / threshold lock, 420-case benchmark, metrics, statistics | Not started |
+| 14+ | 420-case benchmark, metrics, statistics | Not started |
 
 ---
 
