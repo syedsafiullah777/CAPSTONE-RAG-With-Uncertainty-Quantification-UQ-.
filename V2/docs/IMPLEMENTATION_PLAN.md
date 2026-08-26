@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-26 |
-| Current completed phase | **Phase 14** (9-case validation; T=0.65 locked; full 420 not launched) |
-| Next implementation phase | Full 420-case benchmark (not launched) |
+| Current completed phase | **Phase 14 9-case engineering validation** (local mock + Colab T4 **PASS**) |
+| Next implementation phase | **Final 420-case benchmark** (140 × 3) — not launched |
 | V1 | Reference-only — never modified |
 
 ---
@@ -143,7 +143,7 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 11 | Streamlit live artefact (schema already in Phases 8–10) | ✅ Complete | `evidence/phase11_validation.md` |
 | 12 | Pilot run (6 × 3 = 18 cases) | ✅ Local 18/18 + Colab T4 18/18 PASS (raw JSONL archived) | `evidence/phase12_validation.md` |
 | 13 | Calibration / threshold lock | ✅ Complete — T=0.65 locked on Colab T4 DEV 40 | `evidence/phase13_validation.md` |
-| 14 | 420-case benchmark | ✅ Runner + local 9-case PASS; full 420 not launched | `evidence/phase14_validation.md` |
+| 14 | 420-case benchmark | ✅ 9-case engineering validation complete (Colab T4 9/9). **Next execution: 420.** Not launched. | `evidence/phase14_validation.md` |
 | 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
 | 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
@@ -195,9 +195,27 @@ See `docs/phase12_pilot.md`. 6 frozen questions × 3 architectures = 18 resumabl
 
 See `docs/phase13_calibration_lock.md`. Frozen FinQA **dev** 40; `multi_agent_uq` only. Colab T4 run_id `phase13_20260826T192003Z_7bcd6ed3`. Official lock `results/config/threshold.lock.json`. Does not run the 420-case benchmark.
 
-## Phase 14 — Benchmark runner / 9-case validation (local complete; Colab T4 NEEDS VERIFICATION)
+## Phase 14 — 9-case engineering validation (complete)
 
-See `docs/phase14_benchmark.md`. 3 frozen questions × 3 architectures = 9 resumable cases at locked T=0.65. Full 420 is prepared but not launched. Local run_id `phase14_20260826T195616Z_f9550cce`.
+See `docs/phase14_benchmark.md`. 3 frozen questions × 3 architectures = 9 cases at locked T=0.65. Colab T4 run_id `phase14_20260826T200828Z_e91e588d` **PASS**. Keep as engineering evidence only. **Do not run another 9-case validation.**
+
+## Next execution — final 420-case benchmark (not launched)
+
+**140 frozen test questions × 3 architectures = 420 cases.** Independent; no chaining.
+
+| Item | Locked value |
+| --- | --- |
+| Eval set | Frozen FinQA **test** 140 (`selected_140_questions.csv`) |
+| Architectures | `single_agent`, `multi_agent`, `multi_agent_uq` |
+| Threshold | **T = 0.65** (`threshold.lock.json`; do not recalibrate) |
+| Model | Qwen3-8B **Q4_K_M** via **`llama_cpp`** |
+| Compute | Google Colab GPU |
+| Knowledge base | Shared Phase 6 (230 PDFs / 1239 chunks) |
+| Retrieval | Identical across architectures (`top_k=4`, `BAAI/bge-small-en-v1.5`) |
+
+Must: incremental raw JSONL; checkpoint to Google Drive; resume after interruption; retry genuine failures; skip completed / prevent duplicates; progress monitoring; preserve raw results and logs.
+
+Must not: modify frozen 140 or calibration 40; recalibrate T; modify V1; add another 3/9-case validation stage; start 420 automatically from this documentation update.
 
 ## Git workflow (all phases)
 

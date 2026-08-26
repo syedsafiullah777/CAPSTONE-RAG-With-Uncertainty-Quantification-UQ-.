@@ -1,50 +1,53 @@
-# Phase 14 — Benchmark runner and 9-case validation
+# Phase 14 — 9-case engineering validation (complete) and next 420-case execution
 
-Prepare the frozen **140 × 3 = 420** case runner. This phase **validates** it on **3 questions × 3 architectures = 9 cases** only.
+The 9-case run is **finished**. Keep it as **supporting engineering evidence**. Do **not** run another 3-question / 9-case validation.
 
-## Locked threshold
+## Completed 9-case engineering validation
 
-Uses `results/config/threshold.lock.json` **T = 0.65** (Phase 13, FinQA **dev** 40).
+| Item | Local mock | Colab T4 |
+| --- | --- | --- |
+| Status | PASS (after retry) | **PASS** |
+| Run ID | `phase14_20260826T195616Z_f9550cce` | `phase14_20260826T200828Z_e91e588d` |
+| Backend | mock | `llama_cpp` |
+| GPU | — | Tesla T4 |
+| Model | mock | Qwen3-8B Q4_K_M |
+| Cases | 9 | 9 |
+| T | 0.65 LOCKED | 0.65 LOCKED |
 
-- Does **not** recalibrate
-- Does **not** modify the lock file
-- Does **not** tune T on the frozen 140
+Colab subset: `finqa_test_1000`, `1012`, `1017` × three independent architectures. UQ: 2 ANSWER + 1 ABSTAIN (`finqa_test_1000`, confidence 0.5032 < 0.65).
 
-## What this phase does not do
+## Next execution — final 420-case benchmark (not launched)
 
-- Does **not** launch the full 420-case benchmark
-- Does **not** modify `selected_140_questions.csv` or `calibration_questions.csv`
-- Does **not** change the three RAG architecture modules
-- Does **not** modify V1
+**140 frozen test questions × 3 architectures = 420 cases.**
 
-## Validation subset
+| Item | Value |
+| --- | --- |
+| Eval set | Frozen FinQA **test** 140 (`data/final/selected_140_questions.csv`) |
+| Architectures | `single_agent`, `multi_agent`, `multi_agent_uq` (independent; no chaining) |
+| Threshold | **T = 0.65** from `results/config/threshold.lock.json` |
+| Model | Qwen3-8B **Q4_K_M** |
+| Backend | `llama_cpp` |
+| Compute | Google Colab GPU |
+| Knowledge base | Shared Phase 6 (230 PDFs / 1239 chunks) |
+| Retrieval | Identical across architectures (`top_k=4`, `BAAI/bge-small-en-v1.5`) |
 
-First 3 rows of the Phase 4 frozen CSV (seed-42 order):
+### Required run behaviour
 
-`finqa_test_1000`, `finqa_test_1012`, `finqa_test_1017`
+- Incremental raw JSONL after each case
+- Checkpoint to Google Drive during the run
+- Resume after Colab disconnect (`--resume-latest`); never restart from question 1
+- Retry genuine failures; skip completed `{architecture}:{question_id}`
+- Duplicate prevention; refuse silent overwrite of raw results
+- Progress monitoring (completed / failed / pending)
+- Preserve raw results and logs
 
-Architectures (independent, no chaining): `single_agent`, `multi_agent`, `multi_agent_uq`.
+### Must not
 
-## Commands
+- Modify the frozen 140-question test set
+- Modify the 40-question calibration set
+- Recalibrate or change T
+- Modify V1
+- Add another mandatory 9-case validation
+- Start the 420-case run automatically from documentation updates
 
-```bash
-cd V2
-# Local 9-case validation (mock LLM; real KB)
-PYTHONPATH=. python scripts/run_benchmark.py --backend mock --n-questions 3
-# Colab T4 (9 cases, llama_cpp, T=0.65 locked)
-# notebooks/colab_phase14_benchmark_validation.ipynb
-# PYTHONPATH=. python scripts/run_benchmark.py --backend llama_cpp --n-questions 3
-```
-
-If disconnected: `--resume-latest`. Do not start a new run from question 1.
-
-`--allow-full-420` is **refused** by this entrypoint.
-
-## Recovery
-
-- Incremental JSONL: `results/raw/phase14_benchmark/{run_id}/cases.jsonl`
-- Checkpoint after each case
-- Skip completed `{architecture}:{question_id}`
-- Retry failed cases
-- Refuse overwrite of an existing raw store
-- Optional Drive sync when `V2_DRIVE_ROOT` is set (Colab: `/content/drive/MyDrive/MSc-RAG`)
+This file does **not** launch 420.

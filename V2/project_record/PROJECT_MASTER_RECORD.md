@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-26 |
-| Current completed phase | **Phase 14** (9-case benchmark validation; full 420 not launched) |
-| Next phase (not started) | Official Colab T4 9-case (if not yet run), then full 420-case benchmark / metrics / statistics |
+| Current completed phase | **Phase 14 9-case engineering validation** (local mock + Colab T4 **PASS**) |
+| Next phase (not started) | **Final 420-case benchmark** (140 × 3) — not launched |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -85,11 +85,12 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Colab Phase 13 T4 / Qwen3-8B | **PASS** (2026-08-26T19:37:00Z); Tesla T4; `llama_cpp`; git `19368f1` | `phase13_calibration_summary.json` |
 | Official `threshold.lock.json` | **LOCKED** T=0.65; coverage 0.55; selective accuracy 0.5455 (12/22) | `results/config/threshold.lock.json` |
 | Phase 13 Colab raw JSONL (local) | **present** — 40 unique T4 DEV UQ cases | `results/raw/phase13_calibration/phase13_20260826T192003Z_7bcd6ed3/cases.jsonl` |
-| Phase 14 runner | 140×3 prepared; this phase validates 3×3=9 only | `scripts/run_benchmark.py` |
-| Phase 14 local mock 9-case | **PASS** 9/9 after retry; T=0.65 LOCKED | `phase14_smoke_test.json` |
-| Phase 14 run ID | `phase14_20260826T195616Z_f9550cce` | raw JSONL under `results/raw/phase14_benchmark/` |
-| Colab Phase 14 T4 9-case | **NEEDS VERIFICATION** | `notebooks/colab_phase14_benchmark_validation.ipynb` |
-| Full 420-case benchmark | **not launched** | CLI refuses `--allow-full-420` |
+| Phase 14 runner | 140×3 prepared; 9-case engineering validation complete | `scripts/run_benchmark.py` |
+| Phase 14 local mock 9-case | **PASS** (supporting engineering) | run_id `phase14_20260826T195616Z_f9550cce` |
+| Phase 14 Colab T4 9-case | **PASS** (2026-08-26T20:11:45Z); Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `20ee91e` | `phase14_smoke_test.json` |
+| Phase 14 Colab run ID | `phase14_20260826T200828Z_e91e588d` | 9/9; T=0.65 LOCKED |
+| Colab Phase 14 Drive sync (from summary) | reported `MyDrive/MSc-RAG/results/raw/phase14_benchmark/phase14_20260826T200828Z_e91e588d` | JSON artefact; Drive folder not re-checked locally |
+| Full 420-case benchmark | **not launched** — **next execution** | 140 frozen test × 3 architectures |
 
 ### Architectures
 
@@ -153,6 +154,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 28. **Phase 13 DEV calibration (2026-08-26):** Pre-registered T rule = max selective accuracy with coverage ≥ 0.50 (tie: lowest T), on frozen FinQA **dev** 40 only, architecture `multi_agent_uq`. Official lock requires `llama_cpp` + CUDA + n=40. Mock n=3 smoke **PASS** (`phase13_20260826T190630Z_e3c9b993`); `threshold.lock.json` **not** written. Frozen 140/40 CSVs unmodified. 420-case benchmark not started. Colab official lock **NEEDS VERIFICATION**.
 29. **Phase 13 Colab T4 official lock (2026-08-26):** User copied Colab config + raw. Observed: backend `llama_cpp`, device `cuda`, GPU Tesla T4, Qwen3-8B Q4_K_M, run_id `phase13_20260826T192003Z_7bcd6ed3`, 40/40 DEV `multi_agent_uq` cases, 0 errors, `used_frozen_test_140=false`, IDs match Phase 5 manifest. Locked **T=0.65** (coverage 0.55, selective accuracy 12/22 ≈ 0.5455). YAML `confidence_threshold` remains null; Phase 12 still uses smoke 0.55. Phase 14 must load `threshold.lock.json`. 420-case benchmark not started.
 30. **Phase 14 9-case benchmark validation (2026-08-26):** Implement the 140×3 runner but validate only first 3 frozen-140 rows × 3 independent architectures = 9 cases, using locked T=0.65 from `threshold.lock.json`. Do not recalibrate. Do not launch 420 (`--allow-full-420` refused). Local mock 9/9 **PASS** after retrying ProxyError 403 (`phase14_20260826T195616Z_f9550cce`); UQ 3/3 ABSTAIN at mock confidence < 0.65. Resume skipped 9. Frozen 140/40 and Phase 8–10 modules unchanged. Colab T4 9-case **NEEDS VERIFICATION**. Full 420 not started.
+31. **Phase 14 Colab T4 9-case + next execution is 420 (2026-08-26):** User copied Colab config + raw. Observed: backend `llama_cpp`, device `cuda`, GPU Tesla T4, Qwen3-8B Q4_K_M, run_id `phase14_20260826T200828Z_e91e588d`, **9/9 PASS**, T=0.65 LOCKED, Drive sync reported to `MyDrive/MSc-RAG/results/raw/phase14_benchmark/phase14_20260826T200828Z_e91e588d`. UQ: 2 ANSWER + 1 ABSTAIN (`finqa_test_1000`, 0.5032 < 0.65). The 9-case run is **engineering validation evidence only** — do not add another 9-case gate. **Next execution:** final **140 × 3 = 420** on Colab GPU with the same lock, KB, and retrieval. This update does not launch 420. Frozen 140/40 and T are unchanged.
 
 ---
 
@@ -1043,12 +1045,44 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 14 — Colab T4 9-case archived; next execution is 420
+
+- **Date:** 2026-08-26
+- **Objective:** Record the completed Colab T4 9-case run as engineering validation evidence and lock the **next** job as the final 420-case benchmark.
+- **Why required:** The 9-case gate is finished. Repeating it would waste GPU time and is not a research requirement. The dissertation benchmark is 140 × 3 = 420.
+- **Work completed:** Inspected user-copied Colab config + 9-line `cases.jsonl` (run_id `phase14_20260826T200828Z_e91e588d`). Updated plan, master record, and Phase 14 evidence. Did **not** re-run 9 cases. Did **not** launch 420.
+- **Technical decisions:** Keep the 9-case results as supporting engineering evidence. Next execution uses locked T=0.65, Qwen3-8B Q4_K_M, `llama_cpp`, Colab GPU, shared Phase 6 KB, identical retrieval. Incremental JSONL, Drive checkpoints, resume, retry genuine failures, duplicate prevention, progress logs, raw preservation.
+- **Files created/modified:**
+  - `V2/project_record/evidence/phase14_validation.md`
+  - `V2/docs/IMPLEMENTATION_PLAN.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+  - `V2/docs/phase14_benchmark.md`
+- **Tests/validation:** No new pytest or smoke. Observed Colab artefacts: **9/9 PASS**; T=0.65; 4 chunks; 0 errors; latency 16.47–43.16 s; UQ 2 ANSWER / 1 ABSTAIN (`finqa_test_1000`).
+- **Actual outcome:** 9-case engineering validation is complete. Full 420 is the next execution and is **not** started.
+- **Problems encountered:** Colab raw files were copied into folder name `phase14_20260826T195616Z_f9550cce`; JSONL `run_id` is `phase14_20260826T200828Z_e91e588d`.
+- **Problems resolved:** Evidence records the Colab run_id from the JSON, not the folder name.
+- **Remaining issues:** Launch 420 on Colab GPU when ready (not in this update). Local Drive tree not independently re-listed. Do not rerun 9 cases.
+- **Dissertation relevance:** 9-case T4 results demonstrate locked T and independent architectures on the official compute path; they are not the 420-case test evaluation.
+- **Evidence/source file paths:**
+  - `V2/results/config/phase14_smoke_test.json`
+  - `V2/results/config/phase14_benchmark_summary.json`
+  - `V2/results/config/phase14_runtime_fingerprint.json`
+  - `V2/results/raw/phase14_benchmark/phase14_20260826T195616Z_f9550cce/cases.jsonl` (Colab 9 T4 cases; run_id in file `phase14_20260826T200828Z_e91e588d`)
+- **Validation evidence:** `V2/project_record/evidence/phase14_validation.md`
+- **Backup status:**
+  - Colab: T4 9/9 **PASS** (`phase14_20260826T200828Z_e91e588d`); `/content` ephemeral
+  - Google Drive: reported in summary JSON — `MyDrive/MSc-RAG/results/raw/phase14_benchmark/phase14_20260826T200828Z_e91e588d` (folder not re-listed from this machine)
+  - Local: verified — Colab config JSONs + 9-line T4 JSONL
+  - GitHub: evidence/plan/master-record updates uncommitted
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 14 Colab | Official T4 9-case (`llama_cpp`) | NEEDS VERIFICATION |
-| 15+ | Full 420-case benchmark, metrics, statistics | Not started |
+| 14 final | **420-case benchmark** (140 frozen test × 3 architectures) | **Next execution — not launched** |
+| 16+ | Evaluation, metrics, statistics | Not started |
 
 ---
 
