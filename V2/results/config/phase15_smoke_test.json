@@ -1,0 +1,56 @@
+{
+  "phase": 15,
+  "test_name": "phase15_full_benchmark",
+  "command": "PYTHONPATH=. python scripts/run_full_benchmark.py --backend llama_cpp",
+  "expected": "140 frozen test questions \u00d7 3 independent architectures = 420 cases; locked T=0.65; incremental JSONL + Drive checkpoint/resume",
+  "actual": "status=PASS completed=420 failed=0 pending=0 threshold=0.65 locked=True n_cases=420",
+  "status": "PASS",
+  "recorded_at_utc": "2026-08-26T23:11:58.888424+00:00",
+  "notebook": null,
+  "environment": {
+    "device": "cuda",
+    "platform": {
+      "system": "Linux",
+      "release": "6.6.122+",
+      "machine": "x86_64",
+      "processor": "x86_64",
+      "python_version": "3.13.15"
+    },
+    "gpu": {
+      "available": true,
+      "name": "Tesla T4",
+      "vram_total_mb": 15360.0,
+      "vram_free_mb": 14910.0,
+      "driver_version": "580.82.07"
+    },
+    "torch": {
+      "installed": true,
+      "version": "2.11.0+cu128",
+      "cuda_available": true,
+      "cuda_device_count": 1,
+      "cuda_device_name": "Tesla T4",
+      "vram_total_gb": 14.56
+    },
+    "model_config": {
+      "name": "Qwen3-8B",
+      "backend": "llama_cpp",
+      "quantisation": "Q4_K_M",
+      "model_path": null,
+      "hf_repo_id": "bartowski/Qwen_Qwen3-8B-GGUF",
+      "gguf_filename": "Qwen_Qwen3-8B-Q4_K_M.gguf",
+      "ollama_model": "qwen3:8b",
+      "temperature": 0.1,
+      "max_new_tokens": 512
+    },
+    "git_commit": "e3c6094f267100f13471db7fc8091a7a926bb42b",
+    "captured_at_utc": "2026-08-26T20:37:24.223220+00:00"
+  },
+  "error": null,
+  "output_path": "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl",
+  "extra": {
+    "run_id": "phase15_20260826T203744Z_dae9c3a4",
+    "threshold_note": "LOCKED on FinQA DEV calibration \u2014 not tuned on the frozen 140",
+    "evidence_md": "project_record/evidence/phase15_validation.md",
+    "n_planned": 420
+  }
+}
