@@ -4,8 +4,8 @@
 | --- | --- |
 | Phase | 15 — Final 420-case benchmark |
 | Evidence file | `project_record/evidence/phase15_validation.md` |
-| Last updated | 2026-08-26 |
-| Phase 15 status | **Notebook and entrypoint created.** Official 420-case Colab run **not launched**. |
+| Last updated | 2026-08-27 |
+| Phase 15 status | **Notebook, entrypoint, and empty raw/checkpoint folders created.** Official 420-case Colab run **not launched**. |
 
 ## Summary
 
@@ -29,8 +29,8 @@ Phase 14 9-case notebook left unchanged as engineering evidence.
 | Test name | `test_phase15_benchmark` |
 | Command | `PYTHONPATH=. pytest tests/test_phase15_benchmark.py -q` |
 | Environment | Local Mac; `V2/.venv` |
-| Expected | Notebook is 140×3=420; uses `run_full_benchmark.py`; T=0.65; Drive/resume; Phase 14 9-case notebook unchanged; mock refused |
-| Actual (observed) | **5 passed**. Notebook JSON valid (nbformat 4, 18 cells). Frozen 140/40 and T not modified. 420-case job **not** run. |
+| Expected | Notebook is 140×3=420; uses `run_full_benchmark.py`; T=0.65; Drive/resume; Phase 14 9-case notebook unchanged; mock refused; empty `results/raw/phase15_benchmark/` exists |
+| Actual (observed) | **6 passed** (2026-08-27). Empty `results/raw/phase15_benchmark/` and `results/checkpoints/phase15_benchmark/` exist. Frozen 140/40 and T not modified. 420-case job **not** run. |
 | Status | **PASS** (structure only) |
 | Error | — |
 | Output path | `notebooks/colab_phase15_full_benchmark.ipynb`; `scripts/run_full_benchmark.py` |

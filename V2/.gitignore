@@ -96,12 +96,16 @@ knowledge_base/index/**
 # Results (never silently commit large/raw experiment dumps by default)
 results/raw/**
 !results/raw/.gitkeep
+!results/raw/phase15_benchmark/
+!results/raw/phase15_benchmark/.gitkeep
 results/processed/**
 !results/processed/.gitkeep
 results/final/**
 !results/final/.gitkeep
 results/checkpoints/**
 !results/checkpoints/.gitkeep
+!results/checkpoints/phase15_benchmark/
+!results/checkpoints/phase15_benchmark/.gitkeep
 results/logs/**
 !results/logs/.gitkeep
 # Config snapshots may be committed selectively later

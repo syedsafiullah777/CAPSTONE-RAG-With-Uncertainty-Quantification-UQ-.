@@ -98,3 +98,12 @@ def test_full_script_exists_and_refuses_mock() -> None:
     )
     assert proc.returncode != 0
     assert "mock" in (proc.stderr + proc.stdout).lower()
+
+
+def test_phase15_raw_and_checkpoint_folders_exist() -> None:
+    raw = project_root() / "results" / "raw" / "phase15_benchmark"
+    ckpt = project_root() / "results" / "checkpoints" / "phase15_benchmark"
+    assert raw.is_dir(), raw
+    assert ckpt.is_dir(), ckpt
+    assert (raw / ".gitkeep").is_file()
+    assert (ckpt / ".gitkeep").is_file()

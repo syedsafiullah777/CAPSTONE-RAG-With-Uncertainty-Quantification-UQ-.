@@ -34,6 +34,11 @@ Mock backends are refused. Drive incremental sync uses `V2_DRIVE_ROOT=/content/d
 
 Raw store: `results/raw/phase15_benchmark/{run_id}/` (separate from Phase 14's `phase14_benchmark/`).
 
+Empty local placeholders (no 420 results yet):
+
+- `results/raw/phase15_benchmark/`
+- `results/checkpoints/phase15_benchmark/`
+
 ## Recovery
 
 - Incremental JSONL after each case

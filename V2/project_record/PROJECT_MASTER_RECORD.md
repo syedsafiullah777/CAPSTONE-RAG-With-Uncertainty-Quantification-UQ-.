@@ -105,7 +105,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest tests/test_phase15_benchmark.py` from `V2/` with `PYTHONPATH=.` (this session); last recorded full suite was **105 passed** (Phases 1–14)
-- Result: **5 passed** (Phase 15 notebook/entrypoint structure only). Official 420-case job was **not** executed. Full suite was **not** re-run in this session.
+- Result: **6 passed** (Phase 15 notebook/entrypoint/raw-folder structure only). Official 420-case job was **not** executed. Full suite was **not** re-run in this session.
 
 ### Storage / backup (project infrastructure)
 
@@ -1104,10 +1104,12 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - `V2/docs/IMPLEMENTATION_PLAN.md`
   - `V2/project_record/PROJECT_MASTER_RECORD.md`
   - `V2/config/experiment.yaml` (`phase15_entrypoint`)
-- **Tests/validation:** `PYTHONPATH=. pytest tests/test_phase15_benchmark.py -q` → **5 passed**. 420-case job not run. Full suite not re-run this session (last recorded 105 passed through Phase 14).
+  - `V2/results/raw/phase15_benchmark/.gitkeep` (empty placeholder; added 2026-08-27)
+  - `V2/results/checkpoints/phase15_benchmark/.gitkeep` (empty placeholder; added 2026-08-27)
+- **Tests/validation:** `PYTHONPATH=. pytest tests/test_phase15_benchmark.py -q` → **6 passed** (2026-08-27, after empty raw/checkpoint folders). 420-case job not run. Full suite not re-run in this session (last recorded 105 passed through Phase 14).
 - **Actual outcome:** Notebook and runner exist for the official 420-case Colab job. Execution is **not launched**.
 - **Problems encountered:** None during notebook creation. A previous 9-case raw store must not be used as `--resume-latest` for 420 — separate `phase15_benchmark` job prefix addresses this.
-- **Problems resolved:** Separate Phase 15 raw/checkpoint/config Drive paths.
+- **Problems resolved:** Separate Phase 15 raw/checkpoint/config Drive paths. Local empty folders `results/raw/phase15_benchmark/` and `results/checkpoints/phase15_benchmark/` created 2026-08-27 (no 420 results written).
 - **Remaining issues:** Push Phase 15 to GitHub, then run `notebooks/colab_phase15_full_benchmark.ipynb` on Colab GPU. Do not re-run the 9-case notebook instead. Google Drive Phase 15 archive does not exist until the run starts.
 - **Dissertation relevance:** The official test evaluation is 140 × 3 at T=0.65, not the 9-case engineering check.
 - **Evidence/source file paths:**
@@ -1118,7 +1120,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Backup status:**
   - Colab: 420-case job **not launched**
   - Google Drive: Phase 15 raw/checkpoints **do not exist yet**
-  - Local: verified — notebook, entrypoint, tests, docs, master record
+  - Local: verified — notebook, entrypoint, tests, docs, empty `results/raw/phase15_benchmark/` and `results/checkpoints/phase15_benchmark/`
   - GitHub: Phase 15 files **uncommitted** (push required before Colab clone)
 
 ---
