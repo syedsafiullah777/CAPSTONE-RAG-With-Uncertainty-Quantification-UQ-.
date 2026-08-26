@@ -53,8 +53,9 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Phase status
 
-**Phase 11 complete — Streamlit live artefact (three independent architectures; local smoke PASS).**  
-Next: pilot / calibration threshold lock / 420-case benchmark — not started.
+**Phase 12 local complete — 18-case pilot (checkpoint/resume) mock PASS.**  
+Colab T4 / Qwen3-8B pilot is **NEEDS VERIFICATION**.  
+Next: calibration / threshold lock / 420-case benchmark — not started.
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -91,4 +92,7 @@ Next: pilot / calibration threshold lock / 420-case benchmark — not started.
 - Phase 11 live app: `V2/app/streamlit_app.py`
 - Phase 11 notes: `V2/docs/phase11_live_artefact.md`
 - Phase 11 evidence: `V2/project_record/evidence/phase11_validation.md`
+- Phase 12 notes: `V2/docs/phase12_pilot.md`
+- Phase 12 evidence: `V2/project_record/evidence/phase12_validation.md`
+- Phase 12 Colab: `V2/notebooks/colab_phase12_pilot.ipynb`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

@@ -161,3 +161,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** In the live artefact only, treat missing evidence, empty generation, or a runtime exception (including ProxyError 403) as ERROR/UNAVAILABLE. Do not display ANSWER, do not keep a mock/fabricated answer, and do not assign confidence. Mock remains a UI/testing backend only.
 
 **Verified:** `tests/test_phase11_live_artefact.py` **10 passed**; full suite **65 passed**. Phase 8–10 pipeline modules unchanged.
+
+## 2026-08-24 — Phase 12 pilot (18 cases)
+
+**Decision:** Run a small reproducible subset of the frozen 140 — first 6 CSV rows (Phase 4 seed-42 order) × 3 independent architectures = 18 cases — to validate checkpoint/resume/raw persistence before calibration lock and the 420-case benchmark. Use `uncertainty.smoke_threshold` 0.55 only, labelled **NOT LOCKED**. Cap the runner at 6 questions. Do not modify the frozen 140/40, lock T, or change the three RAG modules.
+
+**Verified local:** 18/18 mock + real retrieval **PASS**; run_id `phase12_20260824T011511Z_415d75de`; resume-latest skipped 18 duplicates. Colab T4 / Qwen3-8B **NEEDS VERIFICATION**.

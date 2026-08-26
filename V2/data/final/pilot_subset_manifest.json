@@ -1,0 +1,26 @@
+{
+  "phase": 12,
+  "mode": "pilot",
+  "frozen": true,
+  "modifies_frozen_140": false,
+  "modifies_frozen_calibration": false,
+  "threshold_locked": false,
+  "threshold_note": "smoke/demo \u2014 NOT LOCKED",
+  "selection_rule": "first_n_rows_of_frozen_140_csv",
+  "source_csv": "data/final/selected_140_questions.csv",
+  "source_split": "test",
+  "frozen_n": 140,
+  "n_questions": 6,
+  "n_architectures": 3,
+  "n_cases": 18,
+  "question_ids": [
+    "finqa_test_1000",
+    "finqa_test_1012",
+    "finqa_test_1017",
+    "finqa_test_1027",
+    "finqa_test_1039",
+    "finqa_test_1040"
+  ],
+  "question_ids_sha256": "58a0734eb9290026e44eca8921c4b59543990f5f5030861606495722f9f54ed6",
+  "notes": "Subset is the first N rows of the Phase 4 frozen CSV (already ordered by sampling seed 42). This file documents the subset; it does not replace selected_140_questions.csv."
+}

@@ -2,7 +2,7 @@
 
 Clean development area for the revised MSc AI capstone artefact.
 
-**Phase status:** Phase 11 complete. See `project_record/PROJECT_MASTER_RECORD.md`.
+**Phase status:** Phase 12 pilot implemented (local 18/18 mock PASS; Colab T4 NEEDS VERIFICATION). See `project_record/PROJECT_MASTER_RECORD.md`.
 
 ## Storage / backup
 
@@ -58,6 +58,19 @@ PYTHONPATH=. streamlit run app/streamlit_app.py
 ```
 
 Uses the existing Phase 6 knowledge base and the three V2 RAG pipelines. Sidebar backend: `mock` (UI check), `ollama_dev` (local Qwen), `llama_cpp` (Colab GPU).
+
+## Pilot (Phase 12)
+
+```bash
+PYTHONPATH=. python scripts/run_pilot.py --backend mock
+# Colab T4:
+# notebooks/colab_phase12_pilot.ipynb
+# PYTHONPATH=. python scripts/run_pilot.py --backend llama_cpp
+# After disconnect:
+# PYTHONPATH=. python scripts/run_pilot.py --backend llama_cpp --resume-latest
+```
+
+6 frozen questions × 3 architectures = 18 cases. Threshold `0.55` smoke/demo — **NOT LOCKED**. Does not run the 420-case benchmark.
 
 Import check:
 

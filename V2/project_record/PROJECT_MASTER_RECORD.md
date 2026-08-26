@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-24 |
-| Current completed phase | **Phase 11** |
-| Next phase (not started) | Phase 12+ — pilot / calibration lock / 420-case benchmark |
+| Current completed phase | **Phase 12** (local 18/18; Colab T4 NEEDS VERIFICATION) |
+| Next phase (not started) | Phase 13+ — calibration / threshold lock / 420-case benchmark |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -73,6 +73,10 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 11 live artefact | `app/streamlit_app.py` via `run_live_comparison()` | local smoke PASS |
 | Colab Phase 11 live | **PASS** (user-reported T4 / Qwen3-8B / three architectures); raw UQ 0.7688 / 0.55 / ANSWER | user report 2026-08-24 |
 | Phase 11 artefacts | `phase11_runtime_fingerprint.json`, `phase11_smoke_test.json`, `phase11_live_smoke.json` | local copy verified |
+| Phase 12 pilot | 6 frozen IDs × 3 architectures = 18 cases; checkpoint/resume | local mock 18/18 PASS |
+| Phase 12 run ID | `phase12_20260824T011511Z_415d75de` | `phase12_smoke_test.json` |
+| Colab Phase 12 T4 / Qwen3-8B | **NEEDS VERIFICATION** | `notebooks/colab_phase12_pilot.ipynb` |
+| Phase 12 artefacts | `phase12_runtime_fingerprint.json`, `phase12_smoke_test.json`, `phase12_pilot_summary.json`, raw JSONL under `results/raw/phase12_pilot/` | local copy verified |
 
 ### Architectures
 
@@ -85,7 +89,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 ### Test suite status (as of last update)
 
 - Command: `pytest` from `V2/` with `PYTHONPATH=.`
-- Result: **77 passed** (Phases 1–11 + UQ display + verification rationale + insufficient-evidence question)
+- Result: **87 passed** (Phases 1–12 including pilot subset/resume/duplicate tests)
 
 ### Storage / backup (project infrastructure)
 
@@ -98,7 +102,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase11_validation.md` |
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase12_validation.md` |
 | Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 | Phase 8 smoke JSON | `results/config/phase8_smoke_test.json` (local copy; gitignored by default) |
 
@@ -130,6 +134,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 22. **Phase 11 Colab live-demo launch (2026-08-24):** A later UI still showed `backend=llama_cpp` with `device=mps_capable_host`, `gpu=null`, ~0.01s latency, and `127.0.0.1:8501`. That is Mac Streamlit with `llama_cpp` selected, not Colab. Launch now uses Colab `proxyPort` + iframe (no cloudflared). Streamlit refuses `llama_cpp` on Darwin. Section 5 runs frozen `finqa_test_1000` on the Colab GPU. Subsequent Colab T4 live execution was **user-reported PASS**.
 23. **Phase 11 prompt / verification / UQ display (2026-08-24):** Generation prompts tightened (concise final answer, no instruction echo). Verification status + rationale are derived from the same scores. UQ zeros in Streamlit were a display/mapping issue (`st.metric` + schema not reading `uncertainty_result`); calculated values were 0.7688 / 0.55 / ANSWER. Display now shows the calculated confidence and `0.55 (smoke/demo — NOT LOCKED)`. Insufficient-evidence live question (SpaceX FY2025) identified; local mock smoke produced genuine UQ **ABSTAIN** at confidence 0.5351 < 0.55. Methodology unchanged. Threshold lock / 420-case benchmark not started.
 24. **Phase 11 output-quality (2026-08-24):** Prompts now distinguish final/ending value vs absolute change vs ROI/percentage change, and require the answer once. `clean_generated_answer` collapses repeated sentences. Retrieval, UQ method, and smoke threshold 0.55 NOT LOCKED unchanged. Additional numerical live case: frozen `finqa_test_1012`. Local mock smoke 3/3 **PASS**; Colab T4/Qwen3 re-run **NEEDS VERIFICATION**. Phase 12 not started.
+25. **Phase 12 pilot (2026-08-24):** First 6 frozen-140 rows × 3 independent architectures = 18 cases. Runner writes append-only JSONL, checkpoints after each case, resumes by `{architecture}:{question_id}`, skips completed, retries failed, refuses overwrite and n>6. Smoke threshold 0.55 **NOT LOCKED**. Frozen 140/40 and Phase 8–10 architectures unchanged. Local mock 18/18 **PASS** (`phase12_20260824T011511Z_415d75de`); resume skipped 18. Colab T4/Qwen3-8B **NEEDS VERIFICATION**. Calibration lock and 420-case benchmark not started.
 
 ---
 
@@ -785,11 +790,61 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 12 — Pilot (18 cases)
+
+- **Date:** 2026-08-24
+- **Objective:** Validate end-to-end experimental stability on a small reproducible subset of the frozen 140 before calibration lock and the 420-case benchmark.
+- **Why required:** The 420-case job needs proven checkpoint/resume, raw persistence, a common schema, and per-case error handling. A 18-case pilot is the approved gate.
+- **Work completed:**
+  - Pilot subset = first 6 rows of `selected_140_questions.csv` (Phase 4 seed-42 order): `finqa_test_1000`, `1012`, `1017`, `1027`, `1039`, `1040`
+  - Manifest `data/final/pilot_subset_manifest.json` (does not replace the 140 CSV)
+  - `src/run/store.py` append-only JSONL + checkpoint; skip completed; retry failed; refuse silent overwrite
+  - `src/run/pilot.py` / `scripts/run_pilot.py` run the three architectures independently (no chaining)
+  - Colab notebook `notebooks/colab_phase12_pilot.ipynb` with Drive sync and `--resume-latest`
+  - Local mock 18/18 **PASS**; resume-latest skipped 18 duplicates
+- **Technical decisions:**
+  - Cap at 6 questions / 18 cases; refuse 140/420 from this script
+  - UQ uses `uncertainty.smoke_threshold` 0.55 labelled **smoke/demo — NOT LOCKED**
+  - Do not create `threshold.lock.json`
+  - Phase 8–10 architecture modules not modified
+- **Files created/modified:**
+  - `V2/src/run/subset.py`, `store.py`, `pilot.py`, `__init__.py`
+  - `V2/scripts/run_pilot.py`
+  - `V2/tests/test_phase12_pilot.py`
+  - `V2/notebooks/colab_phase12_pilot.ipynb`
+  - `V2/data/final/pilot_subset_manifest.json`
+  - `V2/docs/phase12_pilot.md`
+  - `V2/config/experiment.yaml` (`phase12_pilot_n`, `phase12_entrypoint`)
+  - `V2/project_record/evidence/phase12_validation.md`
+- **Tests/validation:**
+  - `tests/test_phase12_pilot.py` **10 passed**
+  - Full suite **87 passed**
+  - Local mock pilot **PASS** — run_id `phase12_20260824T011511Z_415d75de`; 18/18; 4 chunks each; UQ 0.5637–0.6349 ANSWER at 0.55 NOT LOCKED
+  - Resume **PASS** — 0 executed / 18 skipped; 18 unique keys
+  - Colab T4 / Qwen3-8B — **NEEDS VERIFICATION**
+- **Actual outcome:** Pilot infrastructure is stable on mock + real retrieval. Mock answers cannot prove Qwen3 quality or T4 latency. Threshold remains unlocked. 420-case benchmark not started.
+- **Problems encountered:** This session cannot execute Colab T4. Local first-case latency 3.43s was embedding-model load, not Qwen3.
+- **Problems resolved:** Resume/duplicate prevention verified on the real 18-case store. Runner refuses n>6 and a locked `confidence_threshold`.
+- **Remaining issues:** Run `notebooks/colab_phase12_pilot.ipynb` on Colab GPU after pushing V2; copy raw JSONL + checkpoint to Drive; then start Phase 13+ only after that verification if required.
+- **Dissertation relevance:** Shows the 420-case job can survive Colab disconnects without restarting from question 1, and that T is not tuned on the test set.
+- **Evidence/source file paths:**
+  - `V2/results/raw/phase12_pilot/phase12_20260824T011511Z_415d75de/cases.jsonl`
+  - `V2/results/config/phase12_smoke_test.json`
+  - `V2/results/config/phase12_pilot_summary.json`
+- **Validation evidence:** `V2/project_record/evidence/phase12_validation.md`
+- **Backup status:**
+  - Colab: T4 / Qwen3-8B pilot **NEEDS VERIFICATION**
+  - Google Drive: **NEEDS VERIFICATION** (notebook section 7 copies raw + checkpoints when run)
+  - Local: verified — tests, mock 18/18 raw JSONL, checkpoint, evidence, master record
+  - GitHub: Phase 12 files **uncommitted**
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 12+ | Pilot, calibration / threshold lock, 420-case benchmark, metrics, statistics | Not started |
+| 13+ | Calibration / threshold lock, 420-case benchmark, metrics, statistics | Not started |
 
 ---
 

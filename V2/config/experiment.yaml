@@ -91,6 +91,7 @@ remote_execution:
   phase9_entrypoint: "notebooks/colab_phase9_smoke.ipynb"
   phase10_entrypoint: "notebooks/colab_phase10_smoke.ipynb"
   phase11_entrypoint: "notebooks/colab_phase11_live.ipynb"
+  phase12_entrypoint: "notebooks/colab_phase12_pilot.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -139,6 +140,7 @@ rag:
   phase9_smoke_n: 3
   phase10_smoke_n: 3
   phase11_smoke_n: 2  # 1 frozen + 1 fresh live comparison
+  phase12_pilot_n: 6  # 6 frozen questions × 3 architectures = 18 cases; not the 420-case benchmark
 
 uncertainty:
   # Final threshold MUST be locked on DEV/calibration only (Phase 14). Never tune on test.

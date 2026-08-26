@@ -5,9 +5,9 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-23 |
-| Current completed phase | **Phase 11** |
-| Next implementation phase | Pilot / calibration lock / 420-case benchmark (not started) |
+| Last updated | 2026-08-24 |
+| Current completed phase | **Phase 12** (local 18/18; Colab T4 NEEDS VERIFICATION) |
+| Next implementation phase | Calibration / threshold lock / 420-case benchmark (not started) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -141,8 +141,8 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 9 | Multi-Agent RAG | ✅ Complete | `evidence/phase9_validation.md` |
 | 10 | Multi-Agent + UQ / abstention | ✅ Complete | `evidence/phase10_validation.md` |
 | 11 | Streamlit live artefact (schema already in Phases 8–10) | ✅ Complete | `evidence/phase11_validation.md` |
-| 12 | Streamlit live artefact | ✅ Absorbed into Phase 11 | `evidence/phase11_validation.md` |
-| 13 | Pilot run | ⬜ Not started | concise summary → raw/checkpoints on Drive |
+| 12 | Pilot run (6 × 3 = 18 cases) | ✅ Local 18/18; Colab T4 NEEDS VERIFICATION | `evidence/phase12_validation.md` |
+| 13 | Streamlit (original-plan number) | ✅ Absorbed into Phase 11 | `evidence/phase11_validation.md` |
 | 14 | Calibration / threshold lock | ⬜ Not started | calibration evidence |
 | 15 | 420-case benchmark | ⬜ Not started | summary only; raw in `results/raw/` |
 | 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
@@ -187,6 +187,10 @@ See `docs/phase10_multi_agent_uq.md`.
 ## Phase 11 — Streamlit live artefact (complete)
 
 See `docs/phase11_live_artefact.md`. Original-plan schema/logging is `RAGCaseResult` from Phases 8–10.
+
+## Phase 12 — Pilot (local complete; Colab T4 NEEDS VERIFICATION)
+
+See `docs/phase12_pilot.md`. 6 frozen questions × 3 architectures = 18 resumable cases. Smoke threshold 0.55 **NOT LOCKED**. Does not run the 420-case benchmark.
 
 ## Git workflow (all phases)
 
