@@ -1,0 +1,131 @@
+{
+  "phase": 15,
+  "verified_at_utc": "2026-08-26T23:38:22Z",
+  "run_id": "phase15_20260826T203744Z_dae9c3a4",
+  "benchmark_rerun": false,
+  "drive_listed_from_this_machine": false,
+  "verdict": {
+    "exactly_420_unique_cases": true,
+    "exactly_140_frozen_questions": true,
+    "three_architectures_140_each": true,
+    "n_jsonl_lines": 420,
+    "n_unique_keys": 420,
+    "n_duplicates": 0,
+    "n_missing": 0,
+    "n_failed": 0,
+    "n_pending": 0,
+    "threshold_0_65_locked": true,
+    "backend": "llama_cpp",
+    "device": "cuda",
+    "gpu": "Tesla T4",
+    "model": "Qwen3-8B",
+    "quantisation": "Q4_K_M",
+    "status": "PASS"
+  },
+  "decisions_observed": {
+    "single_agent:ANSWER": 140,
+    "multi_agent:ANSWER": 140,
+    "multi_agent_uq:ANSWER": 78,
+    "multi_agent_uq:ABSTAIN": 62
+  },
+  "processed_generated": false,
+  "final_generated": false,
+  "cases_jsonl_sha256": "f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa",
+  "drive_sync_self_reported": {
+    "synced": true,
+    "dest": "/content/drive/MyDrive/MSc-RAG/results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4",
+    "independently_verified": false
+  },
+  "files": [
+    {
+      "path": "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl",
+      "purpose": "Raw 420-case JSONL",
+      "bytes": 3123276,
+      "local_backup_required": "yes",
+      "github_commit_required": "no",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/checkpoint.json",
+      "purpose": "Per-run checkpoint",
+      "bytes": 19577,
+      "local_backup_required": "yes",
+      "github_commit_required": "no",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/summary.json",
+      "purpose": "Per-run summary",
+      "bytes": 20375,
+      "local_backup_required": "yes",
+      "github_commit_required": "no",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/checkpoints/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4.json",
+      "purpose": "Checkpoint copy",
+      "bytes": 19577,
+      "local_backup_required": "yes",
+      "github_commit_required": "no",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/logs/phase15_20260826T203639Z.log",
+      "purpose": "Colab benchmark log",
+      "bytes": 329457,
+      "local_backup_required": "yes",
+      "github_commit_required": "no",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/config/phase15_benchmark_summary.json",
+      "purpose": "Completion summary",
+      "bytes": 20713,
+      "local_backup_required": "yes",
+      "github_commit_required": "yes",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/config/phase15_runtime_fingerprint.json",
+      "purpose": "Runtime fingerprint",
+      "bytes": 1187,
+      "local_backup_required": "yes",
+      "github_commit_required": "yes",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/config/phase15_smoke_test.json",
+      "purpose": "Validation record",
+      "bytes": 1901,
+      "local_backup_required": "yes",
+      "github_commit_required": "yes",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    },
+    {
+      "path": "results/config/threshold.lock.json",
+      "purpose": "Official T=0.65 lock",
+      "bytes": 33873,
+      "local_backup_required": "yes",
+      "github_commit_required": "yes",
+      "drive_retention_required": "yes",
+      "verification_status": "VERIFIED_LOCAL",
+      "drive_verified": false
+    }
+  ]
+}

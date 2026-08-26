@@ -5,9 +5,9 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-26 |
-| Current completed phase | **Phase 15 notebook/entrypoint created** (structure validated). Official 420-case Colab run **not launched**. |
-| Next implementation phase | **Execute Phase 15 420-case benchmark on Colab GPU** — not launched |
+| Last updated | 2026-08-27 |
+| Current completed phase | **Phase 15 420-case Colab run locally verified** (140×3=420). Drive **NEEDS VERIFICATION**. |
+| Next implementation phase | **Phase 16 evaluation + metrics** |
 | V1 | Reference-only — never modified |
 
 ---
@@ -144,7 +144,7 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 12 | Pilot run (6 × 3 = 18 cases) | ✅ Local 18/18 + Colab T4 18/18 PASS (raw JSONL archived) | `evidence/phase12_validation.md` |
 | 13 | Calibration / threshold lock | ✅ Complete — T=0.65 locked on Colab T4 DEV 40 | `evidence/phase13_validation.md` |
 | 14 | 9-case engineering validation | ✅ Complete (Colab T4 9/9). Keep as evidence. Do not re-run. | `evidence/phase14_validation.md` |
-| 15 | Final 420-case benchmark | ⬜ Notebook created. Colab 420 **not launched**. | `evidence/phase15_validation.md` |
+| 15 | Final 420-case benchmark | ✅ Local 420/420 verified (Colab T4). Drive **NEEDS VERIFICATION**. | `evidence/phase15_validation.md`; `evidence/phase15_backup_manifest.md` |
 | 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
 | 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
@@ -200,9 +200,13 @@ See `docs/phase13_calibration_lock.md`. Frozen FinQA **dev** 40; `multi_agent_uq
 
 See `docs/phase14_benchmark.md`. 3 frozen questions × 3 architectures = 9 cases at locked T=0.65. Colab T4 run_id `phase14_20260826T200828Z_e91e588d` **PASS**. Keep as engineering evidence only. **Do not run another 9-case validation.**
 
-## Phase 15 — Final 420-case benchmark (notebook created; execution not launched)
+## Phase 15 — Final 420-case benchmark (Colab executed; locally verified)
 
-See `docs/phase15_full_benchmark.md`. Notebook: `notebooks/colab_phase15_full_benchmark.ipynb`. Entrypoint: `scripts/run_full_benchmark.py`.
+See `docs/phase15_full_benchmark.md` and `project_record/evidence/phase15_backup_manifest.md`.
+
+Notebook: `notebooks/colab_phase15_full_benchmark.ipynb`. Entrypoint: `scripts/run_full_benchmark.py`.
+
+Colab T4 run_id `phase15_20260826T203744Z_dae9c3a4`: **420/420** unique cases, T=0.65 LOCKED. Processed/final metric files are **not** generated yet (Phase 16).
 
 **140 frozen test questions × 3 architectures = 420 cases.** Independent; no chaining. Phase 14 9-case notebook remains engineering evidence and is unchanged.
 
@@ -219,7 +223,7 @@ See `docs/phase15_full_benchmark.md`. Notebook: `notebooks/colab_phase15_full_be
 
 Must: incremental raw JSONL; checkpoint to Google Drive; resume after interruption (`--resume-latest`); retry genuine failures; skip completed / prevent duplicates; progress monitoring; preserve raw results and logs; print a 420-case completion summary.
 
-Must not: modify frozen 140 or calibration 40; recalibrate T; modify V1; change RAG architectures or retrieval; rewrite the Phase 14 9-case notebook; start 420 automatically from this documentation update.
+Must not: modify frozen 140 or calibration 40; recalibrate T; modify V1; change RAG architectures or retrieval; rewrite the Phase 14 9-case notebook; rerun 420 because of this documentation update.
 
 ## Git workflow (all phases)
 

@@ -5,9 +5,9 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-26 |
-| Current completed phase | **Phase 15 notebook/entrypoint created** (structure validated). Official 420-case Colab run **not launched**. |
-| Next phase (not started) | **Execute Phase 15 420-case benchmark on Colab GPU** — not launched |
+| Last updated | 2026-08-27 |
+| Current completed phase | **Phase 15 420-case Colab run locally verified** (140×3=420). Drive archive **NEEDS VERIFICATION**. Metrics not started. |
+| Next phase (not started) | **Phase 16 evaluation + metrics** |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -90,9 +90,12 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 14 Colab T4 9-case | **PASS** (2026-08-26T20:11:45Z); Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `20ee91e` | `phase14_smoke_test.json` |
 | Phase 14 Colab run ID | `phase14_20260826T200828Z_e91e588d` | 9/9; T=0.65 LOCKED |
 | Colab Phase 14 Drive sync (from summary) | reported `MyDrive/MSc-RAG/results/raw/phase14_benchmark/phase14_20260826T200828Z_e91e588d` | JSON artefact; Drive folder not re-checked locally |
-| Phase 15 notebook | `notebooks/colab_phase15_full_benchmark.ipynb` | structure created; 420 **not launched** |
-| Phase 15 entrypoint | `scripts/run_full_benchmark.py` (`allow_full=True`, mock refused) | separate from Phase 14 9-case CLI |
-| Full 420-case benchmark | **not launched** | 140 frozen test × 3 architectures |
+| Phase 15 notebook | `notebooks/colab_phase15_full_benchmark.ipynb` | on GitHub (`cursor/empty-v2-workspace`) |
+| Phase 15 entrypoint | `scripts/run_full_benchmark.py` | mock refused; n=140 |
+| Phase 15 Colab T4 420-case | **PASS** (local inspect 2026-08-27); Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `e3c6094` | `phase15_smoke_test.json` |
+| Phase 15 Colab run ID | `phase15_20260826T203744Z_dae9c3a4` | 420/420; T=0.65 LOCKED |
+| Phase 15 raw JSONL (local) | **present** — 420 unique keys, 0 duplicates, 0 errors | `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl` |
+| Phase 15 Drive sync (from summary) | reported `MyDrive/MSc-RAG/results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4` | **NEEDS VERIFICATION** (not listed from this Mac) |
 
 ### Architectures
 
@@ -104,8 +107,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Test suite status (as of last update)
 
-- Command: `pytest tests/test_phase15_benchmark.py` from `V2/` with `PYTHONPATH=.` (this session); last recorded full suite was **105 passed** (Phases 1–14)
-- Result: **6 passed** (Phase 15 notebook/entrypoint/raw-folder structure only). Official 420-case job was **not** executed. Full suite was **not** re-run in this session.
+- Command: local artefact inspection 2026-08-27 (no benchmark rerun); earlier `pytest tests/test_phase15_benchmark.py` → 6 passed
+- Result: last recorded full suite **105 passed** (Phases 1–14). Phase 15 structure tests **6 passed**. 420-case job was not re-executed during backup verification.
 
 ### Storage / backup (project infrastructure)
 
@@ -118,7 +121,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase15_validation.md` |
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase15_validation.md`; backup checklist `evidence/phase15_backup_manifest.md` |
 | Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 | Phase 8 smoke JSON | `results/config/phase8_smoke_test.json` (local copy; gitignored by default) |
 
@@ -158,6 +161,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 30. **Phase 14 9-case benchmark validation (2026-08-26):** Implement the 140×3 runner but validate only first 3 frozen-140 rows × 3 independent architectures = 9 cases, using locked T=0.65 from `threshold.lock.json`. Do not recalibrate. Do not launch 420 (`--allow-full-420` refused). Local mock 9/9 **PASS** after retrying ProxyError 403 (`phase14_20260826T195616Z_f9550cce`); UQ 3/3 ABSTAIN at mock confidence < 0.65. Resume skipped 9. Frozen 140/40 and Phase 8–10 modules unchanged. Colab T4 9-case **NEEDS VERIFICATION**. Full 420 not started.
 31. **Phase 14 Colab T4 9-case + next execution is 420 (2026-08-26):** User copied Colab config + raw. Observed: backend `llama_cpp`, device `cuda`, GPU Tesla T4, Qwen3-8B Q4_K_M, run_id `phase14_20260826T200828Z_e91e588d`, **9/9 PASS**, T=0.65 LOCKED, Drive sync reported to `MyDrive/MSc-RAG/results/raw/phase14_benchmark/phase14_20260826T200828Z_e91e588d`. UQ: 2 ANSWER + 1 ABSTAIN (`finqa_test_1000`, 0.5032 < 0.65). The 9-case run is **engineering validation evidence only** — do not add another 9-case gate. **Next execution:** final **140 × 3 = 420** on Colab GPU with the same lock, KB, and retrieval. This update does not launch 420. Frozen 140/40 and T are unchanged.
 32. **Phase 15 420-case notebook created (2026-08-26):** Official evaluation vehicle is `notebooks/colab_phase15_full_benchmark.ipynb` + `scripts/run_full_benchmark.py` (always n=140, `allow_full=True`, mock refused). Raw store is `results/raw/phase15_benchmark/` so `--resume-latest` cannot pick the Phase 14 9-case run. Locked T=0.65, Qwen3-8B Q4_K_M, `llama_cpp`, Colab GPU, shared Phase 6 KB, identical retrieval. Incremental JSONL, Drive checkpoint, resume, retry failures, duplicate prevention, progress logs, completion summary. Phase 14 9-case notebook **unchanged**. Frozen 140/40, T, V1, RAG modules, and retrieval **unchanged**. 420-case Colab execution **not launched**.
+33. **Phase 15 Colab 420 locally verified (2026-08-27):** Inspected user-copied artefacts at `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/`. Observed **420/420** unique keys, 0 duplicates, 0 missing, 0 errors; 140 frozen-test IDs; 140 cases per architecture; T=0.65 LOCKED; Tesla T4 `llama_cpp` Qwen3-8B Q4_K_M. JSONL not rewritten. Drive folder not listed from this Mac (**NEEDS VERIFICATION**). Backup checklist: `project_record/evidence/phase15_backup_manifest.md`. Next: Phase 16 metrics — do not retune T or the frozen 140.
 
 ---
 
@@ -1126,11 +1130,43 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 
 ---
 
+## Phase 15 — Colab 420-case output verified locally; backup checklist
+
+- **Date:** 2026-08-27
+- **Objective:** Verify the official 140 × 3 = 420 Colab artefacts on the Mac and record what to keep on Drive vs GitHub. Do not rerun.
+- **Why required:** Colab `/content` is ephemeral. Dissertation scoring needs a complete raw JSONL plus a documented backup split (local / Drive / GitHub).
+- **Work completed:** Counted JSONL vs frozen 140 and planned 420 keys. Compared summary, checkpoint, log, fingerprint, lock. Wrote `evidence/phase15_backup_manifest.md` + JSON artefact. Did **not** rewrite JSONL, freeze files, T, RAG modules, or V1.
+- **Technical decisions:** Treat local 420 JSONL as the scoring input. Do not commit raw JSONL or the run log to GitHub. Drive presence remains **NEEDS VERIFICATION**.
+- **Files created/modified:**
+  - `V2/project_record/evidence/phase15_backup_manifest.md`
+  - `V2/project_record/evidence/artifacts/phase15_backup_manifest.json`
+  - `V2/project_record/evidence/phase15_validation.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+  - `V2/docs/IMPLEMENTATION_PLAN.md`
+  - `V2/.gitignore` (un-ignore Phase 15 small config snapshots after `results/config/**`)
+- **Tests/validation:** Local file inspection only. 420-case job not re-run. Completeness **PASS** on Mac artefacts.
+- **Actual outcome:** 420 unique completed cases; processed/final empty (expected).
+- **Problems encountered:** User-copied files originally lacked the run-id folder (fixed earlier). Drive not listed from this machine.
+- **Problems resolved:** Canonical local path used for counts.
+- **Remaining issues:** Confirm Drive folder in the UI. Commit small config snapshots + evidence (not JSONL). Phase 16 metrics not started.
+- **Dissertation relevance:** Official test evaluation artefacts exist locally for RQ1–RQ3 scoring.
+- **Evidence/source file paths:**
+  - `V2/results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl`
+  - `V2/results/config/phase15_benchmark_summary.json`
+  - `V2/project_record/evidence/phase15_backup_manifest.md`
+- **Validation evidence:** `V2/project_record/evidence/phase15_validation.md`
+- **Backup status:**
+  - Colab: `/content` ephemeral; run finished 2026-08-26T23:11:58Z
+  - Google Drive: **NEEDS VERIFICATION** (summary self-reports sync)
+  - Local: verified — 420 JSONL + checkpoint + log + configs
+  - GitHub: source already on origin; config snapshots + this evidence **not yet committed**
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 15 execution | **420-case benchmark** (140 frozen test × 3 architectures) | Notebook ready — **not launched** |
 | 16+ | Evaluation, metrics, statistics | Not started |
 
 ---

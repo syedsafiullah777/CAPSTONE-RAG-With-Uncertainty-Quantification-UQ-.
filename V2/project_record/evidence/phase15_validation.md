@@ -5,14 +5,15 @@
 | Phase | 15 — Final 420-case benchmark |
 | Evidence file | `project_record/evidence/phase15_validation.md` |
 | Last updated | 2026-08-27 |
-| Phase 15 status | Notebook/entrypoint created. Colab 420 JSONL present locally at the canonical run-id path. |
+| Phase 15 status | Colab T4 420/420 locally verified at canonical run-id path. Drive archive **NEEDS VERIFICATION**. Evaluation/metrics not started. |
 
 ## Summary
 
 | # | Test name | Status | Evidence path |
 | --- | --- | --- | --- |
 | 1 | Phase 15 notebook / entrypoint structure | **PASS** | `tests/test_phase15_benchmark.py` |
-| 2 | Official Colab T4 420-case execution | **not launched** | `notebooks/colab_phase15_full_benchmark.ipynb` |
+| 2 | Official Colab T4 420-case execution | **PASS** (local JSONL/summary/log) | `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/` |
+| 3 | Backup / sync checklist | **local verified; Drive NEEDS VERIFICATION** | `evidence/phase15_backup_manifest.md` |
 
 Phase 14 9-case notebook left unchanged as engineering evidence.
 
@@ -45,20 +46,24 @@ User-copied Colab files were in `results/raw/phase15_benchmark/` (missing run-id
 
 Checkpoint copy: `results/checkpoints/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4.json`.
 
-### 2. Official 420-case Colab run
+### 2. Official 420-case Colab run (local archive inspected 2026-08-27)
 
 | Field | Value |
 | --- | --- |
-| Date/time (UTC) | — |
+| Date/time (UTC) | 2026-08-26T23:11:58Z (run end); inspected 2026-08-26T23:38:22Z |
 | Phase | 15 |
 | Test name | `phase15_full_benchmark` |
-| Command / notebook | `notebooks/colab_phase15_full_benchmark.ipynb` |
-| Environment | Not started |
-| Expected | `llama_cpp` + Colab GPU; 420 unique cases; T=0.65; Drive checkpoints |
-| Actual (observed) | Not launched during notebook creation. |
-| Status | **not launched** |
+| Command / notebook | `notebooks/colab_phase15_full_benchmark.ipynb` / `scripts/run_full_benchmark.py --backend llama_cpp` |
+| Environment | Colab Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `e3c6094` |
+| Expected | 140 frozen test × 3 architectures = 420 unique keys; T=0.65 LOCKED; no duplicates |
+| Actual (observed) | JSONL **420** lines, **420** unique keys, **0** duplicates, **0** missing, **0** errors, **0** pending. Architectures 140/140/140. Question IDs = frozen 140 set. T=0.65. Summary/smoke **PASS**. |
+| Status | **PASS** (local artefacts). Drive copy **NEEDS VERIFICATION**. |
 | Error | — |
-| Output path | — |
+| Output path | `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl` |
+
+### 3. Backup checklist
+
+See `project_record/evidence/phase15_backup_manifest.md` and `project_record/evidence/artifacts/phase15_backup_manifest.json`.
 
 ---
 
@@ -66,12 +71,12 @@ Checkpoint copy: `results/checkpoints/phase15_benchmark/phase15_20260826T203744Z
 
 | Constraint | Observed |
 | --- | --- |
-| Frozen 140 unmodified | not written |
+| Frozen 140 unmodified this inspection | not written |
 | Frozen calibration 40 unmodified | not written |
-| T not recalibrated | lock file not rewritten by this phase |
+| T not recalibrated | lock still 0.65; `used_frozen_test_140=false` |
 | Phase 14 9-case notebook unchanged | still `--n-questions 3` |
 | V1 unmodified | no V1 paths edited |
-| 420 not executed here | structure only |
+| 420 cases locally complete | 420 unique keys; JSONL not rewritten this inspection |
 
 ---
 
