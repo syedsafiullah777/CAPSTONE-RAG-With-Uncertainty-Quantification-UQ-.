@@ -1,0 +1,22 @@
+{
+  "phase": 16,
+  "test_name": "phase16_evaluation",
+  "command": "PYTHONPATH=. python scripts/run_evaluation.py",
+  "expected": "Score all 420 saved cases on CPU; no RAG/Qwen; T=0.65 unchanged",
+  "actual": "status=PASS n_cases=420 used_llm=False raw_unchanged=True",
+  "status": "PASS",
+  "recorded_at_utc": "2026-08-26T23:51:41.101582+00:00",
+  "notebook": null,
+  "environment": {
+    "used_llm_inference": false,
+    "used_gpu": false,
+    "device": "cpu"
+  },
+  "error": null,
+  "output_path": "results/processed/phase16_cases.jsonl",
+  "extra": {
+    "source_raw_sha256": "f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa",
+    "metrics_csv": "results/metrics/phase16_summary.csv",
+    "evidence_md": "project_record/evidence/phase16_validation.md"
+  }
+}
