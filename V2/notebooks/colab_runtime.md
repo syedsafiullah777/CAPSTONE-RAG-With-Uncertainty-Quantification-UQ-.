@@ -136,6 +136,19 @@ Update `project_record/evidence/phase7_validation.md` with the Colab result.
 
 Drive is for **results backup**, not for syncing source code or the Chroma index.
 
+## Phase 16 — post-hoc LLM-as-judge (no RAG rerun)
+
+Notebook: `notebooks/colab_phase16_judge.ipynb`
+
+Scores frozen Phase 15 `cases.jsonl` only. Metric: **LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)** — not official RAGAS.
+
+```bash
+PYTHONPATH=. python scripts/run_judge.py --backend llama_cpp
+PYTHONPATH=. python scripts/run_judge.py --backend llama_cpp --resume-latest
+```
+
+Drive: `MyDrive/MSc-RAG/results/raw/phase16_judge/`
+
 ## Before git commit
 
 Colab: **Edit → Clear all outputs** before saving the notebook to avoid GitHub “invalid notebook” errors.

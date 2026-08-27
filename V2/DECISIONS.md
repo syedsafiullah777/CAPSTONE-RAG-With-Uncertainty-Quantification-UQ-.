@@ -191,3 +191,17 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Create a dedicated Colab notebook and CLI for the official 140 × 3 = 420 evaluation. Keep the Phase 14 9-case notebook unchanged. Use locked T=0.65, Qwen3-8B Q4_K_M, `llama_cpp`, Colab GPU, shared Phase 6 KB, and a separate `phase15_benchmark` raw store. Do not execute 420 during notebook creation.
 
 **Verified:** Notebook/entrypoint structure tests only. Frozen 140/40, T, V1, RAG modules, and retrieval unmodified. Official Colab 420 run **not launched**.
+
+## 2026-08-27 — Phase 16 CPU evaluation of saved 420 cases
+
+**Decision:** Score the canonical Phase 15 JSONL on CPU. Do not rerun RAG or Qwen3-8B. Do not use an LLM-as-judge (`judge_model: null`). Do not retune T=0.65 or the frozen 140/40. Do not start statistical tests (Phase 17).
+
+**Metric choices:** numeric match to `program_answer` for answer correctness; CPU token-overlap for faithfulness (not official RAGAS); gold `file_name`/`context_id` for context precision/recall; coverage, selective accuracy, and unsupported-emitted rate for abstention.
+
+**Verified:** 420/420 scored; run_id `phase16_20260826T235141Z_73fdbf58`; raw SHA-256 unchanged; T=0.65 lock SHA unchanged. Displayed correctness 32/140, 29/140, 32/140 (SA / MA / UQ). UQ selective accuracy 32/78. Full pytest **116 passed**.
+
+## 2026-08-27 — Phase 16 post-hoc LLM-as-judge (not official RAGAS)
+
+**Decision:** Add a separate resumable faithfulness judge over the frozen Phase 15 JSONL. Do not rerun RAG. Do not rewrite CPU Phase 16 tables. Do not feed gold context or gold answers to the judge. Use Qwen3-8B Q4_K_M, temperature 0, 32 tokens, 420 cases on Colab. Label: `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)`. Keep token-overlap secondary. Do not start Phase 17.
+
+**Verified this session:** implementation + local mock n=3 (pytest). Official Colab 420 **not launched**.

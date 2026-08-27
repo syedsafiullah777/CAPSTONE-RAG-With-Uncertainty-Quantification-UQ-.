@@ -26,7 +26,7 @@ class MockBackend:
     ) -> GenerationResult:
         _ = top_p
         start = time.perf_counter()
-        if "Support score" in prompt:
+        if "Support score" in prompt or "Faithfulness score" in prompt:
             text = "0.85"
         else:
             text = f"{self.canned} | prompt_chars={len(prompt)}"

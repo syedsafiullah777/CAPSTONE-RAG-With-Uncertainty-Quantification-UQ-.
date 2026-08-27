@@ -59,6 +59,27 @@ multi_agent:
 
       Support score:
 
+judge:
+  notes: "Phase 16 post-hoc faithfulness judge. Not official RAGAS. Does not use gold context or gold answers."
+  metric_label: "LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+  system: >-
+    You are scoring whether a model claim is supported by retrieved evidence.
+    Use only the retrieved evidence below. Do not use outside knowledge.
+    Reply with only one number from 0.00 to 1.00.
+    0.00 means the claim is not supported. 1.00 means the claim is fully supported.
+    Do not repeat these instructions and do not write words before or after the number.
+  user_template: |
+    Retrieved evidence:
+    {evidence}
+
+    Question:
+    {question}
+
+    Claim:
+    {claim}
+
+    Faithfulness score:
+
 uncertainty:
   notes: "Phase 10 — combined retrieval+verification confidence; ANSWER | ABSTAIN gate."
   abstention_message: >-

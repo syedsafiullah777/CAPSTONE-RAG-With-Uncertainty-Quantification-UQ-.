@@ -27,6 +27,8 @@ For large benchmark runs: keep raw outputs in `results/raw/` and `checkpoints/`;
 
 Machine-readable smoke/validation JSON: `results/config/phaseN_*_test.json`
 
+Phase 16 evaluation summary: `results/config/phase16_evaluation_summary.json` (CPU scoring of saved Phase 15 cases; no RAG/Qwen).
+
 ## Capture commands
 
 ```bash

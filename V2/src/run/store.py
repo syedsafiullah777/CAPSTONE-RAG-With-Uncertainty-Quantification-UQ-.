@@ -36,10 +36,16 @@ def case_is_successful(result: RAGCaseResult) -> bool:
 class CaseStore:
     """Per-run raw JSONL + checkpoint. Duplicate-safe and resumable."""
 
-    def __init__(self, run_dir: Path, *, checkpoint_copy: Path | None = None) -> None:
+    def __init__(
+        self,
+        run_dir: Path,
+        *,
+        checkpoint_copy: Path | None = None,
+        raw_filename: str = "cases.jsonl",
+    ) -> None:
         self.run_dir = Path(run_dir)
         self.run_dir.mkdir(parents=True, exist_ok=True)
-        self.raw_path = self.run_dir / "cases.jsonl"
+        self.raw_path = self.run_dir / raw_filename
         self.checkpoint_path = self.run_dir / "checkpoint.json"
         self.checkpoint_copy = Path(checkpoint_copy) if checkpoint_copy else None
         self._completed: set[str] = set()
@@ -112,14 +118,32 @@ class CaseStore:
         payload["case_status"] = STATUS_COMPLETED if ok else STATUS_FAILED
         if extra:
             payload.update(extra)
+        return self.append_payload(key, payload, ok=ok, error=result.error)
+
+    def append_payload(
+        self,
+        key: str,
+        payload: dict[str, Any],
+        *,
+        ok: bool,
+        error: str | None = None,
+    ) -> bool:
+        """Write one dict record. Returns False if the case was already completed."""
+        if key in self._completed:
+            return False
+        record = dict(payload)
+        record["case_key"] = key
+        record["case_status"] = STATUS_COMPLETED if ok else STATUS_FAILED
+        if error:
+            record["error"] = error
         with self.raw_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(payload, default=str) + "\n")
-        self._records[key] = payload
+            handle.write(json.dumps(record, default=str) + "\n")
+        self._records[key] = record
         if ok:
             self._completed.add(key)
             self._failed.pop(key, None)
         else:
-            self._failed[key] = str(result.error or "failed")
+            self._failed[key] = str(error or record.get("error") or "failed")
             self._completed.discard(key)
         return True
 

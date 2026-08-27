@@ -52,3 +52,5 @@ Colab T4 run (copied locally; files were moved into the run-id folder on 2026-08
 - Completion summary requires phase=15, n_questions=140, n_cases=420, T=0.65, 420 unique keys on PASS
 
 Do **not** start 420 from this documentation. Push to GitHub first, then run the Colab notebook.
+
+Phase 16 scored the saved Colab JSONL on CPU (`docs/phase16_evaluation.md`). Do not rerun 420 to produce metrics.

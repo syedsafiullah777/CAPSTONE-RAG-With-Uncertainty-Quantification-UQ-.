@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-27 |
-| Current completed phase | **Phase 15 420-case Colab run locally verified** (140×3=420). Drive **NEEDS VERIFICATION**. |
-| Next implementation phase | **Phase 16 evaluation + metrics** |
+| Current completed phase | **Phase 16 CPU metrics complete.** LLM-as-judge **implemented; Colab 420 not launched**. |
+| Next implementation phase | **Phase 16 official 420-case LLM judge on Colab** (then Phase 17) |
 | V1 | Reference-only — never modified |
 
 ---
@@ -145,7 +145,7 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 13 | Calibration / threshold lock | ✅ Complete — T=0.65 locked on Colab T4 DEV 40 | `evidence/phase13_validation.md` |
 | 14 | 9-case engineering validation | ✅ Complete (Colab T4 9/9). Keep as evidence. Do not re-run. | `evidence/phase14_validation.md` |
 | 15 | Final 420-case benchmark | ✅ Local 420/420 verified (Colab T4). Drive **NEEDS VERIFICATION**. | `evidence/phase15_validation.md`; `evidence/phase15_backup_manifest.md` |
-| 16 | Evaluation + metrics | ⬜ Not started | metrics evidence → Drive |
+| 16 | Evaluation + metrics | ✅ CPU complete. LLM-judge **implemented**; Colab 420 **not launched** | `evidence/phase16_validation.md` |
 | 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
 
@@ -206,7 +206,7 @@ See `docs/phase15_full_benchmark.md` and `project_record/evidence/phase15_backup
 
 Notebook: `notebooks/colab_phase15_full_benchmark.ipynb`. Entrypoint: `scripts/run_full_benchmark.py`.
 
-Colab T4 run_id `phase15_20260826T203744Z_dae9c3a4`: **420/420** unique cases, T=0.65 LOCKED. Processed/final metric files are **not** generated yet (Phase 16).
+Colab T4 run_id `phase15_20260826T203744Z_dae9c3a4`: **420/420** unique cases, T=0.65 LOCKED. Phase 16 scored these saved cases on CPU (no RAG/Qwen rerun).
 
 **140 frozen test questions × 3 architectures = 420 cases.** Independent; no chaining. Phase 14 9-case notebook remains engineering evidence and is unchanged.
 
@@ -224,6 +224,18 @@ Colab T4 run_id `phase15_20260826T203744Z_dae9c3a4`: **420/420** unique cases, T
 Must: incremental raw JSONL; checkpoint to Google Drive; resume after interruption (`--resume-latest`); retry genuine failures; skip completed / prevent duplicates; progress monitoring; preserve raw results and logs; print a 420-case completion summary.
 
 Must not: modify frozen 140 or calibration 40; recalibrate T; modify V1; change RAG architectures or retrieval; rewrite the Phase 14 9-case notebook; rerun 420 because of this documentation update.
+
+## Phase 16 — Evaluation + metrics (complete; CPU)
+
+See `docs/phase16_evaluation.md` and `project_record/evidence/phase16_validation.md`.
+
+Entrypoint: `scripts/run_evaluation.py`. Sole input: Phase 15 JSONL `phase15_20260826T203744Z_dae9c3a4` (SHA-256 `f5256ae40fa8…`). No RAG/Qwen/GPU. `judge_model: null` (not official RAGAS).
+
+Observed displayed correctness: Single-Agent 32/140, Multi-Agent 29/140, UQ 32/140 displayed / 34/140 claim. UQ 78 ANSWER / 62 ABSTAIN at T=0.65. Context P/R identical across architectures. Do not claim Multi-Agent improves accuracy.
+
+## Phase 16 — LLM-as-judge faithfulness (implemented; Colab 420 not launched)
+
+See `docs/phase16_judge.md`. Separate post-hoc job: `scripts/run_judge.py` + `notebooks/colab_phase16_judge.ipynb`. Frozen Phase 15 JSONL only. Qwen3-8B Q4_K_M, 420 calls, no RAG rerun. **Not official RAGAS.** Do not overwrite CPU Phase 16 tables. **Do not start Phase 17 from this documentation.**
 
 ## Git workflow (all phases)
 

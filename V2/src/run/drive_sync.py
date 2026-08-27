@@ -19,7 +19,12 @@ DEFAULT_COLAB_DRIVE = Path("/content/drive/MyDrive/MSc-RAG")
 def _job_rels(job: str) -> tuple[str, str, str]:
     """Return (raw_rel, checkpoint_rel, config_rel) under the Drive root."""
     name = job.strip("/") or "phase14_benchmark"
-    phase = "phase15" if name.startswith("phase15") else "phase14"
+    if name.startswith("phase16"):
+        phase = "phase16"
+    elif name.startswith("phase15"):
+        phase = "phase15"
+    else:
+        phase = "phase14"
     return f"results/raw/{name}", f"checkpoints/{name}", f"configs/{phase}"
 
 
@@ -48,7 +53,7 @@ def sync_benchmark_run(
     dest = root / raw_rel / run_id
     dest.mkdir(parents=True, exist_ok=True)
     copied: list[str] = []
-    for name in ("cases.jsonl", "checkpoint.json", "summary.json"):
+    for name in ("cases.jsonl", "judge.jsonl", "checkpoint.json", "summary.json"):
         src = Path(run_dir) / name
         if src.is_file():
             shutil.copy2(src, dest / name)
@@ -68,14 +73,27 @@ def sync_benchmark_configs(config_dir: Path, *, job: str = "phase14_benchmark") 
     _raw_rel, _ckpt_rel, config_rel = _job_rels(job)
     dest = root / config_rel
     dest.mkdir(parents=True, exist_ok=True)
-    phase = "phase15" if job.startswith("phase15") else "phase14"
+    if job.startswith("phase16"):
+        phase = "phase16"
+    elif job.startswith("phase15"):
+        phase = "phase15"
+    else:
+        phase = "phase14"
     copied: list[str] = []
-    for name in (
+    names = [
         f"{phase}_runtime_fingerprint.json",
         f"{phase}_smoke_test.json",
         f"{phase}_benchmark_summary.json",
         "threshold.lock.json",
-    ):
+    ]
+    if phase == "phase16":
+        names.extend(
+            [
+                "phase16_judge_summary.json",
+                "phase16_judge_smoke_test.json",
+            ]
+        )
+    for name in names:
         src = Path(config_dir) / name
         if src.is_file():
             shutil.copy2(src, dest / name)

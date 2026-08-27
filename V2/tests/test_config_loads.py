@@ -35,6 +35,7 @@ def test_standard_paths_resolve_under_v2() -> None:
         "results_raw",
         "results_logs",
         "results_checkpoints",
+        "results_metrics",
     ):
         path = get_path(config, key)
         assert path.is_absolute()

@@ -22,6 +22,7 @@ paths:
   results_checkpoints: "results/checkpoints"
   results_logs: "results/logs"
   results_config: "results/config"
+  results_metrics: "results/metrics"
 
 dataset:
   # NEEDS_VERIFICATION: confirm via load_dataset in Phase 3.
@@ -95,6 +96,7 @@ remote_execution:
   phase13_entrypoint: "notebooks/colab_phase13_calibration.ipynb"
   phase14_entrypoint: "notebooks/colab_phase14_benchmark_validation.ipynb"
   phase15_entrypoint: "notebooks/colab_phase15_full_benchmark.ipynb"
+  phase16_judge_entrypoint: "notebooks/colab_phase16_judge.ipynb"
   notes_md: "notebooks/colab_runtime.md"
   colab_cli: false  # not used; standard Colab notebook Runtime → GPU
   colab_gpu_verification: "PASS"  # Phase 7 verified 2026-08-22 Tesla T4 llama_cpp
@@ -163,11 +165,39 @@ uncertainty:
   abstention_message: "I cannot answer reliably because supporting evidence is insufficient."
 
 evaluation:
-  # Metrics wiring begins in later phases; keep placeholders only.
+  # Phase 16 CPU scoring of saved Phase 15 cases (no RAG rerun).
+  # Separate post-hoc job: LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired). Not official RAGAS.
   primary_answer_field: "program_answer"
   secondary_answer_field: "original_answer"
-  judge_model: null
+  numeric_rel_tol: 0.01
+  phase16_entrypoint: "scripts/run_evaluation.py"
+  phase16_judge_entrypoint: "scripts/run_judge.py"
+  source_raw: "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl"
+  uses_llm_inference: false
+  uses_gpu: false
+  uses_rag_rerun: false
+  judge_model: "Qwen3-8B"  # post-hoc faithfulness only; not official RAGAS
+  judge_backend: "llama_cpp"
+  judge_quantisation: "Q4_K_M"
+  judge_n_ctx: 4096
   judge_temperature: 0.0
+  judge_max_new_tokens: 32
+  judge_metric_label: "LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+  judge_uses_llm_inference: true
+  judge_uses_gpu: true
+  judge_uses_rag_rerun: false
+  metrics:
+    - answer_correctness
+    - answer_correctness_claim
+    - faithfulness
+    - context_precision
+    - context_recall
+    - context_recall_numeric
+    - selective_accuracy
+    - coverage
+    - abstention_rate
+    - unsupported_emitted_rate
+    - faithfulness_llm_judge  # post-hoc; not official RAGAS
 
 execution:
   # Detected at runtime; do not hard-code a Colab GPU SKU.
