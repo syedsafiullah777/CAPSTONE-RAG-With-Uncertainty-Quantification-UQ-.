@@ -355,10 +355,14 @@ def _fig_mcnemar(data: dict, fig_dir: Path) -> list[str]:
 def _fig_box(data: dict, fig_dir: Path) -> list[str]:
     labels = [ARCH_LABELS[a] for a in ARCHITECTURES]
     values = [data["llm_by_arch"][a] for a in ARCHITECTURES]
-    for arch, vals in zip(ARCHITECTURES, values):
-        if len(vals) != N_QUESTIONS:
-            raise ValueError(f"{arch} faithfulness n={len(vals)}, expected {N_QUESTIONS}")
-    fig, ax = plt.subplots(figsize=(7.6, 5.4))
+    expected_means = {ARCH_SA: 0.3241, ARCH_MA: 0.3484, ARCH_UQ: 0.3749}
+    means = [_f(data["desc"][a], "llm_faithfulness_mean") for a in ARCHITECTURES]
+    for arch, mean in zip(ARCHITECTURES, means):
+        if abs(mean - expected_means[arch]) > 5e-5:
+            raise ValueError(f"Unexpected {arch} mean faithfulness {mean}; refusing to draw appendix RQ2")
+        if len(values[ARCHITECTURES.index(arch)]) != N_QUESTIONS:
+            raise ValueError(f"{arch} faithfulness n={len(values[ARCHITECTURES.index(arch)])}, expected {N_QUESTIONS}")
+    fig, ax = plt.subplots(figsize=(7.8, 5.7))
     box_common = dict(
         showfliers=True,
         patch_artist=True,
@@ -378,14 +382,24 @@ def _fig_box(data: dict, fig_dir: Path) -> list[str]:
         patch.set_facecolor(color)
         patch.set_alpha(0.55)
         patch.set_edgecolor("#333333")
-    ax.set_ylim(0, 1)
+    xpos = np.arange(1, 4)
+    ax.scatter(xpos, means, marker="D", s=46, c="black", zorder=5)
+    for i, mean in enumerate(means, start=1):
+        ax.text(
+            i, 1.07, f"MEAN = {mean:.4f}",
+            ha="center", va="bottom", fontsize=9,
+        )
+    ax.set_ylim(0, 1.20)
+    ax.set_yticks(np.arange(0, 1.01, 0.2))
     ax.set_ylabel(YLABEL_FAITHFULNESS)
     ax.set_title("RQ2 Faithfulness Distribution by Architecture")
-    fig.tight_layout(rect=[0, 0.14, 1, 1.0])
+    fig.tight_layout(rect=[0, 0.16, 1, 1.0])
     _caption(
         fig,
         f"n = {N_QUESTIONS} questions per architecture. "
         f"{JUDGE_METRIC_LABEL} — not official RAGAS.\n"
+        "MEAN labels and diamonds are arithmetic means from phase17_descriptive.csv. "
+        "The box midline is the median. This figure does not mark statistical significance.\n"
         "Source: official Phase 16 judge JSONL joined to Phase 16 processed cases. "
         "UQ includes abstained drafts.",
     )
