@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "phase": 17,
+  "task": "figure_refresh_presentation_only",
+  "used_rag_rerun": false,
+  "used_llm_inference": false,
+  "recomputed_statistics": false,
+  "primary": [
+    "rq1_accuracy_wilson_ci",
+    "rq2_confidence_vs_faithfulness",
+    "rq3_coverage_selective"
+  ],
+  "appendix": [
+    "rq1_mcnemar_counts",
+    "rq2_llm_faithfulness_box",
+    "rq3_uq_outcomes"
+  ],
+  "written": {
+    "rq1_accuracy_wilson_ci": [
+      "results/metrics/phase17_figures/rq1_accuracy_wilson_ci.png",
+      "results/metrics/phase17_figures/rq1_accuracy_wilson_ci.pdf",
+      "results/metrics/phase17_figures/rq1_accuracy_wilson_ci.svg"
+    ],
+    "rq2_confidence_vs_faithfulness": [
+      "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.png",
+      "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.pdf",
+      "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.svg"
+    ],
+    "rq3_coverage_selective": [
+      "results/metrics/phase17_figures/rq3_coverage_selective.png",
+      "results/metrics/phase17_figures/rq3_coverage_selective.pdf",
+      "results/metrics/phase17_figures/rq3_coverage_selective.svg"
+    ],
+    "rq1_mcnemar_counts": [
+      "results/metrics/phase17_figures/rq1_mcnemar_counts.png",
+      "results/metrics/phase17_figures/rq1_mcnemar_counts.pdf",
+      "results/metrics/phase17_figures/rq1_mcnemar_counts.svg"
+    ],
+    "rq2_llm_faithfulness_box": [
+      "results/metrics/phase17_figures/rq2_llm_faithfulness_box.png",
+      "results/metrics/phase17_figures/rq2_llm_faithfulness_box.pdf",
+      "results/metrics/phase17_figures/rq2_llm_faithfulness_box.svg"
+    ],
+    "rq3_uq_outcomes": [
+      "results/metrics/phase17_figures/rq3_uq_outcomes.png",
+      "results/metrics/phase17_figures/rq3_uq_outcomes.pdf",
+      "results/metrics/phase17_figures/rq3_uq_outcomes.svg"
+    ]
+  },
+  "frozen_hashes_unchanged": true,
+  "result_file_hashes_unchanged": true,
+  "result_file_sha256": {
+    "results/metrics/phase17_descriptive.csv": "9e4aaba63d67d25e3bac2390e99a5cb378d8cf1bad5d67f0f7d8ca586fb42d15",
+    "results/metrics/phase17_tests.csv": "cc3af0b00563efbb71607ed672bf574ae2fb8bd3eebd8357632201844be518fc",
+    "results/metrics/phase17_effect_sizes.csv": "5f04ff8e2a8744ca469c159f922e9e65b30d949827e10592de3894327a715853",
+    "results/metrics/phase17_assumptions.csv": "0505fe37b7d5fb52c24a5d29ec51f053a6d9fb95419fcef54d0daedae6bfc79e",
+    "results/metrics/phase17_summary.md": "89c823f0b0309eeade4b851a13f8fe739a6b6c19c2b64359f0110f93b3b8daf6",
+    "results/config/phase17_statistics_summary.json": "6d37a45ea8e2a89eab6c9dfb4e9c6843ff108e4fec54a1f1bece5b6a025e7f10",
+    "results/final/phase17_interpretation.md": "89c823f0b0309eeade4b851a13f8fe739a6b6c19c2b64359f0110f93b3b8daf6",
+    "results/processed/phase16_cases.jsonl": "e9e4f80dafffa0d0db970fb4426c9c0b81310717405389b2b7fd5ddb5b231e91"
+  },
+  "frozen_sha256": {
+    "phase15": "f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa",
+    "processed": "e9e4f80dafffa0d0db970fb4426c9c0b81310717405389b2b7fd5ddb5b231e91",
+    "judge": "093c4699b68e9653125fcd08e3b25b0d10a3357be3a20bc817a5a71e8498ebe3",
+    "frozen140": "88899ae9c66fb47bf4aa50e197d91aa171adcb882ae36f066bf614ff40fba087",
+    "cal40": "1325b595ae1f9404802879ad06f52be7f7b63d805ab1edf5b66c3b608a478845",
+    "lock": "8981233604e64959386292d3d1fbdeebd4e983c0520fde3b4467772281687d88"
+  }
+}

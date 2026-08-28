@@ -1,0 +1,6 @@
+name,metric,n,shapiro_statistic,shapiro_p_value,normality_ok,note
+llm_sa_vs_ma,llm_sa_vs_ma,140,0.7162,4.03687e-15,false,Paired-difference normality not met; Wilcoxon/McNemar preferred.
+llm_ma_vs_uq,llm_ma_vs_uq,140,0.5577,9.04274e-19,false,Paired-difference normality not met; Wilcoxon/McNemar preferred.
+llm_sa_vs_uq,llm_sa_vs_uq,140,0.6784,4.17753e-16,false,Paired-difference normality not met; Wilcoxon/McNemar preferred.
+overlap_sa_vs_ma,overlap_sa_vs_ma,140,0.8943,1.54838e-08,false,Paired-difference normality not met; Wilcoxon/McNemar preferred.
+uq_confidence,UQ confidence,140,0.9315,2.59883e-06,false,Paired-difference normality not met; Wilcoxon/McNemar preferred.
