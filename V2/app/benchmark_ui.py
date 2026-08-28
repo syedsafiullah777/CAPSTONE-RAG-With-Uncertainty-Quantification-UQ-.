@@ -16,9 +16,9 @@ from src.rag.benchmark_catalogue import (
     PAGE_SIZE,
     company_options,
     filter_catalogue,
-    live_prefill_from_row,
     load_frozen_catalogue,
     paginate,
+    queue_live_demo_navigation,
     validate_catalogue,
 )
 
@@ -43,6 +43,11 @@ def _read_csv_rows(rel: str) -> list[dict[str, str]]:
         return []
     with path.open("r", encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle))
+
+
+def _on_use_in_live_demo(question_id: str, question: str) -> None:
+    """Button callback: runs before widgets on the next rerun."""
+    queue_live_demo_navigation(st.session_state, {"id": question_id, "question": question})
 
 
 def render_benchmark_results_page() -> None:
@@ -164,9 +169,9 @@ def render_benchmark_questions_page() -> None:
                 st.caption(
                     f"FinQA gold program_answer (dataset reference, not a V2 RAG output): `{gold}`"
                 )
-            if st.button("Use this question in Live Demo", key=f"use_{row['id']}"):
-                prefill = live_prefill_from_row(row)
-                st.session_state["app_page"] = "Live RAG Demo"
-                st.session_state["catalogue_prefill_question"] = prefill["question"]
-                st.session_state["catalogue_source_id"] = prefill["source_id"]
-                st.rerun()
+            st.button(
+                "Use this question in Live Demo",
+                key=f"use_{row['id']}",
+                on_click=_on_use_in_live_demo,
+                args=(row["id"], row["question"]),
+            )

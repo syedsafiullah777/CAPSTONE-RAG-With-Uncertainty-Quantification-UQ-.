@@ -19,6 +19,10 @@ import streamlit as st
 
 from app.benchmark_ui import render_benchmark_questions_page, render_benchmark_results_page
 from src.config import get_path, load_experiment_config, project_root
+from src.rag.benchmark_catalogue import (
+    apply_catalogue_prefill_to_live_input,
+    apply_pending_app_page,
+)
 from src.models.factory import create_backend
 from src.models.runtime_guard import (
     LiveRuntimeError,
@@ -223,10 +227,6 @@ def render_live_rag_demo() -> None:
         "using the shared Phase 6 knowledge base. This is not a benchmark lookup."
     )
 
-    if "catalogue_prefill_question" in st.session_state:
-        st.session_state["fresh_question_text"] = st.session_state.pop("catalogue_prefill_question")
-        st.session_state["question_source"] = "Fresh question"
-
     locked_t = resolve_live_locked_threshold()
 
     with st.sidebar:
@@ -403,6 +403,8 @@ def render_live_rag_demo() -> None:
 
 def main() -> None:
     st.set_page_config(page_title="V2 RAG Artefact", layout="wide")
+    apply_pending_app_page(st.session_state)
+    apply_catalogue_prefill_to_live_input(st.session_state)
     with st.sidebar:
         st.radio(
             "Navigate",

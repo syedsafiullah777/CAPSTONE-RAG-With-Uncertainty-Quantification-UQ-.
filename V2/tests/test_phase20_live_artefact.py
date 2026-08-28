@@ -318,3 +318,54 @@ def test_frozen_catalogue_loads_140_unique_matching_csv() -> None:
     assert "program_answer" not in prefill
     assert snap[0]["program_answer"]
     assert prefill["question"] != snap[0]["program_answer"]
+
+
+def test_use_in_live_demo_navigation_is_streamlit_safe() -> None:
+    from src.rag.benchmark_catalogue import (
+        FRESH_SOURCE_LABEL,
+        LIVE_DEMO_PAGE,
+        LIVE_QUESTION_INPUT_KEY,
+        LIVE_QUESTION_SOURCE_KEY,
+        PENDING_APP_PAGE_KEY,
+        apply_catalogue_prefill_to_live_input,
+        apply_pending_app_page,
+        load_frozen_catalogue,
+        queue_live_demo_navigation,
+    )
+
+    row = load_frozen_catalogue()[0]
+    session: dict = {"app_page": "Benchmark Questions"}
+    queue_live_demo_navigation(session, {"id": row["id"], "question": row["question"]})
+    assert session["app_page"] == "Benchmark Questions"
+    assert session[PENDING_APP_PAGE_KEY] == LIVE_DEMO_PAGE
+    assert session["catalogue_prefill_question"] == row["question"]
+    assert session["catalogue_source_id"] == row["id"]
+    assert session["catalogue_prefill_question"] != row["program_answer"]
+    assert "program_answer" not in session
+    assert LIVE_QUESTION_INPUT_KEY not in session
+
+    apply_pending_app_page(session)
+    apply_catalogue_prefill_to_live_input(session)
+    assert session["app_page"] == LIVE_DEMO_PAGE
+    assert PENDING_APP_PAGE_KEY not in session
+    assert LIVE_QUESTION_INPUT_KEY in session
+    assert session[LIVE_QUESTION_INPUT_KEY] == row["question"]
+    assert session[LIVE_QUESTION_SOURCE_KEY] == FRESH_SOURCE_LABEL
+    assert "catalogue_prefill_question" not in session
+    assert session[LIVE_QUESTION_INPUT_KEY] != row["program_answer"]
+
+    ui = Path("app/benchmark_ui.py").read_text(encoding="utf-8")
+    app = Path("app/streamlit_app.py").read_text(encoding="utf-8")
+    assert 'st.session_state["app_page"]' not in ui
+    assert "st.session_state['app_page']" not in ui
+    assert "on_click=_on_use_in_live_demo" in ui
+    assert "st.write(row[\"question\"])" in ui
+    assert "run_live_comparison" not in ui
+    assert "apply_pending_app_page" in app
+    assert "apply_catalogue_prefill_to_live_input" in app
+    assert app.index("apply_pending_app_page") < app.index('key="app_page"')
+    assert app.index("apply_catalogue_prefill_to_live_input") < app.index('key="app_page"')
+    assert 'key="fresh_question_text"' in app
+    assert "run_live_comparison" in app
+    assert "cases.jsonl" not in app
+    assert "phase15_benchmark" not in app

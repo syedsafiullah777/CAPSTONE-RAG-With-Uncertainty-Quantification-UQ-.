@@ -115,3 +115,36 @@ def live_prefill_from_row(row: dict[str, str]) -> dict[str, str]:
         "question": row.get("question") or "",
         "source_id": row.get("id") or "",
     }
+
+
+PENDING_APP_PAGE_KEY = "_pending_app_page"
+LIVE_DEMO_PAGE = "Live RAG Demo"
+LIVE_QUESTION_INPUT_KEY = "fresh_question_text"
+LIVE_QUESTION_SOURCE_KEY = "question_source"
+FRESH_SOURCE_LABEL = "Fresh question"
+
+
+def queue_live_demo_navigation(session: dict, row: dict[str, str]) -> None:
+    """Queue Live RAG Demo navigation without touching the instantiated app_page widget.
+
+    Copies question text only. Does not copy FinQA gold or Phase 15 answers.
+    """
+    prefill = live_prefill_from_row(row)
+    session[PENDING_APP_PAGE_KEY] = LIVE_DEMO_PAGE
+    session["catalogue_prefill_question"] = prefill["question"]
+    session["catalogue_source_id"] = prefill["source_id"]
+
+
+def apply_pending_app_page(session: dict) -> None:
+    """Apply queued page before the sidebar radio (key=app_page) is created."""
+    pending = session.pop(PENDING_APP_PAGE_KEY, None)
+    if pending:
+        session["app_page"] = pending
+
+
+def apply_catalogue_prefill_to_live_input(session: dict) -> None:
+    """Copy queued question text into the Live Demo input before those widgets exist."""
+    if "catalogue_prefill_question" not in session:
+        return
+    session[LIVE_QUESTION_INPUT_KEY] = session.pop("catalogue_prefill_question")
+    session[LIVE_QUESTION_SOURCE_KEY] = FRESH_SOURCE_LABEL

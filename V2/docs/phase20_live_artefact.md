@@ -41,6 +41,8 @@ Sidebar navigation:
 
 The Benchmark Questions page does not run RAG or call Qwen3-8B.
 
+**Navigation (Streamlit-safe):** the catalogue button uses an `on_click` callback that queues `_pending_app_page` plus the selected question text. `main()` applies that pending page **before** the sidebar `st.radio(key="app_page")` is created, then copies the text into the Live Demo input. The app does not assign `st.session_state["app_page"]` after that widget exists (that assignment raises `StreamlitAPIException`). Sidebar pages remain Live RAG Demo, Benchmark Results, and Benchmark Questions.
+
 ## UQ confidence warning (UI-only)
 
 The research decision rule is unchanged: **confidence < 0.65 → ABSTAIN**; **confidence ≥ 0.65 → ANSWER**.

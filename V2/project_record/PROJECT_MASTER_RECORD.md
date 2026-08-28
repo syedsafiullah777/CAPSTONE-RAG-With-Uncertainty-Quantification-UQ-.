@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-29 |
-| Current completed phase | **Phase 20 complete:** final live-artefact validation (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` live demo **NEEDS VERIFICATION**). Phases 15–19 remain **PASS** on their recorded criteria. |
-| Next phase (not started) | **None.** Stop after Phase 20. A dissertation write-up pack is not a numbered phase in this instruction. |
+| Current completed phase | **Phase 21 complete:** canonical Colab final live-demo launcher (static notebook checks **PASS**; official Colab T4 viva launch **NEEDS VERIFICATION**). Research Phases 15–20 unchanged. |
+| Next phase (not started) | **None.** Stop after Phase 21. A dissertation write-up pack is not a numbered phase. |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -108,6 +108,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 18 error analysis | **PASS** (2026-08-28); 420 labelled; sample 81 cases / 42 questions; seed 18 | `phase18_smoke_test.json` |
 | Phase 19 reproducibility audit | **PASS** scientific chain (2026-08-28); 17 PASS / 0 FAIL / 4 **NEEDS VERIFICATION** (Drive, GitHub, judge fingerprint vs JSONL, leftover yaml flag); no RAG/judge/stats rerun | `phase19_audit.json` |
 | Phase 20 live artefact | Local mock plumbing **PASS** at locked T=0.65; Streamlit HTTP 200; no Phase 15 lookup; frozen hashes unchanged. Official Colab T4 Qwen live answers **NEEDS VERIFICATION** | `phase20_live_demo_summary.json` |
+| Phase 21 final live-demo launcher | Canonical Colab notebook created; static JSON/guard checks **PASS** (3 tests). Does not rerun 420/calibration/judge/stats. Official T4 viva launch **NEEDS VERIFICATION** | `notebooks/colab_phase21_final_live_demo.ipynb` |
 
 ### Architectures
 
@@ -119,8 +120,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Test suite status (as of last update)
 
-- Command: `PYTHONPATH=. pytest -q -k "not test_analyse_paired_140"` (2026-08-28, after Phase 20)
-- Result: **144 passed**, 1 deselected (`analyse()` not re-run). Official 420-case RAG job, official judge, Phase 17 statistical tests, and Colab T4 live Qwen runs were **not** re-executed.
+- Command: `PYTHONPATH=. pytest tests/test_phase21_final_live_demo.py -v` (2026-08-29, Phase 21 notebook creation)
+- Result: **3 passed**. Full 420-case RAG job, judge, calibration, and Phase 17 tests were **not** re-executed. Prior Phase 20 live-artefact suite was **21 passed** (2026-08-29 UI warning).
 
 ### Storage / backup (project infrastructure)
 
@@ -184,6 +185,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 41. **Phase 19 reproducibility audit (2026-08-28):** Read-only integrity audit of 40 DEV → T=0.65 → frozen 140 → 420 cases → Phase 16/17/18. No RAG/Qwen/judge/stats rerun. Frozen SHA-256 unchanged. Scientific chain **PASS**. Google Drive archive, GitHub commit, judge fingerprint vs JSONL settings, and leftover yaml `phase5_threshold_locked: false` remain **NEEDS VERIFICATION**. Dissertation evidence pack is **Phase 20** (not started). Do not commit Phase 15 raw JSONL or judge JSONL.
 42. **Phase 20 live artefact (2026-08-28):** Final numbered phase is live-artefact validation at locked T=0.65 — not a dissertation write-up pack (that earlier Phase 19 assumption is superseded here). Streamlit always loads `threshold.lock.json`; smoke 0.55 control removed. Live path calls Phase 8–10 pipelines on the shared Phase 6 KB; it does not look up Phase 15 JSONL. Local mock three-question demo + tests **PASS** (plumbing). Official Colab T4 + Qwen3-8B + `llama_cpp` answers remain **NEEDS VERIFICATION**. Frozen 140/40, T, and Phase 15–18 results unchanged. No Phase 21 started.
 43. **Phase 20 UI-only UQ confidence warning (2026-08-29):** Streamlit Multi-Agent + UQ panel gained a **display-only** confidence warning. Research decision rule unchanged: confidence < 0.65 → ABSTAIN; confidence ≥ 0.65 → ANSWER. Locked **T = 0.65** unchanged. The 0.66 display band is **not** a research threshold, not calibrated, and not stored in `threshold.lock.json` or experiment config. The warning does **not** alter stored decisions, confidence values, benchmark results, Phase 15/16/17/18 results, or statistics. User-facing safety/usability indicator only. No 420-case benchmark, calibration, LLM-judge, or statistical analysis was rerun.
+44. **Phase 21 canonical final live-demo launcher (2026-08-29):** Dedicated Colab notebook `notebooks/colab_phase21_final_live_demo.ipynb` is the viva launch vehicle for the existing Streamlit app. Not a new research experiment. Does not rerun 420, calibration, judge, or statistics. Does not modify T=0.65, frozen 140/40, Phase 15–18 results, V1, or RAG architectures. Previous live notebooks (including `colab_phase11_live.ipynb`) are historical development/validation evidence. Official Colab T4 execution **NEEDS VERIFICATION**.
 
 ---
 
@@ -1580,12 +1582,49 @@ This addendum records a later Streamlit display change. It does **not** rewrite 
 
 ---
 
+## Phase 21 — Canonical final live-demo launcher (Colab)
+
+- **Date:** 2026-08-29
+- **Objective:** Provide one dedicated Colab notebook that launches the already-completed Streamlit live artefact for the MSc viva.
+- **Why required:** Phase 11/20 live notebooks mix development validation (including optional live-demo GPU scripts) with launch. The viva needs a single launcher that restores the Phase 6 KB, locks `llama_cpp` on Tesla T4, and exposes Streamlit through Colab `proxyPort`.
+- **Work completed:**
+  - Created `notebooks/colab_phase21_final_live_demo.ipynb`: clone/pull GitHub; mount Drive; restore `MyDrive/MSc-RAG/artifacts/knowledge_base/`; Chroma preflight; CUDA/T4/Qwen3-8B Q4_K_M/`llama_cpp` guard; start `app/streamlit_app.py`; print and embed Colab proxy URL; keep-alive loop; optional Streamlit health cell.
+  - Refuses Darwin/non-CUDA, mock, and Ollama. Does not call `build_index.py` or any benchmark/calibration/judge/statistics/`run_live_demo.py` script.
+  - Static tests `tests/test_phase21_final_live_demo.py` **3 passed**.
+  - Did **not** rerun 420, calibration, judge, or statistics. Did **not** modify frozen 140/40, T=0.65, Phase 15–18 results, V1, or RAG architectures.
+- **Technical decisions:** This is a launch vehicle, not a new experiment. Canonical viva notebook is Phase 21. `colab_phase11_live.ipynb` remains historical. Browser URL = Colab `google.colab.kernel.proxyPort(8501)`, not Mac `127.0.0.1`.
+- **Files created/modified:**
+  - `V2/notebooks/colab_phase21_final_live_demo.ipynb`
+  - `V2/docs/phase21_final_live_demo.md`
+  - `V2/tests/test_phase21_final_live_demo.py`
+  - `V2/project_record/evidence/phase21_validation.md`
+  - `V2/project_record/PROJECT_MASTER_RECORD.md`
+  - `V2/docs/IMPLEMENTATION_PLAN.md`
+- **Tests/validation:** 3 static notebook tests **PASS**. Official Colab T4 viva launch **NEEDS VERIFICATION**. No GPU job during notebook creation.
+- **Actual outcome:** Launcher notebook and docs exist. Research chain unchanged.
+- **Problems encountered:** None in static validation.
+- **Problems resolved:** n/a
+- **Remaining issues:** Push notebook to GitHub; run on Colab T4 with Drive KB; record the printed proxy URL. Drive archive **NEEDS VERIFICATION**.
+- **Dissertation relevance:** Examiner live demo entrypoint.
+- **Evidence/source file paths:**
+  - `V2/notebooks/colab_phase21_final_live_demo.ipynb`
+  - `V2/docs/phase21_final_live_demo.md`
+  - `V2/project_record/evidence/phase21_validation.md`
+- **Validation evidence:** `V2/project_record/evidence/phase21_validation.md`
+- **Backup status:**
+  - Colab: **NEEDS VERIFICATION** (notebook not executed on T4 in this session)
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — Phase 21 notebook, docs, tests, evidence
+  - GitHub: Phase 21 files **uncommitted** (do not commit Phase 15 raw JSONL or judge JSONL)
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
 | — | Dissertation write-up pack (formerly planned as Phase 20) | Not a numbered phase under the 2026-08-28 instruction. **Not started.** |
-| 21+ | Further implementation phases | **Not started.** Stop after Phase 20. |
+| 22+ | Further implementation phases | **Not started.** Stop after Phase 21. |
 
 ---
 

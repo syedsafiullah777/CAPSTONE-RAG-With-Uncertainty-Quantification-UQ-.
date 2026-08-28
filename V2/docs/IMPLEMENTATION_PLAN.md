@@ -5,9 +5,9 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-28 |
-| Current completed phase | **Phase 20 complete:** final live-artefact validation (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` **NEEDS VERIFICATION**). |
-| Next implementation phase | **None.** Stop after Phase 20. |
+| Last updated | 2026-08-29 |
+| Current completed phase | **Phase 21 complete:** canonical Colab final live-demo launcher (static checks **PASS**; official T4 viva launch **NEEDS VERIFICATION**). Research Phases 15–20 unchanged. |
+| Next implementation phase | **None.** Stop after Phase 21. |
 | V1 | Reference-only — never modified |
 
 ---
@@ -276,6 +276,16 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`. GPU demo: `notebo
 Local mock three-question demo (`scripts/run_live_demo.py --backend mock`) recorded insufficient-evidence UQ **ABSTAIN** at 0.5351 < 0.65. Official Qwen/T4 answers **NEEDS VERIFICATION**. Frozen 140/40, lock, and Phase 15–18 results unchanged.
 
 **Do not start Phase 21. Do not rerun the 420-case benchmark, calibration, judge, or statistics.**
+
+## Phase 21 — Canonical final live-demo launcher (complete; static PASS; Colab T4 NV)
+
+See `docs/phase21_final_live_demo.md` and `project_record/evidence/phase21_validation.md`.
+
+**Canonical viva notebook:** `notebooks/colab_phase21_final_live_demo.ipynb`. Previous live notebooks (`colab_phase11_live.ipynb` and earlier) are historical development/validation evidence.
+
+Launch (Colab VM, from `V2/`): `PYTHONPATH=. python -m streamlit run app/streamlit_app.py --server.port=8501 --server.address=0.0.0.0 --server.headless=true` with `V2_LIVE_BACKEND=llama_cpp` and `V2_FORBID_MOCK=1`. Browser URL: Colab `proxyPort(8501)`. Does **not** rerun 420, calibration, judge, or statistics. Locked **T=0.65** unchanged.
+
+**Do not start Phase 22. Do not rerun the 420-case benchmark, calibration, judge, or statistics.**
 
 ## Git workflow (all phases)
 
