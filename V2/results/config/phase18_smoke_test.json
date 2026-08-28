@@ -1,0 +1,30 @@
+{
+  "phase": 18,
+  "test_name": "phase18_error_analysis",
+  "command": "PYTHONPATH=. python scripts/run_error_analysis.py",
+  "expected": "Rule-based taxonomy on frozen 420 cases plus stratified qualitative sample; T=0.65 unchanged; no RAG/Qwen/judge rerun",
+  "actual": "status=PASS n_cases=420 n_sample=81 n_sample_questions=42 false_abstentions_in_sample=2 source_artefacts_unchanged=True",
+  "status": "PASS",
+  "recorded_at_utc": "2026-08-28T17:36:56.993432+00:00",
+  "notebook": null,
+  "environment": {
+    "used_llm_inference": false,
+    "used_gpu": false,
+    "device": "cpu"
+  },
+  "error": null,
+  "output_path": "/Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2/results/final/phase18_error_analysis.md",
+  "extra": {
+    "hashes": {
+      "phase15": "f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa",
+      "processed": "e9e4f80dafffa0d0db970fb4426c9c0b81310717405389b2b7fd5ddb5b231e91",
+      "judge": "093c4699b68e9653125fcd08e3b25b0d10a3357be3a20bc817a5a71e8498ebe3",
+      "frozen140": "88899ae9c66fb47bf4aa50e197d91aa171adcb882ae36f066bf614ff40fba087",
+      "cal40": "1325b595ae1f9404802879ad06f52be7f7b63d805ab1edf5b66c3b608a478845",
+      "lock": "8981233604e64959386292d3d1fbdeebd4e983c0520fde3b4467772281687d88"
+    },
+    "cases_csv": "/Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2/results/analysis/phase18_error_cases.csv",
+    "summary_csv": "/Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2/results/analysis/phase18_error_summary.csv",
+    "used_rag_rerun": false
+  }
+}

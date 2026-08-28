@@ -1,0 +1,25 @@
+architecture,architecture_label,primary_category,n,n_architecture,pct_of_architecture,scope
+single_agent,Single-Agent,correct_answer,32,140,22.86,full_420_rule_based
+single_agent,Single-Agent,appropriate_abstention,0,140,0.0,full_420_rule_based
+single_agent,Single-Agent,incorrect_abstention,0,140,0.0,full_420_rule_based
+single_agent,Single-Agent,retrieval_failure,13,140,9.29,full_420_rule_based
+single_agent,Single-Agent,non_numeric_answer,5,140,3.57,full_420_rule_based
+single_agent,Single-Agent,incorrect_numerical_reasoning,11,140,7.86,full_420_rule_based
+single_agent,Single-Agent,unsupported_claim,55,140,39.29,full_420_rule_based
+single_agent,Single-Agent,incorrect_despite_partial_evidence,24,140,17.14,full_420_rule_based
+multi_agent,Multi-Agent,correct_answer,29,140,20.71,full_420_rule_based
+multi_agent,Multi-Agent,appropriate_abstention,0,140,0.0,full_420_rule_based
+multi_agent,Multi-Agent,incorrect_abstention,0,140,0.0,full_420_rule_based
+multi_agent,Multi-Agent,retrieval_failure,13,140,9.29,full_420_rule_based
+multi_agent,Multi-Agent,non_numeric_answer,5,140,3.57,full_420_rule_based
+multi_agent,Multi-Agent,incorrect_numerical_reasoning,11,140,7.86,full_420_rule_based
+multi_agent,Multi-Agent,unsupported_claim,52,140,37.14,full_420_rule_based
+multi_agent,Multi-Agent,incorrect_despite_partial_evidence,30,140,21.43,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,correct_answer,32,140,22.86,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,appropriate_abstention,60,140,42.86,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,incorrect_abstention,2,140,1.43,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,retrieval_failure,4,140,2.86,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,non_numeric_answer,0,140,0.0,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,incorrect_numerical_reasoning,3,140,2.14,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,unsupported_claim,10,140,7.14,full_420_rule_based
+multi_agent_uq,Multi-Agent + UQ,incorrect_despite_partial_evidence,29,140,20.71,full_420_rule_based
