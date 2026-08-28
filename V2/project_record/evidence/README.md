@@ -29,6 +29,7 @@ Machine-readable smoke/validation JSON: `results/config/phaseN_*_test.json`
 
 Phase 16 evaluation summary: `results/config/phase16_evaluation_summary.json` (CPU scoring of saved Phase 15 cases; no RAG/Qwen).
 Phase 17 statistics summary: `results/config/phase17_statistics_summary.json` (paired tests on frozen Phase 15/16; no RAG/Qwen/judge rerun).
+Phase 18 error analysis: `results/config/phase18_smoke_test.json`; tables in `results/analysis/phase18_error_*.csv` (frozen 420 only; no RAG/Qwen/judge rerun).
 
 ## Capture commands
 

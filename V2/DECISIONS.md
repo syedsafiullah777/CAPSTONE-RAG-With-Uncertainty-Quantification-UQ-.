@@ -228,4 +228,10 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** Keep exactly six figures in `results/metrics/phase17_figures/`, each as one PNG and one PDF. Remove SVG and superseded stems. Fix the overlapping RQ1 title. Spread stacked RQ2 points along x for display only. Index in `FIGURE_INDEX.md`. Do not recompute statistics.
 
-**Verified:** 12 canonical files + index. 12 redundant exports removed. Result-file SHA-256 unchanged. Phase 18 not started.
+**Verified:** 12 canonical files + index. 12 redundant exports removed. Result-file SHA-256 unchanged. Phase 18 not started on this date.
+
+## 2026-08-28 — Phase 18 qualitative error analysis
+
+**Decision:** Label all 420 frozen cases with a mutually exclusive taxonomy from recorded fields, plus a stratified qualitative sample (seed 18). Do not rerun RAG, Qwen, the judge, or Phase 17 tests. Do not retune T=0.65. Do not call numeric incorrectness hallucination. Do not start Phase 19. Metric label remains custom/RAGAS-inspired — **not official RAGAS**.
+
+**Verified:** n_sample=81 cases / 42 questions; both false abstentions included; source SHA-256 unchanged. Tests `test_phase18_error_analysis.py` 4 passed. Full suite excluding `analyse()` 134 passed.

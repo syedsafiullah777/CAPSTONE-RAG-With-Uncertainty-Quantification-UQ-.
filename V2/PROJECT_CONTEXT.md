@@ -53,7 +53,7 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Phase status
 
-**Phase 17 statistics complete** (paired n=140 on frozen Phase 15/16). Phase 16 CPU + official Colab 420-case judge **PASS**. **Phase 18 dissertation evidence pack not started.**
+**Phase 18 error analysis complete** (420 labelled; sample 81/42; seed 18). Phases 15–17 remain **PASS**. **Phase 19 dissertation evidence pack not started.**
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`

@@ -103,6 +103,10 @@ results/raw/**
 results/processed/**
 !results/processed/.gitkeep
 !results/processed/phase16_cases.jsonl
+results/analysis/**
+!results/analysis/.gitkeep
+!results/analysis/phase18_error_cases.csv
+!results/analysis/phase18_error_summary.csv
 results/metrics/**
 !results/metrics/.gitkeep
 !results/metrics/phase16_by_architecture.json
@@ -136,6 +140,7 @@ results/config/**
 !results/config/phase17_statistics_summary.json
 !results/config/phase17_smoke_test.json
 !results/config/phase17_figure_render.json
+!results/config/phase18_smoke_test.json
 !results/metrics/phase17_descriptive.csv
 !results/metrics/phase17_tests.csv
 !results/metrics/phase17_effect_sizes.csv
@@ -146,6 +151,7 @@ results/config/**
 !results/metrics/phase17_figures/*.pdf
 !results/metrics/phase17_figures/FIGURE_INDEX.md
 !results/final/phase17_interpretation.md
+!results/final/phase18_error_analysis.md
 
 # Notebooks checkpoints
 .ipynb_checkpoints/

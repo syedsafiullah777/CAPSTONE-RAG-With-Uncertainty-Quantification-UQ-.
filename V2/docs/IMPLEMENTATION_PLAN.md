@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-28 |
-| Current completed phase | **Phase 17 complete:** paired statistics on frozen Phase 15/16 (**PASS**). |
-| Next implementation phase | **Phase 18 dissertation evidence pack** |
+| Current completed phase | **Phase 18 complete:** qualitative error analysis of frozen 420 cases (**PASS**). |
+| Next implementation phase | **Phase 19 dissertation evidence pack** |
 | V1 | Reference-only — never modified |
 
 ---
@@ -249,7 +249,15 @@ Entrypoint: `scripts/run_statistics.py`. Statistical unit = question (n=140), pa
 
 Dissertation figures (canonical PNG+PDF; 2026-08-28): `scripts/render_phase17_figures.py` + `results/metrics/phase17_figures/FIGURE_INDEX.md`. Does **not** recompute tests. Main body: `rq1_answer_correctness_95ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_vs_selective_accuracy`. Appendix: `rq1_mcnemar_counts`, `rq2_faithfulness_distribution`, `rq3_uq_outcomes`.
 
-**Do not start Phase 18 from this documentation. Do not rerun RAG or the judge.**
+**Do not start Phase 19 from this documentation. Do not rerun RAG or the judge.**
+
+## Phase 18 — Qualitative error analysis (complete; CPU; frozen 15/16/17)
+
+See `docs/phase18_error_analysis.md` and `project_record/evidence/phase18_validation.md`.
+
+Entrypoint: `scripts/run_error_analysis.py`. Taxonomy on all 420 cases; stratified sample seed 18 (**81 cases / 42 questions**). Both false abstentions included. No RAG/Qwen/judge/statistics rerun. Numeric error is not labelled hallucination. **Not official RAGAS.**
+
+**Do not start Phase 19 from this documentation.**
 
 ## Git workflow (all phases)
 

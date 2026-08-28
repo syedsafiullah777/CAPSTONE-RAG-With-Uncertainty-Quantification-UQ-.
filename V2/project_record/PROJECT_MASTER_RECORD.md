@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-28 |
-| Current completed phase | **Phase 17 complete:** paired statistics on frozen Phase 15/16 (**PASS**). Phase 16 CPU + official 420-case judge remain **PASS**. Phase 15 Drive archive still **NEEDS VERIFICATION**. |
-| Next phase (not started) | **Phase 18 dissertation evidence pack** |
+| Current completed phase | **Phase 18 complete:** qualitative error analysis of the frozen 420-case benchmark (**PASS**). Phases 15–17 remain **PASS**. Phase 15 Drive archive still **NEEDS VERIFICATION**. |
+| Next phase (not started) | **Phase 19 dissertation evidence pack** |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -105,6 +105,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 17 statistics | **PASS** (2026-08-28); CPU; paired n=140; no RAG/judge rerun | `phase17_smoke_test.json` |
 | Phase 17 RQ1 | SA 32/140 vs MA 29/140; McNemar p=0.6776 (not significant) | `results/metrics/phase17_tests.csv` |
 | Phase 17 figures | **PASS** (2026-08-28); six canonical PNG+PDF; statistics unchanged | `results/metrics/phase17_figures/FIGURE_INDEX.md` |
+| Phase 18 error analysis | **PASS** (2026-08-28); 420 labelled; sample 81 cases / 42 questions; seed 18 | `phase18_smoke_test.json` |
 
 ### Architectures
 
@@ -116,8 +117,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Test suite status (as of last update)
 
-- Command: `PYTHONPATH=. pytest -q -k "not test_analyse_paired_140"` (2026-08-28, after Phase 17 figure refresh)
-- Result: **130 passed**, 1 deselected (`analyse()` not re-run; no statistical tests recomputed). Official 420-case RAG job and official 420-case judge were **not** re-executed.
+- Command: `PYTHONPATH=. pytest -q -k "not test_analyse_paired_140"` (2026-08-28, after Phase 18)
+- Result: **134 passed**, 1 deselected (`analyse()` not re-run). Official 420-case RAG job, official judge, and Phase 17 statistical tests were **not** re-executed.
 
 ### Storage / backup (project infrastructure)
 
@@ -176,7 +177,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 36. **Phase 16 official 420-case LLM-as-judge verified (2026-08-28):** User copied Colab artefacts. Local inspect of `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl`: **420/420** unique keys, 140 per architecture, 0 duplicates, 0 missing, 0 errors, 0 parse failures, all COMPLETED; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; no gold context/answer; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Mean faithfulness: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL records `temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096` (source of truth). Do not use fingerprint `model_config` 0.1 / 512 as judge-call settings. **Not official RAGAS.** CPU Phase 16 tables unchanged. Phase 17 not started on this date. Drive folder **NEEDS VERIFICATION**.
 37. **Phase 17 paired statistics (2026-08-28):** CPU analysis of frozen Phase 16 scored cases + official judge JSONL. Statistical unit = question (n=140), paired across architectures. Confirmatory RQ1 McNemar SA vs MA displayed correctness p=0.6776 (**not significant**). RQ2: Spearman confidence vs LLM-as-judge faithfulness ρ=0.6988 (Holm significant); Mann–Whitney ANSWER vs ABSTAIN faithfulness Holm significant; paired Wilcoxon MA vs UQ faithfulness **not** significant. RQ3: unsupported-emitted McNemar vs SA and MA Holm significant; coverage 78/140; selective accuracy 32/78; 2 false abstains. **Not official RAGAS.** Phase 15/16 JSONL SHAs unchanged. Phase 18 not started.
 38. **Phase 17 figure refresh (2026-08-28):** Presentation-only redraw of six dissertation figures from saved Phase 17 tables. No RAG/Qwen/judge rerun. No statistical tests recomputed. Result-file SHA-256 unchanged. Primary: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs custom/RAGAS-inspired LLM-as-judge faithfulness; RQ3 coverage vs selective accuracy at locked T=0.65. Appendix: McNemar counts, faithfulness boxplot, UQ outcome counts. Phase 18 not started.
-39. **Phase 17 canonical figure cleanup (2026-08-28):** Six figures only, PNG+PDF each, in `results/metrics/phase17_figures/`. Overlapping RQ1 title fixed; RQ2 stacked points spread on x for display only. SVG and superseded stems removed. Statistics unchanged. Phase 18 not started.
+39. **Phase 17 canonical figure cleanup (2026-08-28):** Six figures only, PNG+PDF each, in `results/metrics/phase17_figures/`. Overlapping RQ1 title fixed; RQ2 stacked points spread on x for display only. SVG and superseded stems removed. Statistics unchanged. Phase 18 not started on this date.
+40. **Phase 18 qualitative error analysis (2026-08-28):** Rule-based taxonomy on all 420 frozen cases plus stratified sample (seed 18; 81 cases / 42 questions). Both false abstentions included. No RAG/Qwen/judge/statistics rerun. Numeric error not labelled hallucination. Not official RAGAS. Phase 19 not started.
 
 ---
 
@@ -1416,11 +1418,55 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
 
 ---
 
+## Phase 18 — Qualitative error analysis of the frozen 420-case benchmark
+
+- **Date:** 2026-08-28
+- **Objective:** Explain why the Phase 15–17 quantitative results occurred using only recorded artefacts.
+- **Why required:** Point estimates and tests do not show whether errors are retrieval misses, numerical reasoning failures, unsupported emission, or abstention behaviour.
+- **Work completed:**
+  - CPU package `src/error_analysis/` + `scripts/run_error_analysis.py` (no RAG/Qwen/judge/statistics rerun).
+  - Mutually exclusive taxonomy on all 420 cases from recorded fields (numeric match, context P/R, gold-number-in-evidence, judge faithfulness, UQ decision/claim).
+  - Stratified qualitative sample, seed 18: **81 cases** on **42 questions**, including both false abstentions.
+  - Outputs: case table, category summary, narrative with RQ1–RQ3 interpretation.
+  - Did **not** rewrite Phase 15/16 JSONL, Phase 17 tables, freeze files, T, RAG modules, or V1. Did **not** start Phase 19.
+- **Technical decisions:** Statistical/quantitative labels stay as Phase 17. Phase 18 does not retune T or claim hallucination from numeric mismatch. LLM-as-judge label remains custom/RAGAS-inspired, **not official RAGAS**. Sample is for inspection; full-420 tables supply category percentages.
+- **Files created/modified:**
+  - `V2/src/error_analysis/*.py`
+  - `V2/scripts/run_error_analysis.py`
+  - `V2/tests/test_phase18_error_analysis.py`
+  - `V2/docs/phase18_error_analysis.md`
+  - `V2/results/analysis/phase18_error_cases.csv`
+  - `V2/results/analysis/phase18_error_summary.csv`
+  - `V2/results/final/phase18_error_analysis.md`
+  - `V2/results/config/phase18_smoke_test.json`
+  - `V2/project_record/evidence/phase18_validation.md`
+- **Tests/validation:** `tests/test_phase18_error_analysis.py` **4 passed**. Full suite excluding `analyse()`: **134 passed**. Source SHA-256 unchanged after the run.
+- **Actual outcome:**
+  - Sample: 81 cases / 42 questions; seed 18; both false abstentions included.
+  - Full-set UQ: 60 appropriate abstentions, 2 incorrect abstentions; SA/MA retrieval_failure 13/140 (identical by shared retrieval).
+  - Dominant always-answer error class: `unsupported_claim` (SA 55, MA 52); UQ reduces that class among emitted answers via abstention.
+- **Problems encountered:** Many “insufficient evidence” strings still contain years or money amounts, so `non_numeric_answer` is rarer than a keyword search suggested.
+- **Problems resolved:** Taxonomy uses `parse_numbers` on displayed text, not keyword heuristics.
+- **Remaining issues:** Google Drive copy of Phase 18 tables **NEEDS VERIFICATION**. GitHub commit **not done**. Phase 19 **not started**.
+- **Dissertation relevance:** Supplies case-level explanations that separate retrieval, numeric reasoning, unsupported emission, and abstention for RQ1–RQ3.
+- **Evidence/source file paths:**
+  - `V2/results/analysis/phase18_error_cases.csv`
+  - `V2/results/analysis/phase18_error_summary.csv`
+  - `V2/results/final/phase18_error_analysis.md`
+- **Validation evidence:** `V2/project_record/evidence/phase18_validation.md`
+- **Backup status:**
+  - Colab: **N/A** (CPU local analysis; no GPU job)
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — Phase 18 CSV/MD/evidence
+  - GitHub: Phase 18 source/docs/tables **uncommitted** (do not commit Phase 15 raw JSONL or judge JSONL)
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 18 | Dissertation evidence pack | Not started |
+| 19 | Dissertation evidence pack | Not started |
 
 ---
 
