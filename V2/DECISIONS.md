@@ -204,4 +204,10 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 
 **Decision:** Add a separate resumable faithfulness judge over the frozen Phase 15 JSONL. Do not rerun RAG. Do not rewrite CPU Phase 16 tables. Do not feed gold context or gold answers to the judge. Use Qwen3-8B Q4_K_M, temperature 0, 32 tokens, 420 cases on Colab. Label: `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)`. Keep token-overlap secondary. Do not start Phase 17.
 
-**Verified this session:** implementation + local mock n=3 (pytest). Official Colab 420 **not launched**.
+**Verified 2026-08-27:** implementation + local mock n=3 (pytest). Official Colab 420 **not launched** on this date.
+
+## 2026-08-28 — Phase 16 official 420-case LLM-as-judge verified
+
+**Decision:** Treat the copied Colab judge JSONL as the official post-hoc faithfulness artefact. Do not rerun RAG or the judge. Do not rewrite CPU Phase 16 tables. Do not start Phase 17. Label remains `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` — **not official RAGAS**. Judge-call source of truth is the JSONL (`temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`), not fingerprint `model_config` 0.1 / 512.
+
+**Verified:** run_id `phase16_judge_20260828T152623Z_06661255` **PASS**; 420/420 completed; 140 per architecture; 0 duplicates; 0 missing; 0 errors; 0 parse failures; all COMPLETED; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Means: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL: `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl`.

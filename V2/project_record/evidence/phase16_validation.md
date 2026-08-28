@@ -2,10 +2,12 @@
 
 | Field | Value |
 | --- | --- |
-| Phase | 16 — Evaluation + metrics |
+| Phase | 16 — Evaluation + metrics + post-hoc LLM-as-judge |
 | Evidence file | `project_record/evidence/phase16_validation.md` |
-| Last updated | 2026-08-27 |
-| Phase 16 status | CPU **PASS** on saved Phase 15 JSONL. LLM-as-judge **implemented**; official Colab 420 **not launched**. Phase 17 not started. |
+| Last updated | 2026-08-28 |
+| Phase 16 status | CPU **PASS** (2026-08-26). Official Colab 420-case LLM-as-judge **PASS** (locally verified 2026-08-28). Phase 17 not started. |
+
+Earlier (2026-08-27) this file recorded official Colab 420 as **not launched** / **NEEDS VERIFICATION**. That was the implementation state. It is superseded by the verified run below. CPU metric numbers in §3–4 are unchanged.
 
 ## Summary
 
@@ -16,7 +18,7 @@
 | 3 | CPU evaluation of 420 saved cases | **PASS** | `results/config/phase16_smoke_test.json` |
 | 4 | Completeness / no new generation | **PASS** | raw SHA unchanged; 420 unique keys |
 | 5 | LLM-as-judge unit tests + mock n=3 | **PASS** | `tests/test_phase16_judge.py` |
-| 6 | Official 420-case Colab judge | **not launched** | `notebooks/colab_phase16_judge.ipynb` |
+| 6 | Official 420-case Colab judge | **PASS** (verified 2026-08-28) | `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl` |
 | 7 | Phase 17 statistics | **not started** | — |
 
 Locked T=0.65 unchanged. Frozen 140/40 CSVs unchanged (SHA recorded). V1 unmodified. No architecture runners imported.
@@ -138,15 +140,44 @@ Source tables: `results/metrics/phase16_summary.csv`, `results/metrics/phase16_b
 | Environment | Local Mac CPU; mock backend; no Colab GPU |
 | Expected | UQ uses draft; prompt omits gold; mock n=3 resume; Phase 15 SHA stable; CPU JSONL unchanged; official mock-420 refused |
 | Actual (observed) | **8 passed** in `test_phase16_judge.py`; mock n=3 resume skipped 3; Phase 15 SHA unchanged; CPU JSONL unchanged; official mock-420 refused. Full suite **124 passed**. |
-| Status | **PASS** if pytest passes; official 420 **not launched** |
+| Status | **PASS** (implementation + mock). Official 420 was **not launched** on this date |
 | Error | — |
 | Output path | `notebooks/colab_phase16_judge.ipynb`; `scripts/run_judge.py` |
 
 Metric label: `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)`. Not official RAGAS. Token-overlap kept as secondary. Phase 16 CPU tables not rewritten.
 
-### 6. Official 420-case Colab judge
+### 6. Official 420-case Colab judge (verified 2026-08-28)
 
-**not launched.** Notebook: `notebooks/colab_phase16_judge.ipynb`. Command: `PYTHONPATH=. python scripts/run_judge.py --backend llama_cpp`. Drive: `MyDrive/MSc-RAG/results/raw/phase16_judge/`.
+Historical (2026-08-27): this row was **not launched** / **NEEDS VERIFICATION**. Notebook and runner existed; the GPU job had not been run.
+
+| Field | Value |
+| --- | --- |
+| Date/time (UTC) | Colab ended 2026-08-28T15:39:49Z; local JSONL inspect 2026-08-28 |
+| Phase | 16 |
+| Test name | `phase16_judge_faithfulness` (official 420) |
+| Command / notebook | `notebooks/colab_phase16_judge.ipynb`; `PYTHONPATH=. python scripts/run_judge.py --backend llama_cpp` |
+| Environment | Colab GPU; Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `e4a6b375cea16a9628a6e0db63b03ca56fa33660` |
+| Expected | 420 post-hoc judge cases on frozen Phase 15 JSONL; SHA `f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa`; no RAG rerun; no gold context/answer |
+| Actual (observed) | **PASS**; run_id `phase16_judge_20260828T152623Z_06661255`; 420/420 unique keys; 140 per architecture; 0 duplicates; 0 missing; 0 errors; 0 parse failures; all `COMPLETED`; `used_rag_rerun=false`; UQ claim_source `draft_answer` (140); UQ 78 ANSWER / 62 ABSTAIN |
+| Status | **PASS** |
+| Error | — |
+| Output path | `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl` |
+
+Metric label (exact): **LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)**. **Not official RAGAS.** Not the RAGAS library. CPU token-overlap remains secondary. Numeric answer correctness and context P/R stay CPU-only and were **not** rewritten.
+
+Observed mean scores from the official JSONL (rounded to 4 d.p.; source `results/metrics/phase16_judge_summary.csv`):
+
+| Architecture | n | LLM faithfulness (all) | LLM faithfulness (ANSWER only) |
+| --- | ---: | ---: | ---: |
+| `single_agent` | 140 | 0.3241 | 0.3241 |
+| `multi_agent` | 140 | 0.3484 | 0.3484 |
+| `multi_agent_uq` | 140 | 0.3749 | **0.6548** (78 ANSWER) |
+
+`judge.jsonl` SHA-256: `093c4699b68e9653125fcd08e3b25b0d10a3357be3a20bc817a5a71e8498ebe3`. Phase 15 source SHA unchanged. T=0.65 lock SHA unchanged. Frozen 140/40 SHA unchanged.
+
+**Judge-call settings (JSONL is source of truth):** every official row records `temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`. Do **not** treat `results/config/phase16_judge_runtime_fingerprint.json` `model_config` values (`temperature=0.1`, `max_new_tokens=512`) as the judge-call settings; those are experiment.yaml defaults captured in the fingerprint, not the post-hoc judge job.
+
+Machine-readable: `results/config/phase16_judge_summary.json`, `results/config/phase16_judge_smoke_test.json`. Log: `results/logs/phase16_judge_20260828T152554Z.log` (420 COMPLETED + `status=PASS completed=420 failed=0 pending=0`).
 
 ---
 

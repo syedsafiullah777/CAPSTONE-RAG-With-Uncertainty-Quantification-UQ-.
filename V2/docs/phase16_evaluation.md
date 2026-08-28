@@ -66,13 +66,19 @@ Refuses to overwrite `results/processed/phase16_cases.jsonl` unless `--force`. D
 
 Observed numbers: `project_record/evidence/phase16_validation.md`.
 
-## Post-hoc LLM-as-judge (separate job; 420 Colab not launched from docs)
+## Post-hoc LLM-as-judge (separate job; official 420 PASS)
+
+CPU metrics above are unchanged. The judge job does **not** replace numeric correctness, context P/R, or token-overlap.
 
 See `docs/phase16_judge.md`.
+
+Historical (2026-08-27): this heading recorded official Colab 420 as **not launched**. That implementation state is superseded.
+
+**Current status (verified 2026-08-28):** official run_id `phase16_judge_20260828T152623Z_06661255` **PASS**. 420/420 completed; 140 per architecture; 0 duplicates; 0 missing; 0 errors; 0 parse failures. `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4. Judge-call settings (JSONL source of truth): `temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`.
 
 - Entrypoint: `scripts/run_judge.py`
 - Notebook: `notebooks/colab_phase16_judge.ipynb`
 - Label: **LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)** — not official RAGAS
 - Token-overlap remains the secondary lexical metric
 - Numeric answer correctness and context P/R stay CPU-only
-- Official command (Colab GPU only): `PYTHONPATH=. python scripts/run_judge.py --backend llama_cpp`
+- Do **not** rerun. Phase 17 is **not started**.

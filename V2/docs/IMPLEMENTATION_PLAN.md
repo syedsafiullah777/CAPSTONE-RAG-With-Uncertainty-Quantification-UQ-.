@@ -5,9 +5,9 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-27 |
-| Current completed phase | **Phase 16 CPU metrics complete.** LLM-as-judge **implemented; Colab 420 not launched**. |
-| Next implementation phase | **Phase 16 official 420-case LLM judge on Colab** (then Phase 17) |
+| Last updated | 2026-08-28 |
+| Current completed phase | **Phase 16 complete:** CPU metrics **PASS** + official Colab 420-case LLM-as-judge **PASS** (locally verified). |
+| Next implementation phase | **Phase 17 statistics** |
 | V1 | Reference-only — never modified |
 
 ---
@@ -145,7 +145,7 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 13 | Calibration / threshold lock | ✅ Complete — T=0.65 locked on Colab T4 DEV 40 | `evidence/phase13_validation.md` |
 | 14 | 9-case engineering validation | ✅ Complete (Colab T4 9/9). Keep as evidence. Do not re-run. | `evidence/phase14_validation.md` |
 | 15 | Final 420-case benchmark | ✅ Local 420/420 verified (Colab T4). Drive **NEEDS VERIFICATION**. | `evidence/phase15_validation.md`; `evidence/phase15_backup_manifest.md` |
-| 16 | Evaluation + metrics | ✅ CPU complete. LLM-judge **implemented**; Colab 420 **not launched** | `evidence/phase16_validation.md` |
+| 16 | Evaluation + metrics | ✅ CPU complete. Official Colab 420 LLM-judge **PASS** (verified 2026-08-28) | `evidence/phase16_validation.md` |
 | 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
 
@@ -233,9 +233,13 @@ Entrypoint: `scripts/run_evaluation.py`. Sole input: Phase 15 JSONL `phase15_202
 
 Observed displayed correctness: Single-Agent 32/140, Multi-Agent 29/140, UQ 32/140 displayed / 34/140 claim. UQ 78 ANSWER / 62 ABSTAIN at T=0.65. Context P/R identical across architectures. Do not claim Multi-Agent improves accuracy.
 
-## Phase 16 — LLM-as-judge faithfulness (implemented; Colab 420 not launched)
+## Phase 16 — LLM-as-judge faithfulness (official 420 PASS; locally verified)
 
-See `docs/phase16_judge.md`. Separate post-hoc job: `scripts/run_judge.py` + `notebooks/colab_phase16_judge.ipynb`. Frozen Phase 15 JSONL only. Qwen3-8B Q4_K_M, 420 calls, no RAG rerun. **Not official RAGAS.** Do not overwrite CPU Phase 16 tables. **Do not start Phase 17 from this documentation.**
+See `docs/phase16_judge.md`. Separate post-hoc job: `scripts/run_judge.py` + `notebooks/colab_phase16_judge.ipynb`. Frozen Phase 15 JSONL only. **Not official RAGAS.** CPU Phase 16 tables not overwritten.
+
+Historical (2026-08-27): implementation + mock n=3; official Colab 420 **not launched** / **NEEDS VERIFICATION**.
+
+Official run (verified 2026-08-28): run_id `phase16_judge_20260828T152623Z_06661255`; **420/420 PASS**; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Means: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL is source of truth for judge calls (`temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`); do not use fingerprint `0.1` / `512`. **Do not start Phase 17 from this documentation. Do not rerun the judge.**
 
 ## Git workflow (all phases)
 
