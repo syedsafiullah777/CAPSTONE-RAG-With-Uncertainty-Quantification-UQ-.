@@ -1,52 +1,75 @@
 {
   "status": "PASS",
   "phase": 17,
-  "task": "figure_refresh_presentation_only",
+  "task": "figure_cleanup_canonical_set",
   "used_rag_rerun": false,
   "used_llm_inference": false,
   "recomputed_statistics": false,
   "primary": [
-    "rq1_accuracy_wilson_ci",
+    "rq1_answer_correctness_95ci",
     "rq2_confidence_vs_faithfulness",
-    "rq3_coverage_selective"
+    "rq3_coverage_vs_selective_accuracy"
   ],
   "appendix": [
     "rq1_mcnemar_counts",
-    "rq2_llm_faithfulness_box",
+    "rq2_faithfulness_distribution",
     "rq3_uq_outcomes"
   ],
   "written": {
-    "rq1_accuracy_wilson_ci": [
-      "results/metrics/phase17_figures/rq1_accuracy_wilson_ci.png",
-      "results/metrics/phase17_figures/rq1_accuracy_wilson_ci.pdf",
-      "results/metrics/phase17_figures/rq1_accuracy_wilson_ci.svg"
+    "rq1_answer_correctness_95ci": [
+      "results/metrics/phase17_figures/rq1_answer_correctness_95ci.png",
+      "results/metrics/phase17_figures/rq1_answer_correctness_95ci.pdf"
     ],
     "rq2_confidence_vs_faithfulness": [
       "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.png",
-      "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.pdf",
-      "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.svg"
+      "results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.pdf"
     ],
-    "rq3_coverage_selective": [
-      "results/metrics/phase17_figures/rq3_coverage_selective.png",
-      "results/metrics/phase17_figures/rq3_coverage_selective.pdf",
-      "results/metrics/phase17_figures/rq3_coverage_selective.svg"
+    "rq3_coverage_vs_selective_accuracy": [
+      "results/metrics/phase17_figures/rq3_coverage_vs_selective_accuracy.png",
+      "results/metrics/phase17_figures/rq3_coverage_vs_selective_accuracy.pdf"
     ],
     "rq1_mcnemar_counts": [
       "results/metrics/phase17_figures/rq1_mcnemar_counts.png",
-      "results/metrics/phase17_figures/rq1_mcnemar_counts.pdf",
-      "results/metrics/phase17_figures/rq1_mcnemar_counts.svg"
+      "results/metrics/phase17_figures/rq1_mcnemar_counts.pdf"
     ],
-    "rq2_llm_faithfulness_box": [
-      "results/metrics/phase17_figures/rq2_llm_faithfulness_box.png",
-      "results/metrics/phase17_figures/rq2_llm_faithfulness_box.pdf",
-      "results/metrics/phase17_figures/rq2_llm_faithfulness_box.svg"
+    "rq2_faithfulness_distribution": [
+      "results/metrics/phase17_figures/rq2_faithfulness_distribution.png",
+      "results/metrics/phase17_figures/rq2_faithfulness_distribution.pdf"
     ],
     "rq3_uq_outcomes": [
       "results/metrics/phase17_figures/rq3_uq_outcomes.png",
-      "results/metrics/phase17_figures/rq3_uq_outcomes.pdf",
-      "results/metrics/phase17_figures/rq3_uq_outcomes.svg"
+      "results/metrics/phase17_figures/rq3_uq_outcomes.pdf"
     ]
   },
+  "removed_redundant": [
+    "rq1_accuracy_wilson_ci.pdf",
+    "rq1_accuracy_wilson_ci.png",
+    "rq1_accuracy_wilson_ci.svg",
+    "rq1_mcnemar_counts.svg",
+    "rq2_confidence_vs_faithfulness.svg",
+    "rq2_llm_faithfulness_box.pdf",
+    "rq2_llm_faithfulness_box.png",
+    "rq2_llm_faithfulness_box.svg",
+    "rq3_coverage_selective.pdf",
+    "rq3_coverage_selective.png",
+    "rq3_coverage_selective.svg",
+    "rq3_uq_outcomes.svg"
+  ],
+  "canonical_directory_listing": [
+    "FIGURE_INDEX.md",
+    "rq1_answer_correctness_95ci.pdf",
+    "rq1_answer_correctness_95ci.png",
+    "rq1_mcnemar_counts.pdf",
+    "rq1_mcnemar_counts.png",
+    "rq2_confidence_vs_faithfulness.pdf",
+    "rq2_confidence_vs_faithfulness.png",
+    "rq2_faithfulness_distribution.pdf",
+    "rq2_faithfulness_distribution.png",
+    "rq3_coverage_vs_selective_accuracy.pdf",
+    "rq3_coverage_vs_selective_accuracy.png",
+    "rq3_uq_outcomes.pdf",
+    "rq3_uq_outcomes.png"
+  ],
   "frozen_hashes_unchanged": true,
   "result_file_hashes_unchanged": true,
   "result_file_sha256": {
