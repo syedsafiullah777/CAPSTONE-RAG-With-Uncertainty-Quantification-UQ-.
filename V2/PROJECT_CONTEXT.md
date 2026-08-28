@@ -42,7 +42,10 @@ Design and Evaluation of a Multi-Agent Retrieval-Augmented Generation Framework 
 
 Streamlit app that runs live pipelines on a new question through all three architectures (not precomputed benchmark lookup).
 
-Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
+Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`  
+Locked threshold: **T=0.65** from `results/config/threshold.lock.json` (not the Phase 11 smoke 0.55).  
+Pages: Live RAG Demo · Benchmark Results (read-only frozen metrics) · Benchmark Questions (read-only frozen 140).  
+Notes: `V2/docs/phase20_live_artefact.md`. Evidence: `V2/project_record/evidence/phase20_live_artefact_validation.md`.
 
 ## Examiner requirements (summary)
 
@@ -53,7 +56,8 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Phase status
 
-**Phase 18 error analysis complete** (420 labelled; sample 81/42; seed 18). Phases 15–17 remain **PASS**. **Phase 19 dissertation evidence pack not started.**
+**Phase 20 live-artefact validation complete** (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` **NEEDS VERIFICATION**). Phases 15–19 remain **PASS** on their recorded criteria. **No Phase 21 started.**
+
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -110,4 +114,12 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 - Phase 17 notes: `V2/docs/phase17_statistics.md`
 - Phase 17 evidence: `V2/project_record/evidence/phase17_validation.md`
 - Phase 17 metrics: `V2/results/metrics/phase17_tests.csv`
+- Phase 18 notes: `V2/docs/phase18_error_analysis.md`
+- Phase 18 evidence: `V2/project_record/evidence/phase18_validation.md`
+- Phase 19 notes: `V2/docs/phase19_reproducibility.md`
+- Phase 19 evidence: `V2/project_record/evidence/phase19_reproducibility_audit.md`
+- Phase 19 manifest: `V2/results/final/phase19_artefact_manifest.md`
+- Phase 20 notes: `V2/docs/phase20_live_artefact.md`
+- Phase 20 evidence: `V2/project_record/evidence/phase20_live_artefact_validation.md`
+- Phase 20 summary: `V2/results/config/phase20_live_demo_summary.json`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

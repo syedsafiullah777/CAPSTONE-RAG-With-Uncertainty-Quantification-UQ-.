@@ -37,3 +37,5 @@ PYTHONPATH=. python scripts/smoke_live_artefact.py --backend mock
 ```
 
 Runs one frozen question (`finqa_test_1000`) and one fresh question through all three pipelines.
+
+**Phase 20 (final examiner demo):** the Streamlit app now always uses **locked T=0.65**. Sidebar pages: Live RAG Demo, Benchmark Results, Benchmark Questions. See `docs/phase20_live_artefact.md`. Do not treat Phase 11 smoke 0.55 runs as the final live artefact.

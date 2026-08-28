@@ -17,6 +17,7 @@ if str(V2_ROOT) not in sys.path:
 
 import streamlit as st
 
+from app.benchmark_ui import render_benchmark_questions_page, render_benchmark_results_page
 from src.config import get_path, load_experiment_config, project_root
 from src.models.factory import create_backend
 from src.models.runtime_guard import (
@@ -26,6 +27,7 @@ from src.models.runtime_guard import (
 )
 from src.rag.live import (
     ARCHITECTURE_LABELS,
+    FRESH_KB_QUESTION,
     INSUFFICIENT_EVIDENCE_QUESTION,
     INSUFFICIENT_EVIDENCE_QUESTION_ID,
     LIVE_ARCHITECTURES,
@@ -35,6 +37,7 @@ from src.rag.live import (
     format_threshold_display,
     load_frozen_questions,
     resolve_displayed_confidence,
+    resolve_live_locked_threshold,
     run_live_comparison,
 )
 from src.rag.schema import ARCHITECTURE_MULTI_AGENT_UQ, RAGCaseResult
@@ -205,8 +208,7 @@ def render_architecture(result: RAGCaseResult) -> None:
     render_evidence(result.retrieved_evidence or [])
 
 
-def main() -> None:
-    st.set_page_config(page_title="V2 Live RAG Comparison", layout="wide")
+def render_live_rag_demo() -> None:
     st.title("V2 Live RAG Comparison")
     st.write(
         "Ask a **fresh question** or replay a **frozen FinQA test case**. "
@@ -214,9 +216,11 @@ def main() -> None:
         "using the shared Phase 6 knowledge base. This is not a benchmark lookup."
     )
 
-    config = load_experiment_config()
-    uq_cfg = config.section("uncertainty")
-    default_threshold = float(uq_cfg.get("smoke_threshold") or 0.55)
+    if "catalogue_prefill_question" in st.session_state:
+        st.session_state["fresh_question_text"] = st.session_state.pop("catalogue_prefill_question")
+        st.session_state["question_source"] = "Fresh question"
+
+    locked_t = resolve_live_locked_threshold()
 
     with st.sidebar:
         st.header("Runtime")
@@ -254,17 +258,13 @@ def main() -> None:
                 st.warning("Mock backend is for UI/testing only. It must not be treated as a real RAG answer.")
             if backend_name in {"ollama", "ollama_dev"}:
                 st.warning("Ollama is local-dev only. The Colab live demo must use llama_cpp.")
-        threshold = st.number_input(
-            "UQ smoke/demo threshold (NOT LOCKED)",
-            min_value=0.0,
-            max_value=1.0,
-            value=default_threshold,
-            step=0.05,
-            help="Smoke/demo gate only. The experimental threshold is NOT LOCKED and must be calibrated later on the 40-question DEV set.",
+        st.markdown(f"**Locked threshold T = {locked_t:.2f}**")
+        st.caption(
+            "Official lock from `results/config/threshold.lock.json` (FinQA DEV 40 only). "
+            "Not editable. Not the smoke 0.55 fallback. Not tuned on the frozen 140."
         )
-        st.caption("Threshold status: **NOT LOCKED**. This is not the final research threshold.")
         save_raw = st.checkbox("Append raw result to results/raw/live_sessions.jsonl", value=True)
-        st.caption("Frozen 140 / calibration 40 are not modified.")
+        st.caption("Frozen 140 / calibration 40 / Phase 15–18 results are not modified.")
 
         try:
             preflight = _index_preflight()
@@ -279,6 +279,7 @@ def main() -> None:
         "Question source",
         options=["Fresh question", "Frozen test case", "Insufficient-evidence demo"],
         horizontal=True,
+        key="question_source",
     )
     frozen = _cached_frozen_questions()
     reference_answer = None
@@ -305,12 +306,20 @@ def main() -> None:
         st.info(f"Using frozen question `{question_id}` (read-only).")
         st.write(question)
     else:
+        if st.session_state.get("catalogue_source_id"):
+            st.info(
+                f"Question text copied from frozen `{st.session_state['catalogue_source_id']}`. "
+                "Dataset gold was not copied. Run uses live RAG, not saved benchmark outputs."
+            )
         question = st.text_area(
             "Fresh question",
-            placeholder="Ask a financial-document question over the shared FinQA source-PDF index.",
+            placeholder=FRESH_KB_QUESTION,
             height=120,
+            key="fresh_question_text",
         )
         question_source = "fresh"
+        question_id = None
+        reference_answer = None
 
     if st.button("Run all three architectures", type="primary"):
         if not (question or "").strip():
@@ -326,8 +335,7 @@ def main() -> None:
                 reference_answer=reference_answer,
                 backend=backend,
                 backend_name=backend_name,
-                run_id=create_run_id("phase11"),
-                threshold=float(threshold),
+                run_id=create_run_id("phase20"),
             )
 
         payload = comparison.to_dict()
@@ -384,6 +392,24 @@ def main() -> None:
             }
         )
     st.dataframe(rows, use_container_width=True, hide_index=True)
+
+
+def main() -> None:
+    st.set_page_config(page_title="V2 RAG Artefact", layout="wide")
+    with st.sidebar:
+        st.radio(
+            "Navigate",
+            options=["Live RAG Demo", "Benchmark Results", "Benchmark Questions"],
+            key="app_page",
+        )
+    page = st.session_state.get("app_page") or "Live RAG Demo"
+    if page == "Benchmark Questions":
+        render_benchmark_questions_page()
+        return
+    if page == "Benchmark Results":
+        render_benchmark_results_page()
+        return
+    render_live_rag_demo()
 
 
 if __name__ == "__main__":

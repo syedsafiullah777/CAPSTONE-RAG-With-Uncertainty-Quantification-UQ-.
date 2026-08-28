@@ -2,7 +2,7 @@
 
 Clean development area for the revised MSc AI capstone artefact.
 
-**Phase status:** Phase 15 notebook/entrypoint created. Official 420-case Colab run **not launched**. Phase 14 9-case remains engineering evidence. See `project_record/PROJECT_MASTER_RECORD.md`.
+**Phase status:** Phase 19 reproducibility audit complete. Phase 20 live artefact uses locked T=0.65. See `project_record/PROJECT_MASTER_RECORD.md`.
 
 ## Storage / backup
 
@@ -51,13 +51,13 @@ pip install -r requirements.txt
 pytest -q
 ```
 
-## Live artefact (Phase 11)
+## Live artefact (Phase 20)
 
 ```bash
 PYTHONPATH=. streamlit run app/streamlit_app.py
 ```
 
-Uses the existing Phase 6 knowledge base and the three V2 RAG pipelines. Sidebar backend: `mock` (UI check), `ollama_dev` (local Qwen), `llama_cpp` (Colab GPU).
+Uses the existing Phase 6 knowledge base and the three V2 RAG pipelines at **locked T=0.65**. Pages: **Live RAG Demo**, **Benchmark Results** (frozen metric tables), **Benchmark Questions** (read-only frozen 140). Official GPU demo: `notebooks/colab_phase11_live.ipynb` with `llama_cpp` on Colab T4. Mock is local UI/testing only.
 
 ## Pilot (Phase 12)
 

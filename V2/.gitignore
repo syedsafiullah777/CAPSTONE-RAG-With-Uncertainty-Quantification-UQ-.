@@ -141,6 +141,10 @@ results/config/**
 !results/config/phase17_smoke_test.json
 !results/config/phase17_figure_render.json
 !results/config/phase18_smoke_test.json
+!results/config/phase19_audit.json
+!results/config/phase20_live_demo_summary.json
+!results/config/phase20_smoke_test.json
+!results/final/phase19_artefact_manifest.md
 !results/metrics/phase17_descriptive.csv
 !results/metrics/phase17_tests.csv
 !results/metrics/phase17_effect_sizes.csv

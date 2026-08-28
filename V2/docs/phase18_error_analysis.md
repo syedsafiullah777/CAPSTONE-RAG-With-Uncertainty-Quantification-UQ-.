@@ -23,4 +23,4 @@ Numeric incorrectness is not called hallucination.
 `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` is **not official RAGAS**.  
 Faithfulness &lt; 0.5 is a taxonomy split only, not a new operating threshold.
 
-Phase 19 is **not started**.
+Phase 20 is **not started**.

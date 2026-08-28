@@ -30,6 +30,8 @@ Machine-readable smoke/validation JSON: `results/config/phaseN_*_test.json`
 Phase 16 evaluation summary: `results/config/phase16_evaluation_summary.json` (CPU scoring of saved Phase 15 cases; no RAG/Qwen).
 Phase 17 statistics summary: `results/config/phase17_statistics_summary.json` (paired tests on frozen Phase 15/16; no RAG/Qwen/judge rerun).
 Phase 18 error analysis: `results/config/phase18_smoke_test.json`; tables in `results/analysis/phase18_error_*.csv` (frozen 420 only; no RAG/Qwen/judge rerun).
+Phase 19 reproducibility audit: `project_record/evidence/phase19_reproducibility_audit.md`; `results/config/phase19_audit.json`; `results/final/phase19_artefact_manifest.md` (read-only; no RAG/Qwen/judge/stats rerun).
+Phase 20 live artefact: `project_record/evidence/phase20_live_artefact_validation.md`; `results/config/phase20_live_demo_summary.json` (locked T=0.65; no 420 rerun; official Colab T4 **NEEDS VERIFICATION**).
 
 ## Capture commands
 

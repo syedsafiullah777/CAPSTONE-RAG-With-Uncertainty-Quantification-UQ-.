@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-28 |
-| Current completed phase | **Phase 18 complete:** qualitative error analysis of the frozen 420-case benchmark (**PASS**). Phases 15–17 remain **PASS**. Phase 15 Drive archive still **NEEDS VERIFICATION**. |
-| Next phase (not started) | **Phase 19 dissertation evidence pack** |
+| Current completed phase | **Phase 20 complete:** final live-artefact validation (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` live demo **NEEDS VERIFICATION**). Phases 15–19 remain **PASS** on their recorded criteria. |
+| Next phase (not started) | **None.** Stop after Phase 20. A dissertation write-up pack is not a numbered phase in this instruction. |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -106,6 +106,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 17 RQ1 | SA 32/140 vs MA 29/140; McNemar p=0.6776 (not significant) | `results/metrics/phase17_tests.csv` |
 | Phase 17 figures | **PASS** (2026-08-28); six canonical PNG+PDF; statistics unchanged | `results/metrics/phase17_figures/FIGURE_INDEX.md` |
 | Phase 18 error analysis | **PASS** (2026-08-28); 420 labelled; sample 81 cases / 42 questions; seed 18 | `phase18_smoke_test.json` |
+| Phase 19 reproducibility audit | **PASS** scientific chain (2026-08-28); 17 PASS / 0 FAIL / 4 **NEEDS VERIFICATION** (Drive, GitHub, judge fingerprint vs JSONL, leftover yaml flag); no RAG/judge/stats rerun | `phase19_audit.json` |
+| Phase 20 live artefact | Local mock plumbing **PASS** at locked T=0.65; Streamlit HTTP 200; no Phase 15 lookup; frozen hashes unchanged. Official Colab T4 Qwen live answers **NEEDS VERIFICATION** | `phase20_live_demo_summary.json` |
 
 ### Architectures
 
@@ -117,8 +119,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Test suite status (as of last update)
 
-- Command: `PYTHONPATH=. pytest -q -k "not test_analyse_paired_140"` (2026-08-28, after Phase 18)
-- Result: **134 passed**, 1 deselected (`analyse()` not re-run). Official 420-case RAG job, official judge, and Phase 17 statistical tests were **not** re-executed.
+- Command: `PYTHONPATH=. pytest -q -k "not test_analyse_paired_140"` (2026-08-28, after Phase 20)
+- Result: **144 passed**, 1 deselected (`analyse()` not re-run). Official 420-case RAG job, official judge, Phase 17 statistical tests, and Colab T4 live Qwen runs were **not** re-executed.
 
 ### Storage / backup (project infrastructure)
 
@@ -179,6 +181,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 38. **Phase 17 figure refresh (2026-08-28):** Presentation-only redraw of six dissertation figures from saved Phase 17 tables. No RAG/Qwen/judge rerun. No statistical tests recomputed. Result-file SHA-256 unchanged. Primary: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs custom/RAGAS-inspired LLM-as-judge faithfulness; RQ3 coverage vs selective accuracy at locked T=0.65. Appendix: McNemar counts, faithfulness boxplot, UQ outcome counts. Phase 18 not started.
 39. **Phase 17 canonical figure cleanup (2026-08-28):** Six figures only, PNG+PDF each, in `results/metrics/phase17_figures/`. Overlapping RQ1 title fixed; RQ2 stacked points spread on x for display only. SVG and superseded stems removed. Statistics unchanged. Phase 18 not started on this date.
 40. **Phase 18 qualitative error analysis (2026-08-28):** Rule-based taxonomy on all 420 frozen cases plus stratified sample (seed 18; 81 cases / 42 questions). Both false abstentions included. No RAG/Qwen/judge/statistics rerun. Numeric error not labelled hallucination. Not official RAGAS. Phase 19 not started.
+41. **Phase 19 reproducibility audit (2026-08-28):** Read-only integrity audit of 40 DEV → T=0.65 → frozen 140 → 420 cases → Phase 16/17/18. No RAG/Qwen/judge/stats rerun. Frozen SHA-256 unchanged. Scientific chain **PASS**. Google Drive archive, GitHub commit, judge fingerprint vs JSONL settings, and leftover yaml `phase5_threshold_locked: false` remain **NEEDS VERIFICATION**. Dissertation evidence pack is **Phase 20** (not started). Do not commit Phase 15 raw JSONL or judge JSONL.
+42. **Phase 20 live artefact (2026-08-28):** Final numbered phase is live-artefact validation at locked T=0.65 — not a dissertation write-up pack (that earlier Phase 19 assumption is superseded here). Streamlit always loads `threshold.lock.json`; smoke 0.55 control removed. Live path calls Phase 8–10 pipelines on the shared Phase 6 KB; it does not look up Phase 15 JSONL. Local mock three-question demo + tests **PASS** (plumbing). Official Colab T4 + Qwen3-8B + `llama_cpp` answers remain **NEEDS VERIFICATION**. Frozen 140/40, T, and Phase 15–18 results unchanged. No Phase 21 started.
 
 ---
 
@@ -1462,11 +1466,97 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
 
 ---
 
+## Phase 19 — Final reproducibility and research-integrity audit
+
+- **Date:** 2026-08-28
+- **Objective:** Verify that the complete frozen research chain is internally consistent without rerunning generation or statistics.
+- **Why required:** Dissertation claims must rest on hashed artefacts, 420/420 completeness, locked T, and traceable metrics — not on stale “phase incomplete” headers or unpinned files.
+- **Work completed:**
+  - Read-only package `src/audit/` + `scripts/run_reproducibility_audit.py`.
+  - Verified SHA-256 of Phase 15 JSONL, Phase 16 processed JSONL, official judge JSONL, frozen 140, DEV 40, and `threshold.lock.json` (T=0.65).
+  - Verified 420 unique keys, 140 per architecture, UQ 78 ANSWER / 62 ABSTAIN at T=0.65, judge `used_rag_rerun=false`, judge-call settings from JSONL (`temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`).
+  - Traced Phase 16 CPU counts → Phase 17 tables → FIGURE_INDEX → Phase 18 taxonomy.
+  - Wrote evidence + artefact manifest. Did **not** rerun RAG, Qwen, judge, calibration, or statistical tests. Did **not** start Phase 20. Did **not** modify V1 or frozen result files.
+- **Technical decisions:** Flag inconsistencies as **NEEDS VERIFICATION** rather than rewriting results. Official T remains the lock file. Judge JSONL remains the source of truth for judge-call settings. Dissertation pack is Phase 20 (this audit is Phase 19).
+- **Files created/modified:**
+  - `V2/src/audit/*.py`
+  - `V2/scripts/run_reproducibility_audit.py`
+  - `V2/tests/test_phase19_audit.py`
+  - `V2/docs/phase19_reproducibility.md`
+  - `V2/project_record/evidence/phase19_reproducibility_audit.md`
+  - `V2/results/final/phase19_artefact_manifest.md`
+  - `V2/results/config/phase19_audit.json`
+- **Tests/validation:** `tests/test_phase19_audit.py` **3 passed**. Full suite excluding `analyse()`: **137 passed**, 1 deselected. Source SHA-256 unchanged by the audit.
+- **Actual outcome:** Scientific chain **PASS** (0 FAIL). Completeness 420/420. Hashes match pins. Figure-to-table counts match. Phase 18 counts match Phase 17 (including 2 false abstentions).
+- **Problems encountered:** `phase16_judge_runtime_fingerprint.json` still stores generation defaults (0.1 / 512). `experiment.yaml` still has `phase5_threshold_locked: false`. Google Drive `MSc-RAG` was not listed from this Mac. GitHub working tree is uncommitted on branch `cursor/empty-v2-workspace`.
+- **Problems resolved:** None of those items were “fixed” by changing results; they are recorded as **NEEDS VERIFICATION**. Current-status headers were updated to Phase 19 complete / Phase 20 not started. Historical Phase 15–18 remaining-issues lines were **not** rewritten.
+- **Remaining issues:** Google Drive archive **NEEDS VERIFICATION**. GitHub commit **not done**. Phase 20 **not started**. Do not commit Phase 15 `cases.jsonl` or Phase 16 `judge.jsonl`.
+- **Dissertation relevance:** Supplies a frozen artefact manifest and an integrity log that an examiner can audit without re-running GPU jobs.
+- **Evidence/source file paths:**
+  - `V2/project_record/evidence/phase19_reproducibility_audit.md`
+  - `V2/results/final/phase19_artefact_manifest.md`
+  - `V2/results/config/phase19_audit.json`
+- **Validation evidence:** `V2/project_record/evidence/phase19_reproducibility_audit.md`
+- **Backup status:**
+  - Colab: **N/A** (CPU local audit; no GPU job)
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — audit evidence, manifest, `phase19_audit.json`, frozen chain files listed in the manifest
+  - GitHub: Phase 19 source/docs **uncommitted** (do not commit Phase 15 raw JSONL or judge JSONL)
+
+---
+
+## Phase 20 — Final live artefact and reproducibility validation
+
+- **Date:** 2026-08-28
+- **Objective:** Validate the final Streamlit live artefact at locked T=0.65, confirm it runs the actual V2 RAG pipelines (not Phase 15 lookup), and record evidence for known-good, fresh, insufficient-evidence, and three-architecture independence — without rerunning the 420-case benchmark or calibration.
+- **Why the phase was required:** Phase 11 still exposed a smoke threshold of 0.55. The examiner demo must use the official lock (T=0.65), show retrieval/verification/UQ/runtime, and abstain when the locked rule fires. Phase 19 assumed a dissertation pack would be Phase 20; this instruction redefined Phase 20 as live-artefact validation.
+- **Work completed:**
+  - Live runner always applies `threshold.lock.json` (T=0.65); ignores smoke/override 0.55.
+  - Streamlit sidebar is read-only locked T; smoke `number_input` removed.
+  - CLI `scripts/run_live_demo.py`: known-good `finqa_test_1000`, fresh Snap-on 2013 TSR, SpaceX insufficient-evidence; three independent architectures.
+  - Hash guard before/after the demo; lookup forbidden in `live.py` / `streamlit_app.py`.
+  - Local mock demo on the existing Phase 6 KB (1239 chunks). Streamlit HTTP 200 on port 8502.
+  - Tests `tests/test_phase20_live_artefact.py` (7 passed). Full suite excluding `analyse()`: **144 passed**.
+  - Read-only Streamlit pages: **Benchmark Questions** (frozen 140 catalogue) and **Benchmark Results** (frozen metric tables). **Use this question in Live Demo** copies question text only. Did **not** modify the 140 CSV or Phase 15–18 results.
+  - Did **not** rerun 420, calibration, judge, or statistics. Did **not** modify frozen 140/40, T, Phase 15–18 results, V1, or RAG retrieve/generate/verify internals (live threshold wiring only). Did **not** create a new benchmark notebook. Did **not** start a Phase 21.
+- **Technical decisions:** Official Colab T4 PASS is not claimed from a Mac mock run. Mock UQ ABSTAIN on known-good/fresh is plumbing, not a Qwen result. Insufficient-evidence ABSTAIN at 0.5351 < 0.65 is the locked rule on mock confidence. Live artefact remains `app/streamlit_app.py` via `PYTHONPATH=. streamlit run app/streamlit_app.py`. GPU demo remains `notebooks/colab_phase11_live.ipynb`.
+- **Files created/modified:**
+  - `V2/src/rag/live.py`, `V2/src/rag/benchmark_catalogue.py`
+  - `V2/app/streamlit_app.py`, `V2/app/benchmark_ui.py`
+  - `V2/scripts/run_live_demo.py`, `V2/tests/test_phase20_live_artefact.py`
+  - `V2/docs/phase20_live_artefact.md`, `V2/docs/phase11_live_artefact.md`, `V2/README.md`
+  - `V2/notebooks/colab_phase11_live.ipynb` (Phase 20 questions; not a new benchmark notebook)
+  - `V2/config/experiment.yaml` (`storage.live_artefact.phase: 20`)
+  - `V2/results/config/phase20_live_demo_summary.json`, `phase20_smoke_test.json`
+  - `V2/project_record/evidence/phase20_live_artefact_validation.md`
+- **Tests/validation:** 7 Phase 20 tests **PASS**. Frozen SHA-256 **PASS**. Mock demo `status=NEEDS_VERIFICATION` (backend=mock) as required. Streamlit HTTP **200**. Catalogue loads 140 unique IDs.
+- **Actual outcome:** Live layer uses locked T=0.65 and real RAG modules. Frozen scientific chain unchanged. Official T4 + Qwen3-8B live answers **not** recorded in this session.
+- **Problems encountered:** This Mac has no Tesla T4 / `llama_cpp` CUDA runtime. Mock UQ confidence sat just below 0.65 for known-good and fresh questions, so those mock UQ decisions were ABSTAIN — not usable as official known-good ANSWER evidence.
+- **Problems resolved:** Smoke 0.55 UI control removed; circular import with lock module avoided via lazy import; live path refuses Phase 15 lookup.
+- **Remaining issues:** Official Colab T4 + Qwen3-8B + `llama_cpp` Streamlit demo **NEEDS VERIFICATION**. Google Drive archive **NEEDS VERIFICATION**. GitHub commit **not done**. Phase 19 leftovers (judge fingerprint vs JSONL, yaml `phase5_threshold_locked: false`) unchanged.
+- **Dissertation relevance:** Examiner live artefact: three architectures, evidence, verification, locked UQ gate, honest ERROR/UNAVAILABLE. Does not replace the frozen 420-case tables.
+- **Evidence/source file paths:**
+  - `V2/project_record/evidence/phase20_live_artefact_validation.md`
+  - `V2/results/config/phase20_live_demo_summary.json`
+  - `V2/docs/phase20_live_artefact.md`
+  - `V2/app/streamlit_app.py`
+  - `V2/app/benchmark_ui.py`
+  - `V2/src/rag/benchmark_catalogue.py`
+- **Validation evidence:** `V2/project_record/evidence/phase20_live_artefact_validation.md`
+- **Backup status:**
+  - Colab: **NEEDS VERIFICATION** (Phase 20 GPU live cell not executed from this Mac)
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — Phase 20 source, tests, evidence, `phase20_live_demo_summary.json`
+  - GitHub: Phase 20 source/docs **uncommitted** (do not commit Phase 15 raw JSONL or judge JSONL)
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 19 | Dissertation evidence pack | Not started |
+| — | Dissertation write-up pack (formerly planned as Phase 20) | Not a numbered phase under the 2026-08-28 instruction. **Not started.** |
+| 21+ | Further implementation phases | **Not started.** Stop after Phase 20. |
 
 ---
 

@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-28 |
-| Current completed phase | **Phase 18 complete:** qualitative error analysis of frozen 420 cases (**PASS**). |
-| Next implementation phase | **Phase 19 dissertation evidence pack** |
+| Current completed phase | **Phase 20 complete:** final live-artefact validation (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` **NEEDS VERIFICATION**). |
+| Next implementation phase | **None.** Stop after Phase 20. |
 | V1 | Reference-only — never modified |
 
 ---
@@ -249,7 +249,7 @@ Entrypoint: `scripts/run_statistics.py`. Statistical unit = question (n=140), pa
 
 Dissertation figures (canonical PNG+PDF; 2026-08-28): `scripts/render_phase17_figures.py` + `results/metrics/phase17_figures/FIGURE_INDEX.md`. Does **not** recompute tests. Main body: `rq1_answer_correctness_95ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_vs_selective_accuracy`. Appendix: `rq1_mcnemar_counts`, `rq2_faithfulness_distribution`, `rq3_uq_outcomes`.
 
-**Do not start Phase 19 from this documentation. Do not rerun RAG or the judge.**
+**Do not start Phase 20 from this documentation. Do not rerun RAG or the judge.**
 
 ## Phase 18 — Qualitative error analysis (complete; CPU; frozen 15/16/17)
 
@@ -257,7 +257,25 @@ See `docs/phase18_error_analysis.md` and `project_record/evidence/phase18_valida
 
 Entrypoint: `scripts/run_error_analysis.py`. Taxonomy on all 420 cases; stratified sample seed 18 (**81 cases / 42 questions**). Both false abstentions included. No RAG/Qwen/judge/statistics rerun. Numeric error is not labelled hallucination. **Not official RAGAS.**
 
-**Do not start Phase 19 from this documentation.**
+**Do not start Phase 20 from this documentation.**
+
+## Phase 19 — Final reproducibility and research-integrity audit (complete; CPU; read-only)
+
+See `docs/phase19_reproducibility.md` and `project_record/evidence/phase19_reproducibility_audit.md`.
+
+Entrypoint: `scripts/run_reproducibility_audit.py`. Frozen chain 40 DEV → T=0.65 → 140 test → 420 cases → Phase 16/17/18. No RAG/Qwen/judge/stats rerun. Scientific chain **PASS**. Drive/GitHub **NEEDS VERIFICATION**. Artefact manifest: `results/final/phase19_artefact_manifest.md`.
+
+**Do not start further numbered phases from this documentation.** Phase 20 (live artefact) was completed 2026-08-28.
+
+## Phase 20 — Final live artefact (complete; local plumbing PASS; Colab T4 NV)
+
+See `docs/phase20_live_artefact.md` and `project_record/evidence/phase20_live_artefact_validation.md`.
+
+Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`. GPU demo: `notebooks/colab_phase11_live.ipynb` (no new benchmark notebook). Locked **T=0.65**. Shared Phase 6 KB. Actual RAG pipelines — not Phase 15 lookup. Sidebar pages: Live RAG Demo, Benchmark Results (read-only frozen metrics), Benchmark Questions (read-only frozen 140).
+
+Local mock three-question demo (`scripts/run_live_demo.py --backend mock`) recorded insufficient-evidence UQ **ABSTAIN** at 0.5351 < 0.65. Official Qwen/T4 answers **NEEDS VERIFICATION**. Frozen 140/40, lock, and Phase 15–18 results unchanged.
+
+**Do not start Phase 21. Do not rerun the 420-case benchmark, calibration, judge, or statistics.**
 
 ## Git workflow (all phases)
 

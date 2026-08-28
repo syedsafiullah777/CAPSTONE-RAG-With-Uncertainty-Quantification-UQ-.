@@ -52,6 +52,11 @@ INSUFFICIENT_EVIDENCE_QUESTION = (
     "and how many Starship orbital launches did the company complete that year?"
 )
 INSUFFICIENT_EVIDENCE_QUESTION_ID = "live_insufficient_evidence"
+FRESH_KB_QUESTION = (
+    "According to Snap-on Incorporated's five-year stock performance graph, "
+    "what was the cumulative total shareholder return on Snap-on's own common stock "
+    "at December 31, 2013, if $100 was invested on December 31, 2008?"
+)
 
 
 @dataclass
@@ -67,6 +72,8 @@ class LiveComparison:
     fingerprint: dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     error: str | None = None
+    used_precomputed_benchmark_lookup: bool = False
+    locked_threshold: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -102,7 +109,7 @@ def format_confidence_display(result: RAGCaseResult) -> str:
 
 
 def format_threshold_display(result: RAGCaseResult) -> str:
-    """Smoke/demo threshold is never shown as a locked experimental threshold."""
+    """Live artefact displays the official lock when threshold_source is locked."""
     if result.architecture != ARCHITECTURE_MULTI_AGENT_UQ:
         return "n/a"
     source = (result.configuration or {}).get("threshold_source")
@@ -111,6 +118,34 @@ def format_threshold_display(result: RAGCaseResult) -> str:
     if result.threshold is None:
         return THRESHOLD_NOT_LOCKED
     return f"{float(result.threshold):.4f} (smoke/demo — {THRESHOLD_NOT_LOCKED})"
+
+
+def resolve_live_locked_threshold() -> float:
+    """Official T from threshold.lock.json. Does not retune or read yaml smoke_threshold."""
+    from src.calibration.lock import EXPECTED_LOCKED_THRESHOLD, load_official_lock
+
+    lock = load_official_lock()
+    threshold = float(lock["threshold"])
+    if abs(threshold - EXPECTED_LOCKED_THRESHOLD) > 1e-9:
+        raise RuntimeError(
+            f"Live artefact requires locked T={EXPECTED_LOCKED_THRESHOLD}, found {threshold}."
+        )
+    if lock.get("used_frozen_test_140") is True:
+        raise RuntimeError("Lock claims the frozen 140 was used. Refusing live demo.")
+    if str(lock.get("source_split") or "") != "dev":
+        raise RuntimeError("Official lock must have source_split=dev.")
+    return threshold
+
+
+def annotate_live_uq_lock(result: RAGCaseResult, locked_t: float) -> RAGCaseResult:
+    """Live-layer label only. Does not change retrieve/generate/verify internals."""
+    result.threshold = float(locked_t)
+    cfg = dict(result.configuration or {})
+    cfg["threshold_source"] = "locked"
+    cfg["threshold_locked"] = True
+    cfg["threshold_note"] = "LOCKED T from results/config/threshold.lock.json (DEV 40 only)"
+    result.configuration = cfg
+    return result
 
 
 def live_run_failed(result: RAGCaseResult) -> bool:
@@ -209,7 +244,11 @@ def run_live_comparison(
     fingerprint: dict[str, Any] | None = None,
     threshold: float | None = None,
 ) -> LiveComparison:
-    """Run the three architectures independently on the same original question."""
+    """Run the three architectures independently on the same original question.
+
+    Always applies locked T from threshold.lock.json. The ``threshold`` argument is
+    ignored so the live artefact cannot silently fall back to smoke 0.55.
+    """
     cfg = config or load_experiment_config()
     model_cfg = dict(cfg.section("model"))
     if mock_forbidden():
@@ -222,7 +261,9 @@ def run_live_comparison(
     elif backend_name:
         model_cfg["backend"] = backend_name
 
-    rid = run_id or create_run_id("phase11")
+    locked_t = resolve_live_locked_threshold()
+    _ = threshold
+    rid = run_id or create_run_id("phase20")
     qid = question_id or make_fresh_question_id(question)
     fp = fingerprint or collect_fingerprint(
         model_config=model_cfg,
@@ -242,12 +283,14 @@ def run_live_comparison(
         question_source=question_source,
         backend=backend_used,
         fingerprint=fp,
+        used_precomputed_benchmark_lookup=False,
+        locked_threshold=locked_t,
     )
 
     runners = (
         (ARCHITECTURE_SINGLE_AGENT, run_single_agent, {}),
         (ARCHITECTURE_MULTI_AGENT, run_multi_agent, {}),
-        (ARCHITECTURE_MULTI_AGENT_UQ, run_multi_agent_uq, {"threshold": threshold}),
+        (ARCHITECTURE_MULTI_AGENT_UQ, run_multi_agent_uq, {"threshold": locked_t}),
     )
 
     try:
@@ -262,7 +305,10 @@ def run_live_comparison(
                 "fingerprint": fp,
             }
             kwargs.update(extra)
-            comparison.results[architecture] = normalize_live_case(runner(question, **kwargs))
+            case = normalize_live_case(runner(question, **kwargs))
+            if architecture == ARCHITECTURE_MULTI_AGENT_UQ:
+                case = annotate_live_uq_lock(case, locked_t)
+            comparison.results[architecture] = case
     except Exception as exc:  # noqa: BLE001
         comparison.error = f"{type(exc).__name__}: {exc}"
 

@@ -306,7 +306,7 @@ storage:
     use_actual_v2_rag_code: true
     precomputed_benchmark_lookup_for_fresh_questions: false
     app_entrypoint: "app/streamlit_app.py"
-    phase: 11
+    phase: 20
     shared_pipelines:
       - benchmark_mode
       - live_demonstration_mode

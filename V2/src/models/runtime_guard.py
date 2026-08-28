@@ -50,7 +50,7 @@ def verify_live_llama_cpp_runtime(*, require_cuda: bool = True) -> dict[str, Any
         raise LiveRuntimeError(
             "This process is running on macOS (device would be mps_capable_host), "
             "not the Colab T4 runtime. Open notebooks/colab_phase11_live.ipynb on Colab GPU "
-            "and use the printed trycloudflare URL. Do not run Streamlit on the Mac for this demo."
+            "and use the printed Colab proxy URL. Do not run Streamlit on the Mac for the official live demo."
         )
 
     gpu_name = None

@@ -235,3 +235,21 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Label all 420 frozen cases with a mutually exclusive taxonomy from recorded fields, plus a stratified qualitative sample (seed 18). Do not rerun RAG, Qwen, the judge, or Phase 17 tests. Do not retune T=0.65. Do not call numeric incorrectness hallucination. Do not start Phase 19. Metric label remains custom/RAGAS-inspired — **not official RAGAS**.
 
 **Verified:** n_sample=81 cases / 42 questions; both false abstentions included; source SHA-256 unchanged. Tests `test_phase18_error_analysis.py` 4 passed. Full suite excluding `analyse()` 134 passed.
+
+## 2026-08-28 — Phase 19 reproducibility audit
+
+**Decision:** Phase 19 is a read-only reproducibility and research-integrity audit of the frozen chain (40 DEV → locked T=0.65 → frozen 140 → 420 cases → Phase 16/17/18). The dissertation evidence pack is **Phase 20**. Do not rerun RAG, Qwen, the judge, calibration, or statistical tests. Do not retune T. Do not modify V1 or frozen result files. Flag inconsistencies as NEEDS VERIFICATION rather than rewriting results. Do not commit Phase 15 raw JSONL or judge JSONL. Metric label remains custom/RAGAS-inspired — **not official RAGAS**.
+
+**Verified:** Scientific chain PASS (0 FAIL). Frozen SHA-256 unchanged. 420/420. Figure-to-table and Phase 18 counts consistent. Drive archive, GitHub commit, judge fingerprint vs JSONL, and leftover `phase5_threshold_locked: false` remain NEEDS VERIFICATION. Phase 20 not started.
+
+## 2026-08-28 — Phase 20 live artefact (not a dissertation pack)
+
+**Decision:** Numbered Phase 20 is final live-artefact validation at locked **T=0.65**. The earlier plan that Phase 20 would be a dissertation evidence pack is superseded; no dissertation pack and no Phase 21 were started. The Streamlit app must always apply `threshold.lock.json`, run the three V2 RAG pipelines independently on the shared Phase 6 KB, and must not look up Phase 15 outputs. Do not rerun 420, calibration, the judge, or statistics. Do not retune T. Do not modify V1 or frozen result files. Official Colab T4 + Qwen3-8B + `llama_cpp` answers cannot be claimed from a local mock run. Metric label remains custom/RAGAS-inspired — **not official RAGAS**.
+
+**Verified:** Live layer uses T=0.65; smoke 0.55 control removed. Mock demo run_id `phase20_20260828T180650Z_36ed9b1a`; insufficient-evidence UQ ABSTAIN at 0.5351; frozen SHA-256 unchanged; Streamlit HTTP 200. Tests `test_phase20_live_artefact.py` 6 passed. Full suite excluding `analyse()` 143 passed. Official T4 live demo **NEEDS VERIFICATION**.
+
+## 2026-08-28 — Phase 20 Streamlit Benchmark Questions page
+
+**Decision:** Add a read-only **Benchmark Questions** page to the existing Phase 20 Streamlit app so the frozen 140 can be browsed in a viva. Do not create a new phase. Do not rerun 420/judge/calibration/statistics. Do not modify the CSV, T=0.65, RAG architectures, or Phase 15–18 results. **Use this question in Live Demo** copies question text only (not FinQA gold, not Phase 15 answers). Benchmark Results is a read-only view of existing metric CSVs.
+
+**Verified:** Catalogue loads 140 unique IDs matching `selected_140_questions.csv`; SHA-256 unchanged. `test_phase20_live_artefact.py` 7 passed. Pagination 21–40 of 140 on page 2.
