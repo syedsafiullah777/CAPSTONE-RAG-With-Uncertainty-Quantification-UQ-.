@@ -247,7 +247,7 @@ See `docs/phase17_statistics.md` and `project_record/evidence/phase17_validation
 
 Entrypoint: `scripts/run_statistics.py`. Statistical unit = question (n=140), paired. RQ1 McNemar SA vs MA displayed correctness **not significant** (p=0.6776). RQ2 LLM-as-judge faithfulness is custom/RAGAS-inspired, **not official RAGAS**. RQ3 abstention at T=0.65 reduces unsupported_emitted (McNemar significant) at coverage 78/140.
 
-Dissertation figures (presentation only; 2026-08-28): `scripts/render_phase17_figures.py` + `docs/phase17_figures.md`. Does **not** recompute tests. Primary: `rq1_accuracy_wilson_ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_selective`. Appendix: `rq1_mcnemar_counts`, `rq2_llm_faithfulness_box`, `rq3_uq_outcomes`.
+Dissertation figures (canonical PNG+PDF; 2026-08-28): `scripts/render_phase17_figures.py` + `results/metrics/phase17_figures/FIGURE_INDEX.md`. Does **not** recompute tests. Main body: `rq1_answer_correctness_95ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_vs_selective_accuracy`. Appendix: `rq1_mcnemar_counts`, `rq2_faithfulness_distribution`, `rq3_uq_outcomes`.
 
 **Do not start Phase 18 from this documentation. Do not rerun RAG or the judge.**
 

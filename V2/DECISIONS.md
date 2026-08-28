@@ -223,3 +223,9 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Redraw Phase 17 figures for dissertation presentation only. Do not rerun RAG, Qwen, the judge, or statistical tests. Do not change p-values, CIs, effect sizes, T=0.65, freeze files, or Phase 15/16 JSONL. Primary main-body figures: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs LLM-as-judge faithfulness (custom/RAGAS-inspired, not official RAGAS); RQ3 coverage vs selective accuracy at locked T=0.65. Keep the three supporting plots for the appendix.
 
 **Verified:** Figure renderer reads saved Phase 17 tables + frozen JSONL. Result-file SHA-256 unchanged after render. Phase 18 not started.
+
+## 2026-08-28 — Phase 17 canonical figure set (PNG + PDF)
+
+**Decision:** Keep exactly six figures in `results/metrics/phase17_figures/`, each as one PNG and one PDF. Remove SVG and superseded stems. Fix the overlapping RQ1 title. Spread stacked RQ2 points along x for display only. Index in `FIGURE_INDEX.md`. Do not recompute statistics.
+
+**Verified:** 12 canonical files + index. 12 redundant exports removed. Result-file SHA-256 unchanged. Phase 18 not started.

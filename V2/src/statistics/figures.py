@@ -31,17 +31,20 @@ COLOR_UQ = "#55A868"
 COLOR_ABSTAIN = "#C44E52"
 ARCH_COLORS = {ARCH_SA: COLOR_SA, ARCH_MA: COLOR_MA, ARCH_UQ: COLOR_UQ}
 DPI = 300
+VECTOR_EXT = ".pdf"
+RASTER_EXT = ".png"
 
 PRIMARY = (
-    "rq1_accuracy_wilson_ci",
+    "rq1_answer_correctness_95ci",
     "rq2_confidence_vs_faithfulness",
-    "rq3_coverage_selective",
+    "rq3_coverage_vs_selective_accuracy",
 )
 APPENDIX = (
     "rq1_mcnemar_counts",
-    "rq2_llm_faithfulness_box",
+    "rq2_faithfulness_distribution",
     "rq3_uq_outcomes",
 )
+KEEP_EXTRA = frozenset({"FIGURE_INDEX.md"})
 
 YLABEL_FAITHFULNESS = (
     "LLM-as-judge faithfulness\n(Qwen3-8B, custom/RAGAS-inspired)"
@@ -52,7 +55,7 @@ def _style() -> None:
     plt.rcParams.update({
         "font.family": "DejaVu Sans",
         "font.size": 11,
-        "axes.titlesize": 13,
+        "axes.titlesize": 12.5,
         "axes.titleweight": "normal",
         "axes.labelsize": 11,
         "xtick.labelsize": 10,
@@ -65,14 +68,13 @@ def _style() -> None:
         "axes.facecolor": "white",
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
-        "svg.fonttype": "none",
     })
 
 
 def _save(fig: plt.Figure, fig_dir: Path, stem: str) -> list[str]:
     fig_dir.mkdir(parents=True, exist_ok=True)
     written: list[str] = []
-    for ext in (".png", ".pdf", ".svg"):
+    for ext in (RASTER_EXT, VECTOR_EXT):
         path = fig_dir / f"{stem}{ext}"
         fig.savefig(path, dpi=DPI, bbox_inches="tight", pad_inches=0.18)
         written.append(str(path))
@@ -81,7 +83,7 @@ def _save(fig: plt.Figure, fig_dir: Path, stem: str) -> list[str]:
 
 
 def _caption(fig: plt.Figure, text: str) -> None:
-    fig.text(0.02, 0.01, text, ha="left", va="bottom", fontsize=8.2, wrap=False)
+    fig.text(0.02, 0.01, text, ha="left", va="bottom", fontsize=8.2)
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:
@@ -96,6 +98,23 @@ def _f(row: dict[str, str], key: str) -> float:
 def _fmt_sci(value: float, digits: int = 3) -> str:
     mantissa, exp = f"{value:.{digits}e}".split("e")
     return rf"{mantissa} \times 10^{{{int(exp)}}}"
+
+
+def _spread_x_for_display(x: np.ndarray, y: np.ndarray, step: float = 0.007) -> np.ndarray:
+    """Spread stacked points along x only. y-values and statistics stay unchanged."""
+    out = np.asarray(x, dtype=float).copy()
+    groups: dict[tuple[float, float], list[int]] = {}
+    for i, (xi, yi) in enumerate(zip(x, y)):
+        key = (round(float(xi), 3), round(float(yi), 4))
+        groups.setdefault(key, []).append(i)
+    for idxs in groups.values():
+        n = len(idxs)
+        if n < 2:
+            continue
+        offsets = (np.arange(n) - (n - 1) / 2.0) * step
+        for i, off in zip(idxs, offsets):
+            out[i] = float(np.clip(x[i] + off, 0.0, 1.0))
+    return out
 
 
 def _load_saved(root: Path) -> dict:
@@ -146,7 +165,7 @@ def _fig1(data: dict, fig_dir: Path) -> list[str]:
         "32/140 = 22.86%",
     ]
 
-    fig, ax = plt.subplots(figsize=(7.6, 5.6))
+    fig, ax = plt.subplots(figsize=(7.6, 5.4))
     x = np.arange(3)
     ax.bar(x, means, color=colors, width=0.62, edgecolor="white", linewidth=0.6, zorder=2)
     ax.errorbar(
@@ -160,20 +179,20 @@ def _fig1(data: dict, fig_dir: Path) -> list[str]:
     ax.set_ylabel("Displayed numeric correctness (%)")
     ax.set_ylim(0, 100)
     ax.set_yticks(np.arange(0, 101, 20))
-    ax.set_title("RQ1: Answer Correctness by Architecture (95% CI)")
-    ax.text(
-        0.5, 1.01,
+    ax.set_title(
+        "RQ1: Answer Correctness by Architecture (95% CI)\n"
         "n = 140 frozen FinQA test questions per architecture",
-        transform=ax.transAxes, ha="center", va="bottom", fontsize=9.5,
+        pad=10,
+        linespacing=1.35,
     )
-    fig.tight_layout(rect=[0, 0.14, 1, 0.96])
+    fig.tight_layout(rect=[0, 0.14, 1, 1.0])
     _caption(
         fig,
-        "Error bars: Wilson 95% CI on the displayed numeric correctness proportion.\n"
-        "Intervals overlap. This figure does not indicate a statistically significant difference.\n"
-        "Source: results/metrics/phase17_descriptive.csv (Wilson CIs from Phase 17; T = 0.65 unused for RQ1).",
+        "Error bars: Wilson 95% CI on displayed numeric correctness. "
+        "Intervals overlap; the figure does not mark statistical significance.\n"
+        "Source: results/metrics/phase17_descriptive.csv. T = 0.65 is not used for RQ1.",
     )
-    return _save(fig, fig_dir, "rq1_accuracy_wilson_ci")
+    return _save(fig, fig_dir, "rq1_answer_correctness_95ci")
 
 
 def _fig2(data: dict, fig_dir: Path) -> list[str]:
@@ -188,21 +207,23 @@ def _fig2(data: dict, fig_dir: Path) -> list[str]:
         raise ValueError(f"Unexpected Spearman rho {rho}; refusing to draw Figure 2")
     n_ans = int(ans.sum())
     n_abs = int(N_QUESTIONS - n_ans)
+    x_disp = _spread_x_for_display(conf, llm)
 
-    fig, ax = plt.subplots(figsize=(7.8, 5.8))
+    fig, ax = plt.subplots(figsize=(7.8, 5.7))
+    scatter_kw = dict(alpha=0.42, s=32, linewidths=0.45, zorder=3)
     ax.scatter(
-        conf[ans == 1], llm[ans == 1],
-        c=COLOR_UQ, marker="o", label=f"ANSWER (n = {n_ans})",
-        alpha=0.78, s=38, edgecolors="none", zorder=3,
+        x_disp[ans == 0], llm[ans == 0],
+        c=COLOR_ABSTAIN, marker="^", edgecolors="white",
+        label=f"ABSTAIN (n = {n_abs})", **scatter_kw,
     )
     ax.scatter(
-        conf[ans == 0], llm[ans == 0],
-        c=COLOR_ABSTAIN, marker="^", label=f"ABSTAIN (n = {n_abs})",
-        alpha=0.78, s=38, edgecolors="none", zorder=3,
+        x_disp[ans == 1], llm[ans == 1],
+        c=COLOR_UQ, marker="o", edgecolors="white",
+        label=f"ANSWER (n = {n_ans})", **scatter_kw,
     )
     ax.axvline(
         LOCKED_T, color="black", linestyle="--", linewidth=1.2,
-        label=f"Locked T = {LOCKED_T:.2f} (DEV 40)", zorder=2,
+        label=f"Locked T = {LOCKED_T:.2f} (DEV 40)", zorder=4,
     )
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
@@ -217,12 +238,14 @@ def _fig2(data: dict, fig_dir: Path) -> list[str]:
         f"n = {N_QUESTIONS} UQ cases",
         transform=ax.transAxes, ha="right", va="bottom", fontsize=9.5,
         bbox={"facecolor": "white", "edgecolor": "#cccccc", "boxstyle": "round,pad=0.35"},
+        zorder=5,
     )
-    fig.tight_layout(rect=[0, 0.14, 1, 0.98])
+    fig.tight_layout(rect=[0, 0.14, 1, 1.0])
     _caption(
         fig,
-        f"Y-axis: {JUDGE_METRIC_LABEL} — not official RAGAS.\n"
-        "Vertical line: T = 0.65 locked on a separate 40-question FinQA DEV calibration set (not the frozen 140).\n"
+        f"Y-axis: {JUDGE_METRIC_LABEL} — not official RAGAS. "
+        "T = 0.65 is LOCKED from the separate 40-question DEV set.\n"
+        "Stacked points are spread slightly along the x-axis for display only; y-values and statistics are unchanged.\n"
         "Sources: phase17_tests.csv (ρ, Holm p); phase16_cases.jsonl + official judge JSONL (points).",
     )
     return _save(fig, fig_dir, "rq2_confidence_vs_faithfulness")
@@ -242,7 +265,7 @@ def _fig3(data: dict, fig_dir: Path) -> list[str]:
     if n_answer != 78 or n_correct != 32:
         raise ValueError("Unexpected UQ coverage/selective counts; refusing to draw Figure 3")
 
-    fig, ax = plt.subplots(figsize=(8.2, 5.9))
+    fig, ax = plt.subplots(figsize=(8.2, 5.8))
     x = np.arange(3)
     width = 0.36
     ax.bar(
@@ -281,16 +304,15 @@ def _fig3(data: dict, fig_dir: Path) -> list[str]:
     ax.text(2 - width / 2, coverage[2] + 2.8, "78/140\n= 55.71%", ha="center", va="bottom", fontsize=8.5)
     ax.text(2 + width / 2, sel_hi[2] + 2.8, "32/78\n= 41.03%", ha="center", va="bottom", fontsize=8.5)
     ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
-    fig.tight_layout(rect=[0, 0.16, 1, 0.98])
+    fig.tight_layout(rect=[0, 0.16, 1, 1.0])
     _caption(
         fig,
         "T = 0.65 is LOCKED from the separate 40-question FinQA DEV calibration set; it was not tuned on the frozen 140.\n"
         "Always-answer baselines have coverage = 100%, so selective accuracy equals overall displayed correctness.\n"
-        "UQ abstains on 62/140 questions, raising accuracy among answered cases while reducing coverage. "
-        "Error bars: Wilson 95% CI. n = 140.\n"
+        "UQ abstains on 62/140 questions. Error bars: Wilson 95% CI. n = 140. "
         "Source: results/metrics/phase17_descriptive.csv.",
     )
-    return _save(fig, fig_dir, "rq3_coverage_selective")
+    return _save(fig, fig_dir, "rq3_coverage_vs_selective_accuracy")
 
 
 def _fig_mcnemar(data: dict, fig_dir: Path) -> list[str]:
@@ -309,7 +331,7 @@ def _fig_mcnemar(data: dict, fig_dir: Path) -> list[str]:
         "Multi-Agent\nonly",
         "Both incorrect",
     ]
-    fig, ax = plt.subplots(figsize=(7.4, 5.2))
+    fig, ax = plt.subplots(figsize=(7.4, 5.1))
     bars = ax.bar(labels, counts, color=[COLOR_UQ, COLOR_SA, COLOR_MA, "#8C8C8C"], edgecolor="white")
     for bar, val in zip(bars, counts):
         ax.text(
@@ -318,8 +340,8 @@ def _fig_mcnemar(data: dict, fig_dir: Path) -> list[str]:
         )
     ax.set_ylabel("Number of questions")
     ax.set_ylim(0, max(counts) + 18)
-    ax.set_title("Appendix: RQ1 McNemar Counts — Single-Agent vs Multi-Agent")
-    fig.tight_layout(rect=[0, 0.14, 1, 0.98])
+    ax.set_title("RQ1 McNemar Counts — Single-Agent vs Multi-Agent")
+    fig.tight_layout(rect=[0, 0.14, 1, 1.0])
     _caption(
         fig,
         "Paired n = 140 frozen FinQA test questions. Discordant pairs = 23 "
@@ -336,7 +358,7 @@ def _fig_box(data: dict, fig_dir: Path) -> list[str]:
     for arch, vals in zip(ARCHITECTURES, values):
         if len(vals) != N_QUESTIONS:
             raise ValueError(f"{arch} faithfulness n={len(vals)}, expected {N_QUESTIONS}")
-    fig, ax = plt.subplots(figsize=(7.6, 5.5))
+    fig, ax = plt.subplots(figsize=(7.6, 5.4))
     box_common = dict(
         showfliers=True,
         patch_artist=True,
@@ -358,8 +380,8 @@ def _fig_box(data: dict, fig_dir: Path) -> list[str]:
         patch.set_edgecolor("#333333")
     ax.set_ylim(0, 1)
     ax.set_ylabel(YLABEL_FAITHFULNESS)
-    ax.set_title("Appendix: RQ2 Faithfulness Distribution by Architecture")
-    fig.tight_layout(rect=[0, 0.14, 1, 0.98])
+    ax.set_title("RQ2 Faithfulness Distribution by Architecture")
+    fig.tight_layout(rect=[0, 0.14, 1, 1.0])
     _caption(
         fig,
         f"n = {N_QUESTIONS} questions per architecture. "
@@ -367,7 +389,7 @@ def _fig_box(data: dict, fig_dir: Path) -> list[str]:
         "Source: official Phase 16 judge JSONL joined to Phase 16 processed cases. "
         "UQ includes abstained drafts.",
     )
-    return _save(fig, fig_dir, "rq2_llm_faithfulness_box")
+    return _save(fig, fig_dir, "rq2_faithfulness_distribution")
 
 
 def _fig_outcomes(data: dict, fig_dir: Path) -> list[str]:
@@ -386,7 +408,7 @@ def _fig_outcomes(data: dict, fig_dir: Path) -> list[str]:
         "ABSTAIN,\nincorrect draft",
         "ABSTAIN,\ncorrect draft",
     ]
-    fig, ax = plt.subplots(figsize=(7.6, 5.4))
+    fig, ax = plt.subplots(figsize=(7.6, 5.3))
     bars = ax.bar(labels, counts, color=[COLOR_UQ, COLOR_ABSTAIN, COLOR_SA, COLOR_MA], edgecolor="white")
     for bar, val in zip(bars, counts):
         ax.text(
@@ -395,15 +417,32 @@ def _fig_outcomes(data: dict, fig_dir: Path) -> list[str]:
         )
     ax.set_ylabel("Number of questions")
     ax.set_ylim(0, max(counts) + 12)
-    ax.set_title("Appendix: RQ3 UQ Outcomes at Locked T=0.65")
-    fig.tight_layout(rect=[0, 0.14, 1, 0.98])
+    ax.set_title("RQ3 UQ Outcomes at Locked T=0.65")
+    fig.tight_layout(rect=[0, 0.14, 1, 1.0])
     _caption(
         fig,
         "n = 140. Coverage = 78 ANSWER + 62 ABSTAIN. Two ABSTAIN cases had a numerically correct draft.\n"
-        "T = 0.65 locked on the separate 40-question DEV calibration set. "
+        "T = 0.65 is LOCKED from the separate 40-question DEV calibration set. "
         "Source: results/config/phase17_statistics_summary.json.",
     )
     return _save(fig, fig_dir, "rq3_uq_outcomes")
+
+
+def cleanup_superseded(fig_dir: Path) -> list[str]:
+    """Remove duplicate/outdated exports after canonical PNG+PDF exist."""
+    allowed = {f"{stem}{ext}" for stem in PRIMARY + APPENDIX for ext in (RASTER_EXT, VECTOR_EXT)}
+    allowed |= KEEP_EXTRA
+    removed: list[str] = []
+    if not fig_dir.is_dir():
+        return removed
+    for path in sorted(fig_dir.iterdir()):
+        if not path.is_file():
+            continue
+        if path.name in allowed:
+            continue
+        path.unlink()
+        removed.append(path.name)
+    return removed
 
 
 def render_from_saved(root: Path | None = None) -> dict[str, list[str]]:
@@ -412,11 +451,13 @@ def render_from_saved(root: Path | None = None) -> dict[str, list[str]]:
     root = root or project_root()
     fig_dir = root / "results" / "metrics" / "phase17_figures"
     data = _load_saved(root)
-    return {
-        "rq1_accuracy_wilson_ci": _fig1(data, fig_dir),
+    written = {
+        "rq1_answer_correctness_95ci": _fig1(data, fig_dir),
         "rq2_confidence_vs_faithfulness": _fig2(data, fig_dir),
-        "rq3_coverage_selective": _fig3(data, fig_dir),
+        "rq3_coverage_vs_selective_accuracy": _fig3(data, fig_dir),
         "rq1_mcnemar_counts": _fig_mcnemar(data, fig_dir),
-        "rq2_llm_faithfulness_box": _fig_box(data, fig_dir),
+        "rq2_faithfulness_distribution": _fig_box(data, fig_dir),
         "rq3_uq_outcomes": _fig_outcomes(data, fig_dir),
     }
+    cleanup_superseded(fig_dir)
+    return written

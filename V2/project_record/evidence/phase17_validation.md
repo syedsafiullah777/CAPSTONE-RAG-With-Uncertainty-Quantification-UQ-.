@@ -16,7 +16,8 @@
 | 3 | Official paired analysis n=140 | **PASS** | `results/config/phase17_smoke_test.json` (existing; not re-run) |
 | 4 | Frozen SHA gates | **PASS** | Phase 15/16/140/40/lock hashes unchanged after figure render |
 | 5 | Dissertation figure refresh | **PASS** | `results/config/phase17_figure_render.json`; `docs/phase17_figures.md` |
-| 6 | Phase 18 dissertation pack | **not started** | — |
+| 6 | Canonical figure cleanup | **PASS** | `results/metrics/phase17_figures/FIGURE_INDEX.md` |
+| 7 | Phase 18 dissertation pack | **not started** | — |
 
 Locked T=0.65 unchanged. Frozen 140/40 unchanged. Phase 15 JSONL and Phase 16 judge JSONL not rewritten. V1 unmodified.
 
@@ -127,6 +128,30 @@ Primary (main body): `rq1_accuracy_wilson_ci`, `rq2_confidence_vs_faithfulness`,
 Appendix: `rq1_mcnemar_counts`, `rq2_llm_faithfulness_box`, `rq3_uq_outcomes`.
 
 Pytest: `tests/test_phase17_statistics.py::test_render_figures_does_not_change_results` **PASS**. Full suite `pytest -q -k "not test_analyse_paired_140"`: **130 passed** (analyse not re-run).
+
+Superseded as the canonical export set by record 7 (PNG+PDF filenames; SVG copies removed).
+
+---
+
+### 7. Canonical figure cleanup (PNG + PDF only)
+
+| Field | Value |
+| --- | --- |
+| Date/time (UTC) | 2026-08-28 |
+| Phase | 17 |
+| Test name | `phase17_figure_cleanup` |
+| Command | `PYTHONPATH=. python scripts/render_phase17_figures.py` |
+| Environment | Local Mac; `V2/.venv`; CPU |
+| Expected | Six canonical figures; one PNG + one PDF each; overlapping RQ1 title fixed; RQ2 overplotting improved; no statistical results changed |
+| Actual (observed) | **PASS**; 12 figure files + `FIGURE_INDEX.md`; 12 redundant PNG/PDF/SVG exports removed; result-file SHA-256 unchanged |
+| Status | **PASS** |
+| Error | — |
+| Output path | `results/metrics/phase17_figures/FIGURE_INDEX.md`; `results/config/phase17_figure_render.json` |
+
+Main body: `rq1_answer_correctness_95ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_vs_selective_accuracy`.  
+Appendix: `rq1_mcnemar_counts`, `rq2_faithfulness_distribution`, `rq3_uq_outcomes`.
+
+Redundant files removed: `rq1_accuracy_wilson_ci.{png,pdf,svg}`, `rq2_llm_faithfulness_box.{png,pdf,svg}`, `rq3_coverage_selective.{png,pdf,svg}`, `rq1_mcnemar_counts.svg`, `rq2_confidence_vs_faithfulness.svg`, `rq3_uq_outcomes.svg`.
 
 ---
 

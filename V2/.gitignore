@@ -144,7 +144,7 @@ results/config/**
 !results/metrics/phase17_figures/
 !results/metrics/phase17_figures/*.png
 !results/metrics/phase17_figures/*.pdf
-!results/metrics/phase17_figures/*.svg
+!results/metrics/phase17_figures/FIGURE_INDEX.md
 !results/final/phase17_interpretation.md
 
 # Notebooks checkpoints

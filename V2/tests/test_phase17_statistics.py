@@ -137,8 +137,15 @@ def test_render_figures_does_not_change_results() -> None:
     assert before == after
     fig_dir = Path("results/metrics/phase17_figures")
     for stem in PRIMARY + APPENDIX:
-        for ext in (".png", ".pdf", ".svg"):
+        for ext in (".png", ".pdf"):
             path = fig_dir / f"{stem}{ext}"
             assert path.is_file(), path
             assert path.stat().st_size > 0
+        assert not (fig_dir / f"{stem}.svg").exists()
     assert set(written) == set(PRIMARY + APPENDIX)
+    leftovers = sorted(
+        p.name for p in fig_dir.iterdir()
+        if p.is_file() and p.name != "FIGURE_INDEX.md"
+        and not any(p.name == f"{stem}{ext}" for stem in PRIMARY + APPENDIX for ext in (".png", ".pdf"))
+    )
+    assert leftovers == []

@@ -6,7 +6,7 @@ Entrypoint: `PYTHONPATH=. python scripts/run_statistics.py`
 
 Evidence: `project_record/evidence/phase17_validation.md`  
 Tables: `results/metrics/phase17_*.csv`  
-Figures (primary + appendix): `docs/phase17_figures.md` and `results/metrics/phase17_figures/`  
+Figures (canonical PNG+PDF): `results/metrics/phase17_figures/` and `results/metrics/phase17_figures/FIGURE_INDEX.md`  
 Machine-readable: `results/config/phase17_statistics_summary.json`
 
 Figure-only redraw (no new tests): `PYTHONPATH=. python scripts/render_phase17_figures.py`

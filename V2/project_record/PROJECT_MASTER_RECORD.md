@@ -104,7 +104,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 16 LLM judge means | SA 0.3241; MA 0.3484; UQ 0.3749 (all); UQ ANSWER-only 0.6548 | `phase16_judge_summary.csv`; **not official RAGAS** |
 | Phase 17 statistics | **PASS** (2026-08-28); CPU; paired n=140; no RAG/judge rerun | `phase17_smoke_test.json` |
 | Phase 17 RQ1 | SA 32/140 vs MA 29/140; McNemar p=0.6776 (not significant) | `results/metrics/phase17_tests.csv` |
-| Phase 17 figures | **PASS** (2026-08-28); presentation only; statistics unchanged | `docs/phase17_figures.md`; `phase17_figure_render.json` |
+| Phase 17 figures | **PASS** (2026-08-28); six canonical PNG+PDF; statistics unchanged | `results/metrics/phase17_figures/FIGURE_INDEX.md` |
 
 ### Architectures
 
@@ -176,6 +176,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 36. **Phase 16 official 420-case LLM-as-judge verified (2026-08-28):** User copied Colab artefacts. Local inspect of `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl`: **420/420** unique keys, 140 per architecture, 0 duplicates, 0 missing, 0 errors, 0 parse failures, all COMPLETED; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; no gold context/answer; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Mean faithfulness: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL records `temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096` (source of truth). Do not use fingerprint `model_config` 0.1 / 512 as judge-call settings. **Not official RAGAS.** CPU Phase 16 tables unchanged. Phase 17 not started on this date. Drive folder **NEEDS VERIFICATION**.
 37. **Phase 17 paired statistics (2026-08-28):** CPU analysis of frozen Phase 16 scored cases + official judge JSONL. Statistical unit = question (n=140), paired across architectures. Confirmatory RQ1 McNemar SA vs MA displayed correctness p=0.6776 (**not significant**). RQ2: Spearman confidence vs LLM-as-judge faithfulness ρ=0.6988 (Holm significant); Mann–Whitney ANSWER vs ABSTAIN faithfulness Holm significant; paired Wilcoxon MA vs UQ faithfulness **not** significant. RQ3: unsupported-emitted McNemar vs SA and MA Holm significant; coverage 78/140; selective accuracy 32/78; 2 false abstains. **Not official RAGAS.** Phase 15/16 JSONL SHAs unchanged. Phase 18 not started.
 38. **Phase 17 figure refresh (2026-08-28):** Presentation-only redraw of six dissertation figures from saved Phase 17 tables. No RAG/Qwen/judge rerun. No statistical tests recomputed. Result-file SHA-256 unchanged. Primary: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs custom/RAGAS-inspired LLM-as-judge faithfulness; RQ3 coverage vs selective accuracy at locked T=0.65. Appendix: McNemar counts, faithfulness boxplot, UQ outcome counts. Phase 18 not started.
+39. **Phase 17 canonical figure cleanup (2026-08-28):** Six figures only, PNG+PDF each, in `results/metrics/phase17_figures/`. Overlapping RQ1 title fixed; RQ2 stacked points spread on x for display only. SVG and superseded stems removed. Statistics unchanged. Phase 18 not started.
 
 ---
 
@@ -1387,6 +1388,31 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
   - Google Drive: **NEEDS VERIFICATION**
   - Local: verified — `V2/results/metrics/phase17_figures/` (18 files)
   - GitHub: figure code/docs/PNGs **uncommitted**
+
+---
+
+## Phase 17 figure cleanup — canonical PNG + PDF set
+
+- **Date:** 2026-08-28
+- **Objective:** One unambiguous directory of six dissertation figures (PNG + PDF only), with the RQ1 overlapping title fixed and RQ2 overplotting reduced.
+- **Why required:** The previous export wrote PNG+PDF+SVG under mixed stems (`rq1_accuracy_wilson_ci`, `rq3_coverage_selective`, `rq2_llm_faithfulness_box`). RQ1 had overlapping title/subtitle text.
+- **Work completed:**
+  - Canonical stems: `rq1_answer_correctness_95ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_vs_selective_accuracy`, `rq1_mcnemar_counts`, `rq2_faithfulness_distribution`, `rq3_uq_outcomes`.
+  - One PNG (300 dpi) and one PDF per figure. SVG copies removed.
+  - RQ1 title is a single two-line title (no overlapping subtitle).
+  - RQ2 stacked points are spread slightly on x for display only; y-values and statistics unchanged.
+  - Added `FIGURE_INDEX.md`.
+  - Did **not** rerun RAG, Qwen, the judge, or statistical tests. Did **not** start Phase 18.
+- **Files created/modified:** `src/statistics/figures.py`; `scripts/render_phase17_figures.py`; `docs/phase17_figures.md`; `results/metrics/phase17_figures/`; `results/config/phase17_figure_render.json`; evidence + master record.
+- **Tests/validation:** `test_render_figures_does_not_change_results` **PASS** (6 Phase 17 tests excluding `analyse()`). Result-file SHA-256 unchanged.
+- **Actual outcome:** 12 canonical figure files + index. 12 redundant exports removed. Statistical tables unchanged.
+- **Remaining issues:** Google Drive copy **NEEDS VERIFICATION**. GitHub commit **not done**. Phase 18 **not started**.
+- **Validation evidence:** `V2/project_record/evidence/phase17_validation.md`
+- **Backup status:**
+  - Colab: **N/A**
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — 12 PNG/PDF files + `FIGURE_INDEX.md`
+  - GitHub: **uncommitted**
 
 ---
 
