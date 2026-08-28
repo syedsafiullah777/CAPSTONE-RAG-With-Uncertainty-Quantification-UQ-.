@@ -1,0 +1,38 @@
+{
+  "single_agent": {
+    "architecture": "single_agent",
+    "n_judge": 140,
+    "n_scored": 140,
+    "n_parse_failure": 0,
+    "n_error": 0,
+    "n_answer_scored": 140,
+    "faithfulness_llm": 0.32411357142857145,
+    "faithfulness_llm_answered_only": 0.32411357142857145,
+    "faithfulness_token_overlap_secondary": 0.5618563773023016,
+    "metric_label": "LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+  },
+  "multi_agent": {
+    "architecture": "multi_agent",
+    "n_judge": 140,
+    "n_scored": 140,
+    "n_parse_failure": 0,
+    "n_error": 0,
+    "n_answer_scored": 140,
+    "faithfulness_llm": 0.348425,
+    "faithfulness_llm_answered_only": 0.348425,
+    "faithfulness_token_overlap_secondary": 0.5552848067268494,
+    "metric_label": "LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+  },
+  "multi_agent_uq": {
+    "architecture": "multi_agent_uq",
+    "n_judge": 140,
+    "n_scored": 140,
+    "n_parse_failure": 0,
+    "n_error": 0,
+    "n_answer_scored": 78,
+    "faithfulness_llm": 0.3749207142857143,
+    "faithfulness_llm_answered_only": 0.6547564102564102,
+    "faithfulness_token_overlap_secondary": 0.5539262406960617,
+    "metric_label": "LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+  }
+}

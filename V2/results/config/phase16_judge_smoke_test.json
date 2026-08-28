@@ -1,0 +1,56 @@
+{
+  "phase": 16,
+  "test_name": "phase16_judge_faithfulness",
+  "command": "PYTHONPATH=. python scripts/run_judge.py --backend llama_cpp",
+  "expected": "420 post-hoc judge cases on frozen Phase 15 JSONL; SHA f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa; LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired); no RAG rerun",
+  "actual": "status=PASS completed=420 failed=0 pending=0 used_rag_rerun=False source_unchanged=True",
+  "status": "PASS",
+  "recorded_at_utc": "2026-08-28T15:39:49.575420+00:00",
+  "notebook": null,
+  "environment": {
+    "device": "cuda",
+    "platform": {
+      "system": "Linux",
+      "release": "6.6.122+",
+      "machine": "x86_64",
+      "processor": "x86_64",
+      "python_version": "3.13.15"
+    },
+    "gpu": {
+      "available": true,
+      "name": "Tesla T4",
+      "vram_total_mb": 15360.0,
+      "vram_free_mb": 14913.0,
+      "driver_version": "580.82.07"
+    },
+    "torch": {
+      "installed": true,
+      "version": "2.11.0+cu128",
+      "cuda_available": true,
+      "cuda_device_count": 1,
+      "cuda_device_name": "Tesla T4",
+      "vram_total_gb": 14.56
+    },
+    "model_config": {
+      "name": "Qwen3-8B",
+      "backend": "llama_cpp",
+      "quantisation": "Q4_K_M",
+      "model_path": null,
+      "hf_repo_id": "bartowski/Qwen_Qwen3-8B-GGUF",
+      "gguf_filename": "Qwen_Qwen3-8B-Q4_K_M.gguf",
+      "ollama_model": "qwen3:8b",
+      "temperature": 0.1,
+      "max_new_tokens": 512
+    },
+    "git_commit": "e4a6b375cea16a9628a6e0db63b03ca56fa33660",
+    "captured_at_utc": "2026-08-28T15:25:59.807315+00:00"
+  },
+  "error": null,
+  "output_path": "results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl",
+  "extra": {
+    "run_id": "phase16_judge_20260828T152623Z_06661255",
+    "metric_label": "LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)",
+    "n_planned": 420,
+    "evidence_md": "project_record/evidence/phase16_validation.md"
+  }
+}

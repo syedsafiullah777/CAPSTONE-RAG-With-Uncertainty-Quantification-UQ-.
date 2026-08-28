@@ -1,0 +1,4 @@
+architecture,n_judge,n_scored,n_parse_failure,n_error,n_answer_scored,faithfulness_llm,faithfulness_llm_answered_only,faithfulness_token_overlap_secondary,metric_label
+single_agent,140,140,0,0,140,0.32411357142857145,0.32411357142857145,0.5618563773023016,"LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+multi_agent,140,140,0,0,140,0.348425,0.348425,0.5552848067268494,"LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+multi_agent_uq,140,140,0,0,78,0.3749207142857143,0.6547564102564102,0.5539262406960617,"LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
