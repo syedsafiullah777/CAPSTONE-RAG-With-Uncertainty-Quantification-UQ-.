@@ -61,7 +61,7 @@ Refuses to overwrite `results/processed/phase16_cases.jsonl` unless `--force`. D
 - Does **not** rerun Single-Agent, Multi-Agent, or Multi-Agent + UQ
 - Does **not** call Qwen3-8B or load GGUF
 - Does **not** modify the frozen 140/40 CSVs or `threshold.lock.json`
-- Does **not** run Phase 17 statistical tests
+- Does **not** run Phase 17 statistical tests (those are `scripts/run_statistics.py`)
 - Does **not** claim official RAGAS LLM metrics
 
 Observed numbers: `project_record/evidence/phase16_validation.md`.
@@ -81,4 +81,4 @@ Historical (2026-08-27): this heading recorded official Colab 420 as **not launc
 - Label: **LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)** — not official RAGAS
 - Token-overlap remains the secondary lexical metric
 - Numeric answer correctness and context P/R stay CPU-only
-- Do **not** rerun. Phase 17 is **not started**.
+- Do **not** rerun the judge. Phase 17 statistics: `docs/phase17_statistics.md`.

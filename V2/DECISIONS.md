@@ -211,3 +211,15 @@ Record important V2 decisions and rationale. Append; do not rewrite history sile
 **Decision:** Treat the copied Colab judge JSONL as the official post-hoc faithfulness artefact. Do not rerun RAG or the judge. Do not rewrite CPU Phase 16 tables. Do not start Phase 17. Label remains `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` — **not official RAGAS**. Judge-call source of truth is the JSONL (`temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`), not fingerprint `model_config` 0.1 / 512.
 
 **Verified:** run_id `phase16_judge_20260828T152623Z_06661255` **PASS**; 420/420 completed; 140 per architecture; 0 duplicates; 0 missing; 0 errors; 0 parse failures; all COMPLETED; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Means: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL: `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl`.
+
+## 2026-08-28 — Phase 17 paired statistics (frozen Phase 15/16)
+
+**Decision:** Analyse RQ1–RQ3 on the frozen Phase 16 CPU rows joined to the official judge JSONL. Statistical unit = question (n=140), paired across architectures. Exact McNemar for binary paired outcomes; Wilcoxon for paired continuous scores after Shapiro fails; Spearman for confidence vs support; Holm within RQ families. Do not rerun RAG, Qwen, or the judge. Do not retune T=0.65. Do not start Phase 18. Label remains `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` — **not official RAGAS**.
+
+**Verified:** RQ1 McNemar SA vs MA displayed correctness p=0.6776 (**not significant**; 32/140 vs 29/140). RQ2 Spearman ρ=0.6988 (Holm significant); Mann–Whitney ANSWER vs ABSTAIN faithfulness Holm significant; Wilcoxon MA vs UQ faithfulness Holm p=0.4032 (**not significant**). RQ3 unsupported-emitted McNemar vs SA and MA Holm significant; coverage 78/140; selective accuracy 32/78; 2 false abstains. Phase 15/16 SHA-256 unchanged. Full suite **130 passed**.
+
+## 2026-08-28 — Phase 17 dissertation figures (presentation only)
+
+**Decision:** Redraw Phase 17 figures for dissertation presentation only. Do not rerun RAG, Qwen, the judge, or statistical tests. Do not change p-values, CIs, effect sizes, T=0.65, freeze files, or Phase 15/16 JSONL. Primary main-body figures: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs LLM-as-judge faithfulness (custom/RAGAS-inspired, not official RAGAS); RQ3 coverage vs selective accuracy at locked T=0.65. Keep the three supporting plots for the appendix.
+
+**Verified:** Figure renderer reads saved Phase 17 tables + frozen JSONL. Result-file SHA-256 unchanged after render. Phase 18 not started.

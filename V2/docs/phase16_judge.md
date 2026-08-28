@@ -100,4 +100,4 @@ Phase 15 `cases.jsonl` and Phase 16 `phase16_cases.jsonl` are **not** overwritte
 
 Notebook: `notebooks/colab_phase16_judge.ipynb`
 
-Phase 17 is **not started**.
+Phase 17 statistics (complete): `docs/phase17_statistics.md`. Do not rerun this judge job.

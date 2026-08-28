@@ -6,8 +6,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-28 |
-| Current completed phase | **Phase 16 complete:** CPU metrics **PASS** + official Colab 420-case LLM-as-judge **PASS** (locally verified). Phase 15 Drive archive still **NEEDS VERIFICATION**. |
-| Next phase (not started) | **Phase 17 statistics** |
+| Current completed phase | **Phase 17 complete:** paired statistics on frozen Phase 15/16 (**PASS**). Phase 16 CPU + official 420-case judge remain **PASS**. Phase 15 Drive archive still **NEEDS VERIFICATION**. |
+| Next phase (not started) | **Phase 18 dissertation evidence pack** |
 | V1 status | Reference-only (never modified by V2 work) |
 | Working title | Multi-Agent RAG with Uncertainty Quantification for Financial Document QA |
 
@@ -102,6 +102,9 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 16 metrics | displayed AC 32/140, 29/140, 32/140 (SA / MA / UQ); UQ selective acc. 32/78 | `results/metrics/phase16_summary.csv` |
 | Phase 16 LLM judge | Official Colab 420 **PASS** (verified 2026-08-28); run_id `phase16_judge_20260828T152623Z_06661255` | `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl` |
 | Phase 16 LLM judge means | SA 0.3241; MA 0.3484; UQ 0.3749 (all); UQ ANSWER-only 0.6548 | `phase16_judge_summary.csv`; **not official RAGAS** |
+| Phase 17 statistics | **PASS** (2026-08-28); CPU; paired n=140; no RAG/judge rerun | `phase17_smoke_test.json` |
+| Phase 17 RQ1 | SA 32/140 vs MA 29/140; McNemar p=0.6776 (not significant) | `results/metrics/phase17_tests.csv` |
+| Phase 17 figures | **PASS** (2026-08-28); presentation only; statistics unchanged | `docs/phase17_figures.md`; `phase17_figure_render.json` |
 
 ### Architectures
 
@@ -113,8 +116,8 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 ### Test suite status (as of last update)
 
-- Command: `PYTHONPATH=. pytest -q` (2026-08-27, after Phase 16 judge implementation)
-- Result: **124 passed**. Phase 16 CPU + judge unit tests included. Official 420-case RAG job was **not** re-executed. Official 420-case judge was later run on Colab (2026-08-28) and verified locally — see snapshot and Phase 16 judge verification section.
+- Command: `PYTHONPATH=. pytest -q -k "not test_analyse_paired_140"` (2026-08-28, after Phase 17 figure refresh)
+- Result: **130 passed**, 1 deselected (`analyse()` not re-run; no statistical tests recomputed). Official 420-case RAG job and official 420-case judge were **not** re-executed.
 
 ### Storage / backup (project infrastructure)
 
@@ -127,7 +130,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
 | Benchmark recovery spec | 420 cases; incremental checkpoint/resume defined in config |
 | Phase backup template | `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md` |
-| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase16_validation.md`; backup checklist `evidence/phase15_backup_manifest.md` |
+| Validation evidence | `project_record/evidence/phase1_validation.md` … `phase17_validation.md`; backup checklist `evidence/phase15_backup_manifest.md` |
 | Phase 7 smoke JSON | `results/config/phase7_smoke_test.json` |
 | Phase 8 smoke JSON | `results/config/phase8_smoke_test.json` (local copy; gitignored by default) |
 
@@ -170,7 +173,9 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 33. **Phase 15 Colab 420 locally verified (2026-08-27):** Inspected user-copied artefacts at `results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/`. Observed **420/420** unique keys, 0 duplicates, 0 missing, 0 errors; 140 frozen-test IDs; 140 cases per architecture; T=0.65 LOCKED; Tesla T4 `llama_cpp` Qwen3-8B Q4_K_M. JSONL not rewritten. Drive folder not listed from this Mac (**NEEDS VERIFICATION**). Backup checklist: `project_record/evidence/phase15_backup_manifest.md`. Next: Phase 16 metrics — do not retune T or the frozen 140.
 34. **Phase 16 CPU evaluation (2026-08-26/27):** Score the frozen Phase 15 JSONL only. No RAG/Qwen/GPU. `judge_model` remains null (not official RAGAS). Metrics: numeric `program_answer` match; CPU token-overlap faithfulness; gold file/`context_id` context P/R; coverage, selective accuracy, unsupported-emitted rate. Observed displayed correctness: Single-Agent **32/140**, Multi-Agent **29/140**, UQ **32/140** displayed / **34/140** claim; UQ 78 ANSWER / 62 ABSTAIN; selective accuracy 32/78. Context P/R identical across architectures (0.4304 / 0.9000). Do **not** claim Multi-Agent improves accuracy. Phase 17 statistics not started.
 35. **Phase 16 LLM-as-judge pass prepared (2026-08-27):** Separate post-hoc faithfulness job over the frozen Phase 15 JSONL. Qwen3-8B Q4_K_M `llama_cpp` on Colab, temp 0, 32 new tokens, 420 calls. Claim = displayed answer except UQ `draft_answer`. No gold context/answer in the prompt. Label: `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` — **not** official RAGAS. Token-overlap remains secondary. CPU Phase 16 tables are not rewritten. Official Colab 420 **not launched** on this date. Phase 17 not started.
-36. **Phase 16 official 420-case LLM-as-judge verified (2026-08-28):** User copied Colab artefacts. Local inspect of `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl`: **420/420** unique keys, 140 per architecture, 0 duplicates, 0 missing, 0 errors, 0 parse failures, all COMPLETED; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; no gold context/answer; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Mean faithfulness: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL records `temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096` (source of truth). Do not use fingerprint `model_config` 0.1 / 512 as judge-call settings. **Not official RAGAS.** CPU Phase 16 tables unchanged. Phase 17 not started. Drive folder **NEEDS VERIFICATION**.
+36. **Phase 16 official 420-case LLM-as-judge verified (2026-08-28):** User copied Colab artefacts. Local inspect of `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl`: **420/420** unique keys, 140 per architecture, 0 duplicates, 0 missing, 0 errors, 0 parse failures, all COMPLETED; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; no gold context/answer; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Mean faithfulness: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL records `temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096` (source of truth). Do not use fingerprint `model_config` 0.1 / 512 as judge-call settings. **Not official RAGAS.** CPU Phase 16 tables unchanged. Phase 17 not started on this date. Drive folder **NEEDS VERIFICATION**.
+37. **Phase 17 paired statistics (2026-08-28):** CPU analysis of frozen Phase 16 scored cases + official judge JSONL. Statistical unit = question (n=140), paired across architectures. Confirmatory RQ1 McNemar SA vs MA displayed correctness p=0.6776 (**not significant**). RQ2: Spearman confidence vs LLM-as-judge faithfulness ρ=0.6988 (Holm significant); Mann–Whitney ANSWER vs ABSTAIN faithfulness Holm significant; paired Wilcoxon MA vs UQ faithfulness **not** significant. RQ3: unsupported-emitted McNemar vs SA and MA Holm significant; coverage 78/140; selective accuracy 32/78; 2 false abstains. **Not official RAGAS.** Phase 15/16 JSONL SHAs unchanged. Phase 18 not started.
+38. **Phase 17 figure refresh (2026-08-28):** Presentation-only redraw of six dissertation figures from saved Phase 17 tables. No RAG/Qwen/judge rerun. No statistical tests recomputed. Result-file SHA-256 unchanged. Primary: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs custom/RAGAS-inspired LLM-as-judge faithfulness; RQ3 coverage vs selective accuracy at locked T=0.65. Appendix: McNemar counts, faithfulness boxplot, UQ outcome counts. Phase 18 not started.
 
 ---
 
@@ -1298,11 +1303,97 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
 
 ---
 
+## Phase 17 — Statistics on frozen Phase 15/16 results
+
+- **Date:** 2026-08-28
+- **Objective:** Rigorous paired statistical analysis of RQ1–RQ3 using only frozen Phase 15/16 artefacts.
+- **Why required:** Point estimates from Phase 16 cannot answer significance, effect size, or the coverage/selective-accuracy trade-off. Dissertation reporting needs n, SD, CIs, tests, p-values, and honest non-significant findings.
+- **Work completed:**
+  - CPU statistics package `src/statistics/` + `scripts/run_statistics.py` (no RAG/Qwen/judge rerun).
+  - SHA gates on Phase 15 JSONL, Phase 16 processed JSONL, official judge JSONL, frozen 140/40, and T=0.65 lock.
+  - Confirmatory + exploratory families with Holm–Bonferroni; Wilson CIs; bootstrap (seed 42, 10 000); Shapiro assumption checks; figures.
+  - Did **not** rewrite Phase 15/16 JSONL, freeze files, T, RAG modules, or V1. Did **not** start Phase 18.
+- **Technical decisions:** Statistical unit = frozen test question (n=140), paired by `question_id`. RQ1 primary = exact McNemar on displayed numeric correctness (SA vs MA). RQ2 primary = `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` — **not official RAGAS**. RQ3 = coverage / selective accuracy / unsupported_emitted at locked T=0.65. Token-overlap is secondary. Context P/R are retrieval controls (identical across architectures). Wilcoxon used for paired continuous scores because Shapiro fails.
+- **Files created/modified:**
+  - `V2/src/statistics/*.py`
+  - `V2/scripts/run_statistics.py`
+  - `V2/tests/test_phase17_statistics.py`
+  - `V2/docs/phase17_statistics.md`
+  - `V2/results/metrics/phase17_*.csv`, `phase17_summary.md`, `phase17_figures/*.png`
+  - `V2/results/config/phase17_statistics_summary.json`, `phase17_smoke_test.json`
+  - `V2/results/final/phase17_interpretation.md`
+  - `V2/project_record/evidence/phase17_validation.md`
+- **Tests/validation:** `tests/test_phase17_statistics.py` **6 passed**; full suite **130 passed**. SHA of Phase 15/16 JSONL unchanged after `analyse()`.
+- **Actual outcome:**
+  - **RQ1:** SA 32/140 vs MA 29/140; McNemar exact p=0.6776 (Holm p=0.6776); Cohen's g=−0.0652. **Not significant.** Does not support a Multi-Agent accuracy gain.
+  - **RQ2:** Spearman ρ(confidence, LLM faithfulness)=0.6988, Holm p=2.403×10⁻²¹; Mann–Whitney ANSWER vs ABSTAIN Holm p=1.767×10⁻¹⁴; paired Wilcoxon MA vs UQ faithfulness Holm p=0.4032 (**not significant**).
+  - **RQ3:** Coverage 78/140=0.5571; selective accuracy 32/78=0.4103; 60 true abstains, 2 false abstains; unsupported-emitted McNemar vs SA and MA both Holm-significant.
+- **Problems encountered:** Paired LLM-faithfulness differences are non-normal (Shapiro p≪0.05). Matplotlib was not previously pinned in the V2 venv.
+- **Problems resolved:** Wilcoxon used as primary continuous test. `matplotlib` added to `requirements.txt` and installed in `.venv`.
+- **Remaining issues:** Google Drive copy of Phase 17 tables **NEEDS VERIFICATION**. GitHub commit of stats code/tables **not done**. Phase 18 **not started**. Do not claim official RAGAS. Do not claim Multi-Agent improves numeric accuracy.
+- **Dissertation relevance:** Supplies confirmatory paired tests, CIs, effect sizes, and honest negative RQ1 finding. RQ2 support is within-UQ confidence/faithfulness association, not a paired faithfulness gain vs Multi-Agent. RQ3 shows abstention reduces emitted numeric errors at the cost of coverage.
+- **Evidence/source file paths:**
+  - `V2/results/processed/phase16_cases.jsonl` (input; unchanged)
+  - `V2/results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl` (input; unchanged)
+  - `V2/results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl` (SHA verified; unchanged)
+  - `V2/results/metrics/phase17_tests.csv`
+  - `V2/results/config/phase17_statistics_summary.json`
+- **Validation evidence:** `V2/project_record/evidence/phase17_validation.md`
+- **Backup status:**
+  - Colab: **N/A** (CPU local statistics; no new GPU job)
+  - Google Drive: **NEEDS VERIFICATION** (Phase 17 tables not listed from this Mac)
+  - Local: verified — tests CSV/MD, figures, summary JSON, evidence, master record
+  - GitHub: Phase 17 source/docs/tables **uncommitted** (do not commit Phase 15 raw JSONL or judge JSONL)
+
+---
+
+## Phase 17 figure refresh — dissertation presentation only
+
+- **Date:** 2026-08-28
+- **Objective:** Replace the draft Phase 17 plots with dissertation-quality primary and appendix figures without changing any statistical results.
+- **Why required:** The first Phase 17 plots used a 0–0.5 y-axis, proportion scale, 150 dpi, and incomplete labels. Dissertation insertion needs 0–100% axes, n=140, locked T=0.65, and explicit custom/RAGAS-inspired (not official RAGAS) wording.
+- **Work completed:**
+  - Added `src/statistics/figures.py` and `scripts/render_phase17_figures.py` (figures only; SHA-gates frozen artefacts; does not write Phase 17 CSVs).
+  - Redrew three primary figures (RQ1 Wilson CI correctness; RQ2 confidence vs faithfulness scatter; RQ3 coverage vs selective accuracy) and three appendix figures (McNemar counts; faithfulness boxplot; UQ outcome counts).
+  - Wrote PNG (300 dpi), PDF, and SVG for each stem.
+  - Documented figure roles in `docs/phase17_figures.md`.
+  - Did **not** rerun RAG, Qwen, the judge, or `scripts/run_statistics.py`. Did **not** start Phase 18.
+- **Technical decisions:** Architecture labels locked as Single-Agent / Multi-Agent / Multi-Agent + UQ. RQ1 uses a 0–100% zero baseline and does not mark significance. RQ2 y-axis is `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)`. RQ3 states T=0.65 is locked from the separate DEV 40. Scatter points are joined read-only from Phase 16 processed JSONL + official judge JSONL.
+- **Files created/modified:**
+  - `V2/src/statistics/figures.py`
+  - `V2/scripts/render_phase17_figures.py`
+  - `V2/src/statistics/report.py` (`write_plots` now delegates to saved-table renderer)
+  - `V2/tests/test_phase17_statistics.py` (figure-render SHA guard)
+  - `V2/docs/phase17_figures.md`
+  - `V2/docs/phase17_statistics.md`
+  - `V2/results/metrics/phase17_figures/*.{png,pdf,svg}`
+  - `V2/results/config/phase17_figure_render.json`
+  - `V2/project_record/evidence/phase17_validation.md`
+- **Tests/validation:** `test_render_figures_does_not_change_results` **PASS**. `pytest -q -k "not test_analyse_paired_140"`: **130 passed**. Result-file SHA-256 unchanged (see `phase17_figure_render.json`).
+- **Actual outcome:** Primary and appendix figures regenerated. Phase 17 descriptive/tests/effect/assumptions CSVs, summary MD, interpretation MD, and statistics JSON **unchanged**. Frozen Phase 15/16 JSONL SHAs **unchanged**. T=0.65 **unchanged**.
+- **Problems encountered:** Matplotlib 3.11 `boxplot` uses `tick_labels` rather than `labels`. Title weight `"medium"` is not in DejaVu Sans.
+- **Problems resolved:** `tick_labels` with `labels` fallback; title weight set to `normal`.
+- **Remaining issues:** Google Drive copy of figure files **NEEDS VERIFICATION**. GitHub commit **not done**. Phase 18 **not started**.
+- **Dissertation relevance:** Supplies the three main-body RQ figures and three appendix figures with consistent naming and captions.
+- **Evidence/source file paths:**
+  - `V2/docs/phase17_figures.md`
+  - `V2/results/config/phase17_figure_render.json`
+  - `V2/results/metrics/phase17_descriptive.csv` (unchanged)
+  - `V2/results/metrics/phase17_tests.csv` (unchanged)
+  - `V2/results/config/phase17_statistics_summary.json` (unchanged)
+- **Validation evidence:** `V2/project_record/evidence/phase17_validation.md`
+- **Backup status:**
+  - Colab: **N/A** (CPU local figure render; no GPU job)
+  - Google Drive: **NEEDS VERIFICATION**
+  - Local: verified — `V2/results/metrics/phase17_figures/` (18 files)
+  - GitHub: figure code/docs/PNGs **uncommitted**
+
+---
+
 ## Not started (explicit)
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 17 | Statistics + final tables | Not started |
 | 18 | Dissertation evidence pack | Not started |
 
 ---

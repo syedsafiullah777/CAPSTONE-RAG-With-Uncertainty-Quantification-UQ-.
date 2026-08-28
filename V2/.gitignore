@@ -133,6 +133,19 @@ results/config/**
 !results/config/phase16_judge_summary.json
 !results/config/phase16_judge_smoke_test.json
 !results/config/phase16_judge_runtime_fingerprint.json
+!results/config/phase17_statistics_summary.json
+!results/config/phase17_smoke_test.json
+!results/config/phase17_figure_render.json
+!results/metrics/phase17_descriptive.csv
+!results/metrics/phase17_tests.csv
+!results/metrics/phase17_effect_sizes.csv
+!results/metrics/phase17_assumptions.csv
+!results/metrics/phase17_summary.md
+!results/metrics/phase17_figures/
+!results/metrics/phase17_figures/*.png
+!results/metrics/phase17_figures/*.pdf
+!results/metrics/phase17_figures/*.svg
+!results/final/phase17_interpretation.md
 
 # Notebooks checkpoints
 .ipynb_checkpoints/

@@ -6,8 +6,8 @@ Actual code, configuration, tests, and saved outputs take precedence over this d
 | Field | Value |
 | --- | --- |
 | Last updated | 2026-08-28 |
-| Current completed phase | **Phase 16 complete:** CPU metrics **PASS** + official Colab 420-case LLM-as-judge **PASS** (locally verified). |
-| Next implementation phase | **Phase 17 statistics** |
+| Current completed phase | **Phase 17 complete:** paired statistics on frozen Phase 15/16 (**PASS**). |
+| Next implementation phase | **Phase 18 dissertation evidence pack** |
 | V1 | Reference-only — never modified |
 
 ---
@@ -146,7 +146,7 @@ Colab CLI, gcloud, ADC, Kubernetes, distributed orchestration — unless explici
 | 14 | 9-case engineering validation | ✅ Complete (Colab T4 9/9). Keep as evidence. Do not re-run. | `evidence/phase14_validation.md` |
 | 15 | Final 420-case benchmark | ✅ Local 420/420 verified (Colab T4). Drive **NEEDS VERIFICATION**. | `evidence/phase15_validation.md`; `evidence/phase15_backup_manifest.md` |
 | 16 | Evaluation + metrics | ✅ CPU complete. Official Colab 420 LLM-judge **PASS** (verified 2026-08-28) | `evidence/phase16_validation.md` |
-| 17 | Statistics + final tables | ⬜ Not started | aggregated tables evidence |
+| 17 | Statistics + final tables | ✅ Complete — paired n=140 on frozen Phase 15/16 | `evidence/phase17_validation.md` |
 | 18 | Dissertation evidence pack | ⬜ Not started | master record + all phase evidence |
 
 Phase numbers 11–18 are indicative; adjust if merged — storage requirements remain.
@@ -239,7 +239,17 @@ See `docs/phase16_judge.md`. Separate post-hoc job: `scripts/run_judge.py` + `no
 
 Historical (2026-08-27): implementation + mock n=3; official Colab 420 **not launched** / **NEEDS VERIFICATION**.
 
-Official run (verified 2026-08-28): run_id `phase16_judge_20260828T152623Z_06661255`; **420/420 PASS**; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Means: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL is source of truth for judge calls (`temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`); do not use fingerprint `0.1` / `512`. **Do not start Phase 17 from this documentation. Do not rerun the judge.**
+Official run (verified 2026-08-28): run_id `phase16_judge_20260828T152623Z_06661255`; **420/420 PASS**; `llama_cpp`; Qwen3-8B Q4_K_M; Tesla T4; `used_rag_rerun=false`; UQ `draft_answer`; UQ 78 ANSWER / 62 ABSTAIN; Phase 15 SHA unchanged. Means: SA 0.3241, MA 0.3484, UQ 0.3749, UQ ANSWER-only 0.6548. JSONL is source of truth for judge calls (`temperature=0.0`, `max_new_tokens=32`, `n_ctx=4096`); do not use fingerprint `0.1` / `512`. **Do not rerun the judge.**
+
+## Phase 17 — Statistics (complete; CPU; frozen Phase 15/16)
+
+See `docs/phase17_statistics.md` and `project_record/evidence/phase17_validation.md`.
+
+Entrypoint: `scripts/run_statistics.py`. Statistical unit = question (n=140), paired. RQ1 McNemar SA vs MA displayed correctness **not significant** (p=0.6776). RQ2 LLM-as-judge faithfulness is custom/RAGAS-inspired, **not official RAGAS**. RQ3 abstention at T=0.65 reduces unsupported_emitted (McNemar significant) at coverage 78/140.
+
+Dissertation figures (presentation only; 2026-08-28): `scripts/render_phase17_figures.py` + `docs/phase17_figures.md`. Does **not** recompute tests. Primary: `rq1_accuracy_wilson_ci`, `rq2_confidence_vs_faithfulness`, `rq3_coverage_selective`. Appendix: `rq1_mcnemar_counts`, `rq2_llm_faithfulness_box`, `rq3_uq_outcomes`.
+
+**Do not start Phase 18 from this documentation. Do not rerun RAG or the judge.**
 
 ## Git workflow (all phases)
 

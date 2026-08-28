@@ -53,7 +53,7 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 
 ## Phase status
 
-**Phase 16 CPU complete.** LLM-as-judge pass **implemented; official Colab 420 not launched.** **Phase 17 statistics not started.**
+**Phase 17 statistics complete** (paired n=140 on frozen Phase 15/16). Phase 16 CPU + official Colab 420-case judge **PASS**. **Phase 18 dissertation evidence pack not started.**
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
@@ -107,4 +107,7 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`
 - Phase 16 metrics: `V2/results/metrics/phase16_summary.csv`
 - Phase 16 judge notes: `V2/docs/phase16_judge.md`
 - Phase 16 judge notebook: `V2/notebooks/colab_phase16_judge.ipynb`
+- Phase 17 notes: `V2/docs/phase17_statistics.md`
+- Phase 17 evidence: `V2/project_record/evidence/phase17_validation.md`
+- Phase 17 metrics: `V2/results/metrics/phase17_tests.csv`
 - **Master record (authoritative chronology):** `V2/project_record/PROJECT_MASTER_RECORD.md`

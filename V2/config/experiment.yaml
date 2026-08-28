@@ -172,6 +172,10 @@ evaluation:
   numeric_rel_tol: 0.01
   phase16_entrypoint: "scripts/run_evaluation.py"
   phase16_judge_entrypoint: "scripts/run_judge.py"
+  phase17_entrypoint: "scripts/run_statistics.py"
+  phase17_uses_llm_inference: false
+  phase17_uses_gpu: false
+  phase17_uses_rag_rerun: false
   source_raw: "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl"
   uses_llm_inference: false
   uses_gpu: false

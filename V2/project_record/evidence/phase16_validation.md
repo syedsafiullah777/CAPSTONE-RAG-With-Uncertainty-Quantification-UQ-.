@@ -5,7 +5,7 @@
 | Phase | 16 — Evaluation + metrics + post-hoc LLM-as-judge |
 | Evidence file | `project_record/evidence/phase16_validation.md` |
 | Last updated | 2026-08-28 |
-| Phase 16 status | CPU **PASS** (2026-08-26). Official Colab 420-case LLM-as-judge **PASS** (locally verified 2026-08-28). Phase 17 not started. |
+| Phase 16 status | CPU **PASS** (2026-08-26). Official Colab 420-case LLM-as-judge **PASS** (locally verified 2026-08-28). Phase 17 statistics **PASS** (see `phase17_validation.md`). |
 
 Earlier (2026-08-27) this file recorded official Colab 420 as **not launched** / **NEEDS VERIFICATION**. That was the implementation state. It is superseded by the verified run below. CPU metric numbers in §3–4 are unchanged.
 
@@ -19,7 +19,7 @@ Earlier (2026-08-27) this file recorded official Colab 420 as **not launched** /
 | 4 | Completeness / no new generation | **PASS** | raw SHA unchanged; 420 unique keys |
 | 5 | LLM-as-judge unit tests + mock n=3 | **PASS** | `tests/test_phase16_judge.py` |
 | 6 | Official 420-case Colab judge | **PASS** (verified 2026-08-28) | `results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl` |
-| 7 | Phase 17 statistics | **not started** | — |
+| 7 | Phase 17 statistics | **PASS** (2026-08-28) | `project_record/evidence/phase17_validation.md` |
 
 Locked T=0.65 unchanged. Frozen 140/40 CSVs unchanged (SHA recorded). V1 unmodified. No architecture runners imported.
 
@@ -103,7 +103,7 @@ Additional observed values:
 
 UQ detail: 32 ANSWER correct, 46 ANSWER incorrect, 2 ABSTAIN with a numerically correct **draft**. Displayed UQ correctness counts the abstention template as incorrect.
 
-**Honest reading (no significance tests — Phase 17 not run):**
+**Honest reading (Phase 16 point estimates; significance tests are Phase 17):**
 
 - Displayed answer correctness is **not** higher for Multi-Agent (29/140) than Single-Agent (32/140).
 - UQ displayed correctness (32/140) equals Single-Agent because ABSTAIN text does not match the gold number. Claim correctness is 34/140.
@@ -127,7 +127,7 @@ Source tables: `results/metrics/phase16_summary.csv`, `results/metrics/phase16_b
 | T not retuned | lock still 0.65; SHA unchanged |
 | All 420 cases scored | 420 unique keys; 0 missing; 0 extra; 0 errors |
 | V1 unmodified | no V1 paths edited |
-| Phase 17 not started | no statistical tests |
+| Phase 17 not part of this CPU scoring run | statistical tests are Phase 17 (`phase17_validation.md`) |
 
 ### 5. LLM-as-judge implementation (2026-08-27)
 
