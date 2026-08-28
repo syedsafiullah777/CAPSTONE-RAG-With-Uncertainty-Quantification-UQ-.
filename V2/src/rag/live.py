@@ -120,6 +120,56 @@ def format_threshold_display(result: RAGCaseResult) -> str:
     return f"{float(result.threshold):.4f} (smoke/demo — {THRESHOLD_NOT_LOCKED})"
 
 
+UI_ABSTAIN_LOW_CONFIDENCE = "ABSTAIN — Low confidence"
+UI_MODERATE_CONFIDENCE_WARNING = "Moderate confidence — verify supporting evidence."
+UI_CONFIDENCE_WARNING_NOTE = (
+    "Warning is a user-facing confidence indicator and does not alter the research decision rule."
+)
+
+
+def _confidence_in_lock_hundredths(confidence: float, locked_t: float) -> bool:
+    """True when confidence is still in the locked T hundredths band (e.g. 0.65 ≤ c < 0.66).
+
+    UI proximity only. Not a second research threshold. Not written to the lock file.
+    """
+    return locked_t <= confidence < locked_t + 0.01
+
+
+def uq_ui_confidence_overlay(result: RAGCaseResult) -> dict[str, Any]:
+    """Streamlit-only UQ captions. Does not mutate decision, confidence, or stored results."""
+    empty = {
+        "show": False,
+        "decision_heading": None,
+        "warning": None,
+        "note": None,
+    }
+    if result.architecture != ARCHITECTURE_MULTI_AGENT_UQ:
+        return empty
+    note = UI_CONFIDENCE_WARNING_NOTE
+    confidence = resolve_displayed_confidence(result)
+    if confidence is None:
+        return {
+            "show": True,
+            "decision_heading": result.decision,
+            "warning": None,
+            "note": note,
+        }
+    heading = result.decision
+    warning = None
+    if result.decision == "ABSTAIN":
+        heading = UI_ABSTAIN_LOW_CONFIDENCE
+    elif result.decision == "ANSWER" and result.threshold is not None:
+        locked_t = float(result.threshold)
+        if confidence >= locked_t and _confidence_in_lock_hundredths(confidence, locked_t):
+            warning = UI_MODERATE_CONFIDENCE_WARNING
+    return {
+        "show": True,
+        "decision_heading": heading,
+        "warning": warning,
+        "note": note,
+    }
+
+
 def resolve_live_locked_threshold() -> float:
     """Official T from threshold.lock.json. Does not retune or read yaml smoke_threshold."""
     from src.calibration.lock import EXPECTED_LOCKED_THRESHOLD, load_official_lock

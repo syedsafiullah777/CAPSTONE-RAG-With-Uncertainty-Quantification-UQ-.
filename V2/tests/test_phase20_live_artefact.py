@@ -12,10 +12,14 @@ from src.rag.live import (
     FRESH_KB_QUESTION,
     INSUFFICIENT_EVIDENCE_QUESTION,
     LIVE_ARCHITECTURES,
+    UI_ABSTAIN_LOW_CONFIDENCE,
+    UI_CONFIDENCE_WARNING_NOTE,
+    UI_MODERATE_CONFIDENCE_WARNING,
     format_threshold_display,
     load_frozen_questions,
     resolve_live_locked_threshold,
     run_live_comparison,
+    uq_ui_confidence_overlay,
 )
 from src.rag.schema import ARCHITECTURE_MULTI_AGENT_UQ, RAGCaseResult
 from src.retrieval.retriever import RetrievedChunk
@@ -136,6 +140,9 @@ def test_streamlit_exposes_locked_threshold_and_runtime_fields() -> None:
     assert "Use this question in Live Demo" in ui
     assert "run_live_comparison" not in ui
     assert "create_backend" not in ui
+    assert "uq_ui_confidence_overlay" in text
+    assert "Moderate confidence — verify supporting evidence." in text or "uq_ui_confidence_overlay" in text
+    assert "does not alter the research decision rule" in Path("src/rag/live.py").read_text(encoding="utf-8")
 
 
 def test_live_comparison_does_not_rewrite_frozen_artefacts() -> None:
@@ -190,6 +197,70 @@ def test_locked_threshold_display_helper() -> None:
         configuration={"threshold_source": "locked"},
     )
     assert format_threshold_display(result) == "0.6500 (locked)"
+    overlay = uq_ui_confidence_overlay(result)
+    assert overlay["decision_heading"] == UI_ABSTAIN_LOW_CONFIDENCE
+    assert overlay["warning"] is None
+    assert overlay["note"] == UI_CONFIDENCE_WARNING_NOTE
+    assert result.decision == "ABSTAIN"
+
+
+def _uq_result(*, confidence: float | None, decision: str, threshold: float | None = 0.65) -> RAGCaseResult:
+    uq: dict = {}
+    if confidence is not None:
+        uq["confidence"] = confidence
+    return RAGCaseResult(
+        run_id="r",
+        question_id="q",
+        architecture=ARCHITECTURE_MULTI_AGENT_UQ,
+        question="Q?",
+        retrieved_evidence=[{"text": "e"}],
+        retrieval_scores=[0.8],
+        answer="42",
+        confidence=confidence,
+        threshold=threshold,
+        decision=decision,
+        configuration={"threshold_source": "locked", "uncertainty_result": uq},
+    )
+
+
+def test_uq_ui_overlay_is_display_only_and_near_lock() -> None:
+    abstain = _uq_result(confidence=0.5351, decision="ABSTAIN")
+    overlay = uq_ui_confidence_overlay(abstain)
+    assert abstain.decision == "ABSTAIN"
+    assert overlay["decision_heading"] == UI_ABSTAIN_LOW_CONFIDENCE
+    assert overlay["warning"] is None
+
+    near = _uq_result(confidence=0.6510, decision="ANSWER")
+    overlay_near = uq_ui_confidence_overlay(near)
+    assert near.decision == "ANSWER"
+    assert overlay_near["decision_heading"] == "ANSWER"
+    assert overlay_near["warning"] == UI_MODERATE_CONFIDENCE_WARNING
+    assert overlay_near["note"] == UI_CONFIDENCE_WARNING_NOTE
+
+    clear = _uq_result(confidence=0.7688, decision="ANSWER")
+    overlay_clear = uq_ui_confidence_overlay(clear)
+    assert clear.decision == "ANSWER"
+    assert overlay_clear["warning"] is None
+
+    missing = _uq_result(confidence=None, decision="ANSWER")
+    overlay_na = uq_ui_confidence_overlay(missing)
+    assert overlay_na["warning"] is None
+    assert missing.decision == "ANSWER"
+
+    from src.rag.schema import ARCHITECTURE_SINGLE_AGENT
+
+    sa = RAGCaseResult(
+        run_id="r",
+        question_id="q",
+        architecture=ARCHITECTURE_SINGLE_AGENT,
+        question="Q?",
+        retrieved_evidence=[{"text": "e"}],
+        retrieval_scores=[0.8],
+        answer="42",
+        decision="ANSWER",
+    )
+    assert uq_ui_confidence_overlay(sa)["show"] is False
+    assert uq_ui_confidence_overlay(sa)["warning"] is None
 
 
 def test_frozen_catalogue_loads_140_unique_matching_csv() -> None:

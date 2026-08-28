@@ -40,3 +40,16 @@ Sidebar navigation:
 3. **Benchmark Questions** — read-only catalogue of the frozen 140 FinQA test questions (`data/final/selected_140_questions.csv` only). Search, company filter, pagination (20 per page). **Use this question in Live Demo** copies question text only; it does not copy FinQA gold or Phase 15 answers.
 
 The Benchmark Questions page does not run RAG or call Qwen3-8B.
+
+## UQ confidence warning (UI-only)
+
+The research decision rule is unchanged: **confidence < 0.65 → ABSTAIN**; **confidence ≥ 0.65 → ANSWER**.
+
+The Multi-Agent + UQ live panel may show extra captions:
+
+- ABSTAIN → `ABSTAIN — Low confidence`
+- ANSWER with confidence still in the same 0.65 hundredths band as the lock → `Moderate confidence — verify supporting evidence.`
+- ANSWER clearly above that band → ANSWER with no extra warning
+- missing confidence → `n/a`, no warning
+
+This is a **user-facing indicator**. It is **not** a second calibrated research threshold, is **not** stored in `threshold.lock.json`, and does **not** change stored decisions, confidence, Phase 15–18 results, or statistics.

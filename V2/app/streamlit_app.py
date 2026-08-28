@@ -39,6 +39,7 @@ from src.rag.live import (
     resolve_displayed_confidence,
     resolve_live_locked_threshold,
     run_live_comparison,
+    uq_ui_confidence_overlay,
 )
 from src.rag.schema import ARCHITECTURE_MULTI_AGENT_UQ, RAGCaseResult
 from src.retrieval.index import COLLECTION_NAME
@@ -136,11 +137,17 @@ def render_architecture(result: RAGCaseResult) -> None:
         render_evidence(result.retrieved_evidence or [])
         return
 
+    overlay = uq_ui_confidence_overlay(result)
     decision = result.decision or "n/a"
+    heading = overlay["decision_heading"] if overlay["show"] and overlay["decision_heading"] else decision
     if decision == "ABSTAIN":
-        st.error(f"Decision: {decision}")
+        st.error(f"Decision: {heading}")
     else:
         st.success(f"Decision: {decision}")
+    if overlay["show"] and overlay["warning"]:
+        st.warning(overlay["warning"])
+    if overlay["show"] and overlay["note"]:
+        st.caption(overlay["note"])
 
     st.markdown("**Generated answer**")
     st.write(result.answer)

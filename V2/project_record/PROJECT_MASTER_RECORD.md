@@ -5,7 +5,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 | Field | Value |
 | --- | --- |
-| Last updated | 2026-08-28 |
+| Last updated | 2026-08-29 |
 | Current completed phase | **Phase 20 complete:** final live-artefact validation (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` live demo **NEEDS VERIFICATION**). Phases 15–19 remain **PASS** on their recorded criteria. |
 | Next phase (not started) | **None.** Stop after Phase 20. A dissertation write-up pack is not a numbered phase in this instruction. |
 | V1 status | Reference-only (never modified by V2 work) |
@@ -183,6 +183,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 40. **Phase 18 qualitative error analysis (2026-08-28):** Rule-based taxonomy on all 420 frozen cases plus stratified sample (seed 18; 81 cases / 42 questions). Both false abstentions included. No RAG/Qwen/judge/statistics rerun. Numeric error not labelled hallucination. Not official RAGAS. Phase 19 not started.
 41. **Phase 19 reproducibility audit (2026-08-28):** Read-only integrity audit of 40 DEV → T=0.65 → frozen 140 → 420 cases → Phase 16/17/18. No RAG/Qwen/judge/stats rerun. Frozen SHA-256 unchanged. Scientific chain **PASS**. Google Drive archive, GitHub commit, judge fingerprint vs JSONL settings, and leftover yaml `phase5_threshold_locked: false` remain **NEEDS VERIFICATION**. Dissertation evidence pack is **Phase 20** (not started). Do not commit Phase 15 raw JSONL or judge JSONL.
 42. **Phase 20 live artefact (2026-08-28):** Final numbered phase is live-artefact validation at locked T=0.65 — not a dissertation write-up pack (that earlier Phase 19 assumption is superseded here). Streamlit always loads `threshold.lock.json`; smoke 0.55 control removed. Live path calls Phase 8–10 pipelines on the shared Phase 6 KB; it does not look up Phase 15 JSONL. Local mock three-question demo + tests **PASS** (plumbing). Official Colab T4 + Qwen3-8B + `llama_cpp` answers remain **NEEDS VERIFICATION**. Frozen 140/40, T, and Phase 15–18 results unchanged. No Phase 21 started.
+43. **Phase 20 UI-only UQ confidence warning (2026-08-29):** Streamlit Multi-Agent + UQ panel gained a **display-only** confidence warning. Research decision rule unchanged: confidence < 0.65 → ABSTAIN; confidence ≥ 0.65 → ANSWER. Locked **T = 0.65** unchanged. The 0.66 display band is **not** a research threshold, not calibrated, and not stored in `threshold.lock.json` or experiment config. The warning does **not** alter stored decisions, confidence values, benchmark results, Phase 15/16/17/18 results, or statistics. User-facing safety/usability indicator only. No 420-case benchmark, calibration, LLM-judge, or statistical analysis was rerun.
 
 ---
 
@@ -1548,6 +1549,34 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
   - Google Drive: **NEEDS VERIFICATION**
   - Local: verified — Phase 20 source, tests, evidence, `phase20_live_demo_summary.json`
   - GitHub: Phase 20 source/docs **uncommitted** (do not commit Phase 15 raw JSONL or judge JSONL)
+
+---
+
+## Phase 20 addendum — UI-only UQ confidence warning (2026-08-29)
+
+This addendum records a later Streamlit display change. It does **not** rewrite the Phase 20 section above.
+
+- **Date:** 2026-08-29
+- **Scope:** Live artefact UI only (Multi-Agent + UQ panel). Not a new phase. Not a new research threshold.
+- **Research decision rule (unchanged):**
+  - confidence < 0.65 → **ABSTAIN**
+  - confidence ≥ 0.65 → **ANSWER**
+  - Locked research threshold remains **T = 0.65** (`results/config/threshold.lock.json`).
+- **UI-only display behaviour** (`uq_ui_confidence_overlay` in `src/rag/live.py`; rendered in `app/streamlit_app.py`):
+  - confidence < 0.65 → `ABSTAIN — Low confidence`
+  - 0.65 ≤ confidence < 0.66 → Decision remains **ANSWER**, plus `Moderate confidence — verify supporting evidence.`
+  - confidence ≥ 0.66 → **ANSWER** (no extra warning)
+  - missing confidence → `n/a` (no warning)
+- **What 0.66 is not:** The 0.66 boundary is a **display proximity band** (same hundredths as locked T=0.65). It is **not** a calibrated research threshold, is **not** stored in the lock file or experiment config, and is **not** used to change ANSWER/ABSTAIN.
+- **Integrity:** The warning does **not** alter stored decisions, confidence values, benchmark results, Phase 15/16/17/18 results, statistics, frozen 140/40, T=0.65, RAG architecture modules, or V1. User-facing safety/usability indicator only.
+- **Files changed (this addendum):**
+  - `V2/src/rag/live.py`
+  - `V2/app/streamlit_app.py`
+  - `V2/tests/test_phase20_live_artefact.py`
+  - `V2/docs/phase20_live_artefact.md`
+  - `V2/docs/phase11_live_artefact.md`
+- **Validation:** `tests/test_phase20_live_artefact.py` and `tests/test_phase11_live_artefact.py` — **21 passed**. No 420-case benchmark, calibration, LLM-judge, or statistical analysis was rerun.
+- **Decisions log:** item **43**.
 
 ---
 
