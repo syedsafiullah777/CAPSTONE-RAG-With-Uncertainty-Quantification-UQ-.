@@ -1,0 +1,144 @@
+{
+  "phase": 19,
+  "test_name": "phase19_reproducibility_audit",
+  "command": "PYTHONPATH=. python scripts/run_reproducibility_audit.py",
+  "expected": "Read-only consistency of frozen 40 DEV \u2192 T=0.65 \u2192 140 test \u2192 420 cases \u2192 Phase 16/17/18 artefacts; no RAG/Qwen/judge/stats rerun",
+  "actual": "overall=PASS n_pass=17 n_fail=0 n_needs_verification=4 chain_fail=[]",
+  "status": "PASS",
+  "recorded_at_utc": "2026-08-28T17:58:10.506082+00:00",
+  "notebook": null,
+  "environment": {
+    "used_llm_inference": false,
+    "used_gpu": false,
+    "used_rag_rerun": false,
+    "recomputed_statistics": false,
+    "device": "cpu"
+  },
+  "error": null,
+  "output_path": "/Users/syedsafiullah/Documents/CAPSTONE (RAG WITH UNCERTAINITY QUANTIFICATION)/V2/project_record/evidence/phase19_reproducibility_audit.md",
+  "extra": {
+    "hashes": {
+      "phase15": "f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa",
+      "processed": "e9e4f80dafffa0d0db970fb4426c9c0b81310717405389b2b7fd5ddb5b231e91",
+      "judge": "093c4699b68e9653125fcd08e3b25b0d10a3357be3a20bc817a5a71e8498ebe3",
+      "frozen140": "88899ae9c66fb47bf4aa50e197d91aa171adcb882ae36f066bf614ff40fba087",
+      "cal40": "1325b595ae1f9404802879ad06f52be7f7b63d805ab1edf5b66c3b608a478845",
+      "lock": "8981233604e64959386292d3d1fbdeebd4e983c0520fde3b4467772281687d88"
+    },
+    "manifest": "results/final/phase19_artefact_manifest.md",
+    "used_rag_rerun": false,
+    "recomputed_statistics": false
+  },
+  "checks": [
+    {
+      "name": "frozen_artefact_sha256",
+      "status": "PASS",
+      "detail": "Phase 15/16/140/40/lock SHA-256 match src/statistics/constants.py: phase15=f5256ae40fa8\u2026, processed=e9e4f80dafff\u2026, judge=093c4699b68e\u2026, frozen140=88899ae9c66f\u2026, cal40=1325b595ae1f\u2026, lock=8981233604e6\u2026"
+    },
+    {
+      "name": "locked_threshold",
+      "status": "PASS",
+      "detail": "T=0.65 locked=True source_split=dev used_frozen_test_140=False n=40 rule=max_selective_accuracy_coverage_ge_0.50 coverage=0.55 selective=0.5454545454545454"
+    },
+    {
+      "name": "frozen_140_and_dev_40",
+      "status": "PASS",
+      "detail": "n_test=140 unique_test=140 n_dev=40 overlap_test_dev=0 lock_ids_match_cal40=True"
+    },
+    {
+      "name": "benchmark_420_completeness",
+      "status": "PASS",
+      "detail": "phase15=420 unique=420 per_arch={'single_agent': 140, 'multi_agent': 140, 'multi_agent_uq': 140} ids_match_freeze=True processed_keys_match=True judge_keys_match=True uq_threshold_all_0.65=True uq_decisions={'ABSTAIN': 62, 'ANSWER': 78} judge_used_rag_rerun=False judge_noncomplete_or_parse_fail=0 judge_call_settings_jsonl_T0_32tok_nctx4096=True"
+    },
+    {
+      "name": "phase16_phase17_count_traceability",
+      "status": "PASS",
+      "detail": "Displayed correct SA/MA/UQ = 32/29/32; UQ ANSWER/ABSTAIN = 78/62; UQ claim correct = 34. Phase 16 summary CSV matches Phase 17 descriptive CSV on these counts."
+    },
+    {
+      "name": "phase17_statistics_traceability",
+      "status": "PASS",
+      "detail": "McNemar SA vs MA p=0.6776 cells=19/13/10/98 Holm=0.6776 sig=false; Spearman rho=0.6988 layer=LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)"
+    },
+    {
+      "name": "figure_to_table_consistency",
+      "status": "PASS",
+      "detail": "FIGURE_INDEX counts match Phase 17 descriptive/tests CSVs (SA/MA/UQ displayed 32/29/32; McNemar 19/13/10/98; Spearman 0.6988; coverage 78/140; selective 32/78; UQ outcomes 32/46/60/2; judge means 0.3241/0.3484/0.3749)."
+    },
+    {
+      "name": "phase17_json_rq3_abstention_outcomes_key",
+      "status": "PASS",
+      "detail": "phase17_statistics_summary.json `rq3_abstention_outcomes` is present and matches FIGURE_INDEX / Phase 18: ANSWER correct 32, ANSWER incorrect 46, ABSTAIN incorrect draft 60, ABSTAIN correct draft 2, T=0.65."
+    },
+    {
+      "name": "no_accidental_phase17_result_changes",
+      "status": "PASS",
+      "detail": "Phase 17 table/JSON SHA-256 still match phase17_figure_render.json pins."
+    },
+    {
+      "name": "judge_fingerprint_vs_jsonl_settings",
+      "status": "NEEDS VERIFICATION",
+      "detail": "Judge JSONL is the source of truth for judge-call settings (observed temperature=0.0, max_new_tokens=32, n_ctx=4096, all_match=True). phase16_judge_runtime_fingerprint.json model_config has temperature=0.1 max_new_tokens=512 (RAG generation defaults). Documented in Phase 16 judge notes; not treated as a result rewrite."
+    },
+    {
+      "name": "manifest_id_sets_vs_csv",
+      "status": "PASS",
+      "detail": "sampling_manifest.selected_ids_sha256=1a69d93e412097a076e8ec836253b8fff53366aefc5ea5f8998020984f6bbd8a (JSON array fingerprint); lock.question_ids_sha256=da2126411f3025570293725bc93e5bd8d118dfbc2c706ec53c51eddcf38c4853 (newline-joined ids_sha256); calibration_manifest.selected_ids_sha256=b229d45331fc18dd7c784175abd37cee3550775f268c843b2417d3f9d2e3aeca. Different hash conventions; ID sets match CSVs. id_sets_ok=True"
+    },
+    {
+      "name": "phase17_figures_canonical_set",
+      "status": "PASS",
+      "detail": "files=['FIGURE_INDEX.md', 'rq1_answer_correctness_95ci.pdf', 'rq1_answer_correctness_95ci.png', 'rq1_mcnemar_counts.pdf', 'rq1_mcnemar_counts.png', 'rq2_confidence_vs_faithfulness.pdf', 'rq2_confidence_vs_faithfulness.png', 'rq2_faithfulness_distribution.pdf', 'rq2_faithfulness_distribution.png', 'rq3_coverage_vs_selective_accuracy.pdf', 'rq3_coverage_vs_selective_accuracy.png', 'rq3_uq_outcomes.pdf', 'rq3_uq_outcomes.png'] missing=[] extra=[] svg=[]"
+    },
+    {
+      "name": "phase18_error_analysis_consistency",
+      "status": "PASS",
+      "detail": "n_cases=420 sample=81 UQ false_abstain=2 UQ true_abstain=60 unsupported_claim SA/MA/UQ=55/52/10"
+    },
+    {
+      "name": "experiment_yaml_threshold_fields",
+      "status": "NEEDS VERIFICATION",
+      "detail": "Official T is threshold.lock.json; yaml confidence_threshold is null by design (Phase 12 isolation). dataset.phase5_threshold_locked remains false as a leftover Phase 5 freeze flag \u2014 stale relative to Phase 13 lock; not treated as the scientific source of T."
+    },
+    {
+      "name": "metric_definitions",
+      "status": "PASS",
+      "detail": "Primary RQ2 label is `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` \u2014 not official RAGAS. RQ1 = displayed numeric FinQA match. RQ3 = coverage/selective accuracy/unsupported_emitted at locked T. unsupported_emitted = ANSWER and displayed numeric incorrect (not a hallucination label)."
+    },
+    {
+      "name": "git_does_not_track_raw_jsonl_dumps",
+      "status": "PASS",
+      "detail": "tracked jsonl count=1; forbidden_raw=[]; forbidden_judge=[]; tracked=['V2/results/processed/phase16_cases.jsonl']"
+    },
+    {
+      "name": "google_drive_archive",
+      "status": "NEEDS VERIFICATION",
+      "detail": "No Google Drive MSc-RAG folder was listed from this Mac. Searched CloudStorage/GoogleDrive, ~/Google Drive, ~/My Drive. hits=none. Do not claim a Drive backup exists."
+    },
+    {
+      "name": "github_status",
+      "status": "NEEDS VERIFICATION",
+      "detail": "branch=cursor/empty-v2-workspace. Remote:\norigin\thttps://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (fetch)\norigin\thttps://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (push)\nWorking tree (short, may include uncommitted V2 work):\nM V2/.gitignore\n M V2/DECISIONS.md\n M V2/PROJECT_CONTEXT.md\n M V2/docs/IMPLEMENTATION_PLAN.md\n M V2/docs/phase18_error_analysis.md\n M V2/project_record/PROJECT_MASTER_RECORD.md\n M V2/project_record/evidence/README.md\n M V2/results/metrics/phase17_figures/rq1_answer_correctness_95ci.pdf\n M V2/results/metrics/phase17_figures/rq1_mcnemar_counts.pdf\n M V2/results/metrics/phase17_figures/rq2_confidence_vs_faithfulness.pdf\n M V2/results/metrics/phase17_figures/rq2_faithfulness_distribution.pdf\n M V2/results/metrics/phase17_figures/rq3_coverage_vs_selective_accuracy.pdf\n M V2/results/metrics/phase17_figures/rq3_uq_outcomes.pdf\n?? V2/docs/phase19_reproducibility.md\n?? V2/project_record/evidence/phase19_reproducibility_audit.md\n?? V2/results/config/phase19_audit.json\n?? V2/results/final/phase19_artefact_manifest.md\n?? V2/scripts/run_reproducibility_audit.py\n?? V2/src/audit/\n?? V2/tests/test_phase19_audit.py. Phase 15\u201318 research code/docs were not required to be committed by this audit."
+    },
+    {
+      "name": "required_local_artefacts",
+      "status": "PASS",
+      "detail": "All required local chain files are present."
+    },
+    {
+      "name": "documentation_chronology_pre_audit_write",
+      "status": "PASS",
+      "detail": "Historical Phase 15\u201318 remaining-issues lines that say a later phase was not started are dated history and were not rewritten. Current headers before this audit: headers already mention Phase 19 complete."
+    },
+    {
+      "name": "v1_unmodified_in_this_audit",
+      "status": "PASS",
+      "detail": "Phase 19 audit writes only under V2/. V1 is reference-only. Non-V2 status lines=none"
+    }
+  ],
+  "overall": "PASS",
+  "paths": {
+    "evidence": "project_record/evidence/phase19_reproducibility_audit.md",
+    "manifest": "results/final/phase19_artefact_manifest.md"
+  }
+}

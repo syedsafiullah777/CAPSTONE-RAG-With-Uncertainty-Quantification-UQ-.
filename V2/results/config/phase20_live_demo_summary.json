@@ -1,0 +1,260 @@
+{
+  "phase": 20,
+  "run_id": "phase20_20260828T180650Z_36ed9b1a",
+  "status": "NEEDS_VERIFICATION",
+  "status_note": "This process used backend=mock. Official Phase 20 live validation requires Colab T4 + Qwen3-8B + llama_cpp. Local mock/Mac results are plumbing only.",
+  "backend": "mock",
+  "official_colab_t4_llama_cpp": false,
+  "locked_threshold": 0.65,
+  "used_precomputed_benchmark_lookup": false,
+  "used_rag_rerun_of_420": false,
+  "recomputed_statistics": false,
+  "modified_frozen_140_40": false,
+  "modified_threshold_lock": false,
+  "modified_phase15_16_17_18": false,
+  "n_comparisons": 3,
+  "n_architectures": 3,
+  "runtime_lock": null,
+  "fingerprint": {
+    "captured_at_utc": "2026-08-28T18:06:51.750377+00:00",
+    "platform": {
+      "system": "Darwin",
+      "release": "25.5.0",
+      "machine": "arm64",
+      "processor": "arm",
+      "python_version": "3.13.4"
+    },
+    "cpu": {
+      "count_logical": 12
+    },
+    "device": "mps_capable_host",
+    "gpu": {
+      "available": false
+    },
+    "torch": {
+      "installed": true,
+      "version": "2.13.0",
+      "cuda_available": false,
+      "cuda_device_count": 0,
+      "cuda_device_name": null
+    },
+    "packages": {
+      "transformers": "5.15.1",
+      "llama_cpp": null,
+      "accelerate": null,
+      "sentence_transformers": "6.0.0",
+      "chromadb": "1.5.9",
+      "datasets": "5.0.1"
+    },
+    "model_config": {
+      "name": "Qwen3-8B",
+      "backend": "mock",
+      "quantisation": "Q4_K_M",
+      "model_path": null,
+      "hf_repo_id": "bartowski/Qwen_Qwen3-8B-GGUF",
+      "gguf_filename": "Qwen_Qwen3-8B-Q4_K_M.gguf",
+      "ollama_model": "qwen3:8b",
+      "temperature": 0.1,
+      "max_new_tokens": 512
+    },
+    "git_commit": "6dc9b21acf50dabe5800d93c84655452a4c9c16d"
+  },
+  "hashes": {
+    "results/raw/phase15_benchmark/phase15_20260826T203744Z_dae9c3a4/cases.jsonl": "f5256ae40fa8db0d6172ff9f4083bbde6c1c4fdb47916baa73529bc8215caafa",
+    "results/processed/phase16_cases.jsonl": "e9e4f80dafffa0d0db970fb4426c9c0b81310717405389b2b7fd5ddb5b231e91",
+    "results/raw/phase16_judge/phase16_judge_20260828T152623Z_06661255/judge.jsonl": "093c4699b68e9653125fcd08e3b25b0d10a3357be3a20bc817a5a71e8498ebe3",
+    "data/final/selected_140_questions.csv": "88899ae9c66fb47bf4aa50e197d91aa171adcb882ae36f066bf614ff40fba087",
+    "data/calibration/calibration_questions.csv": "1325b595ae1f9404802879ad06f52be7f7b63d805ab1edf5b66c3b608a478845",
+    "results/config/threshold.lock.json": "8981233604e64959386292d3d1fbdeebd4e983c0520fde3b4467772281687d88"
+  },
+  "summaries": [
+    {
+      "label": "known_good",
+      "question_id": "finqa_test_1000",
+      "question_source": "frozen",
+      "question": "What is the return on investment if $100 are invested in the S&P 500 at the end of 2008 and sold at the end of 2010, based on the cumulative total shareholder return data provided for Snap-on Incorporated's five-year stock performance graph?",
+      "used_precomputed_benchmark_lookup": false,
+      "locked_threshold": 0.65,
+      "uq_displayed_confidence": "0.6185",
+      "uq_displayed_threshold": "0.6500 (locked)",
+      "architectures": {
+        "single_agent": {
+          "decision": "ANSWER",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 3.707569041987881,
+          "verification_status": null,
+          "confidence": null,
+          "threshold": null
+        },
+        "multi_agent": {
+          "decision": "ANSWER",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.022103791940025985,
+          "verification_status": "WEAK_EVIDENCE",
+          "confidence": 0.425,
+          "threshold": null
+        },
+        "multi_agent_uq": {
+          "decision": "ABSTAIN",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.01684229203965515,
+          "verification_status": "WEAK_EVIDENCE",
+          "confidence": 0.6184698209166527,
+          "threshold": 0.65
+        }
+      },
+      "n_architectures": 3,
+      "independent_same_question": true
+    },
+    {
+      "label": "fresh_kb",
+      "question_id": "live_fresh_aa4c046eaf",
+      "question_source": "fresh",
+      "question": "According to Snap-on Incorporated's five-year stock performance graph, what was the cumulative total shareholder return on Snap-on's own common stock at December 31, 2013, if $100 was invested on December 31, 2008?",
+      "used_precomputed_benchmark_lookup": false,
+      "locked_threshold": 0.65,
+      "uq_displayed_confidence": "0.6212",
+      "uq_displayed_threshold": "0.6500 (locked)",
+      "architectures": {
+        "single_agent": {
+          "decision": "ANSWER",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.028538625105284154,
+          "verification_status": null,
+          "confidence": null,
+          "threshold": null
+        },
+        "multi_agent": {
+          "decision": "ANSWER",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.016345832962542772,
+          "verification_status": "WEAK_EVIDENCE",
+          "confidence": 0.425,
+          "threshold": null
+        },
+        "multi_agent_uq": {
+          "decision": "ABSTAIN",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.015616917051374912,
+          "verification_status": "WEAK_EVIDENCE",
+          "confidence": 0.6212071046233177,
+          "threshold": 0.65
+        }
+      },
+      "n_architectures": 3,
+      "independent_same_question": true
+    },
+    {
+      "label": "insufficient_evidence",
+      "question_id": "live_insufficient_evidence",
+      "question_source": "insufficient",
+      "question": "What was SpaceX's audited GAAP net income for fiscal year 2025, and how many Starship orbital launches did the company complete that year?",
+      "used_precomputed_benchmark_lookup": false,
+      "locked_threshold": 0.65,
+      "uq_displayed_confidence": "0.5351",
+      "uq_displayed_threshold": "0.6500 (locked)",
+      "architectures": {
+        "single_agent": {
+          "decision": "ANSWER",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.030174292041920125,
+          "verification_status": null,
+          "confidence": null,
+          "threshold": null
+        },
+        "multi_agent": {
+          "decision": "ANSWER",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.01950008305720985,
+          "verification_status": "WEAK_EVIDENCE",
+          "confidence": 0.425,
+          "threshold": null
+        },
+        "multi_agent_uq": {
+          "decision": "ABSTAIN",
+          "n_evidence": 4,
+          "has_answer": true,
+          "error": null,
+          "backend": "mock",
+          "device": "mps_capable_host",
+          "gpu": null,
+          "latency_seconds": 0.016750458045862615,
+          "verification_status": "WEAK_EVIDENCE",
+          "confidence": 0.5350721642374993,
+          "threshold": 0.65
+        }
+      },
+      "n_architectures": 3,
+      "independent_same_question": true
+    }
+  ],
+  "recorded_at_utc": "2026-08-28T18:06:58.879004+00:00",
+  "entrypoint": "PYTHONPATH=. streamlit run app/streamlit_app.py",
+  "colab_notebook": "notebooks/colab_phase11_live.ipynb",
+  "ui_verification": {
+    "streamlit_http": {
+      "url": "http://127.0.0.1:8502/",
+      "http_status": 200,
+      "html_bytes": 11141,
+      "recorded_at_utc": "2026-08-28T18:09:58.854204+00:00",
+      "note": "Local Mac Streamlit shell only. Not Colab T4. SPA click-through not executed."
+    },
+    "source_fields_present": [
+      "retrieved evidence / scores / metadata",
+      "generated answer",
+      "verification",
+      "UQ confidence",
+      "locked threshold T=0.65",
+      "ANSWER/ABSTAIN",
+      "backend/device/gpu",
+      "ERROR/UNAVAILABLE without fabricated answers"
+    ],
+    "colab_t4_browser_demo": "NEEDS_VERIFICATION"
+  },
+  "secrets_scan": "PASS_no_api_keys_in_live_source",
+  "pytest": {
+    "phase20_tests_passed": 6,
+    "full_suite_excluding_analyse": 143,
+    "deselected": 1
+  }
+}
