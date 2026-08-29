@@ -1,188 +1,78 @@
-# Multi-Agent RAG Evaluation Platform
+# Multi-Agent RAG with Uncertainty Quantification
 
-MSc final project prototype for:
+This repository contains the **final V2 MSc AI project**.
 
-**Design and Evaluation of a Multi-Agent Retrieval-Augmented Generation Framework with Uncertainty Quantification for Enterprise Knowledge Systems**
+**V2 is the canonical implementation.** Work from `V2/` (and `.cursor/rules/` for project constraints). Legacy root-level V1 code has been removed so the repository is not confused with an earlier prototype.
 
-The project separates the **interactive Streamlit app** from the **automated research pipeline**. Both use the same backend retrieval, agent, uncertainty, and Ollama components.
+## Research design
 
-## Architecture
+The project compares three RAG architectures on the same frozen financial-document questions (T²-RAGBench → FinQA):
+
+| Architecture | Role |
+| --- | --- |
+| Single-Agent RAG | Retriever → LLM |
+| Multi-Agent RAG | Retriever → LLM → verifier |
+| Multi-Agent RAG + UQ | Retriever → LLM → verifier → confidence → ANSWER / ABSTAIN |
+
+Controlled constants (where scientifically appropriate): corpus, knowledge base, embeddings, retrieval configuration, top-k, LLM, generation settings, and evaluation configuration. The experimental variable is **RAG architecture**.
+
+### Frozen evaluation set
+
+| Item | Value |
+| --- | --- |
+| Final TEST set | 140 questions (`V2/data/final/selected_140_questions.csv`) |
+| DEV calibration | 40 questions (`V2/data/calibration/calibration_questions.csv`) |
+| Benchmark size | 140 questions × 3 architectures = **420** architecture-question cases |
+| Locked abstention threshold | **T = 0.65** (`V2/results/config/threshold.lock.json`) |
+| LLM | Qwen3-8B, Q4_K_M, `llama_cpp` |
+| Official compute | Google Colab Tesla T4 |
+
+The threshold was locked on DEV calibration data. It was not tuned on the frozen 140-question TEST set.
+
+Results must be read from saved V2 artefacts. This README does not claim that Multi-Agent RAG significantly improved accuracy, or that uncertainty quantification universally improves accuracy. Answer-quality scoring uses a **custom, RAGAS-inspired judge**, not official RAGAS.
+
+## Repository layout
 
 ```text
-RAGBench / enterprise PDFs
-        |
-        v
-Knowledge base: chunking -> embeddings -> ChromaDB
-        |
-        +--> evaluation pipeline -> experiment_results.csv -> summary.csv -> charts
-        |
-        +--> Streamlit app -> live question answering + dashboard
+.cursor/rules/     project constraints (read-only reference for V2 work)
+V2/                canonical project
+.gitignore
+README.md
 ```
 
-## Project Structure
+Authoritative V2 locations:
 
-```text
-app/
-  streamlit_app.py
-  pages/
-    Chat.py
-    Dashboard.py
-    About.py
-
-data/
-  ragbench/
-  sampled_questions.csv
-
-knowledge_base/
-  documents/
-  embeddings/
-
-models/
-  ollama.py
-
-rag/
-  retriever.py
-  embeddings.py
-  chunking.py
-  single_agent.py
-  multi_agent.py
-  uncertainty.py
-
-evaluation/
-  dataset_loader.py
-  evaluator.py
-  metrics.py
-  experiment.py
-  save_results.py
-  charts.py
-
-results/
-  experiment_results.csv
-  summary.csv
-  charts/
-```
+| Purpose | Path |
+| --- | --- |
+| Source | `V2/src/` |
+| Config / prompts | `V2/config/` |
+| Dependencies | `V2/requirements.txt` |
+| Streamlit live artefact | `V2/app/streamlit_app.py` |
+| Final live-demo notebook | `V2/notebooks/colab_phase21_final_live_demo.ipynb` |
+| Project record | `V2/project_record/PROJECT_MASTER_RECORD.md` |
+| Frozen results | `V2/results/` (Phase 15–18 artefacts under raw / processed / metrics / analysis) |
 
 ## Setup
 
 ```bash
+cd V2
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Install or start Ollama, then make sure the configured model exists:
+Local CPU/UI checks can use the mock backend. Official Qwen3-8B inference is intended for a Colab GPU runtime (Tesla T4), not this Mac as the required compute path.
+
+## Live demonstration
+
+From `V2/`:
 
 ```bash
-ollama pull qwen3.5:9b
+PYTHONPATH=. streamlit run app/streamlit_app.py
 ```
 
-If your model name differs, edit `OLLAMA_MODEL` in `config.py`.
+GPU demo notebook: `V2/notebooks/colab_phase21_final_live_demo.ipynb`.
 
-## Run The Streamlit App
+## Reproducibility
 
-```bash
-streamlit run app.py
-```
-
-The app is for interactive demonstration:
-
-1. Upload PDFs.
-2. Build the shared knowledge base.
-3. Ask a question.
-4. Compare Single-Agent RAG, Multi-Agent RAG, and Multi-Agent RAG + UQ.
-
-The Dashboard page reads saved research outputs from `results/`; it does not rerun the benchmark.
-
-## RAGBench Sampling
-
-Create a reproducible 300-question sample:
-
-```bash
-python -m evaluation.dataset_loader
-```
-
-The sample plan is defined in `config.py`:
-
-| Dataset | Questions |
-| --- | ---: |
-| techqa | 100 |
-| emanual | 100 |
-| cuad | 50 |
-| finqa | 25 |
-| expertqa | 25 |
-
-The output is:
-
-```text
-data/sampled_questions.csv
-```
-
-## Run The Automated Experiment
-
-Build the shared knowledge base from the sampled RAGBench contexts:
-
-```bash
-python -m evaluation.build_knowledge_base
-```
-
-Then run the experiment:
-
-```bash
-python -m evaluation.experiment
-```
-
-This runs every sampled question through:
-
-- Single-Agent RAG
-- Multi-Agent RAG
-- Multi-Agent RAG + Uncertainty Quantification
-
-Outputs:
-
-```text
-results/experiment_results.csv
-results/summary.csv
-```
-
-## Generate Dissertation Charts
-
-```bash
-python -m evaluation.charts
-```
-
-Outputs:
-
-```text
-results/charts/accuracy.png
-results/charts/hallucination.png
-results/charts/confidence.png
-results/charts/response_time.png
-```
-
-## Research Design
-
-The comparison is controlled:
-
-- Same documents
-- Same embedding model
-- Same ChromaDB index
-- Same Ollama/Qwen model
-- Same benchmark questions
-
-Only the workflow changes:
-
-| System | Workflow |
-| --- | --- |
-| Single-Agent RAG | Retriever -> LLM |
-| Multi-Agent RAG | Retriever -> LLM -> Verifier |
-| Multi-Agent RAG + UQ | Retriever -> LLM -> Verifier -> Uncertainty -> Decision |
-
-Core metrics:
-
-- Answer correctness
-- Faithfulness
-- Retrieval precision
-- Hallucination rate
-- Mean confidence
-- Abstention rate
-- Average response time
+Install and run from `V2/`. Do not regenerate frozen datasets, lock files, or Phase 15–18 results unless you are explicitly starting a new experiment. Historical V1 implementations (root `app/`, `evaluation/`, `rag/`, Ollama/qwen3.5, RAGBench sampling) have been removed from this repository.
