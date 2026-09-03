@@ -1,78 +1,92 @@
 # Multi-Agent RAG with Uncertainty Quantification
 
-This repository contains the **final V2 MSc AI project**.
+MSc Artificial Intelligence capstone project by Syed Safiullah.
 
-**V2 is the canonical implementation.** Work from `V2/` (and `.cursor/rules/` for project constraints). Legacy root-level V1 code has been removed so the repository is not confused with an earlier prototype.
+This repository is the final V2 implementation. It compares three retrieval-augmented generation (RAG) architectures on frozen FinQA questions from T²-RAGBench, with uncertainty quantification and confidence-based abstention.
 
-## Research design
+## Architecture overview
 
-The project compares three RAG architectures on the same frozen financial-document questions (T²-RAGBench → FinQA):
+Shared retrieval (BAAI/bge-small-en-v1.5, Chroma, cosine distance, top-k = 4) feeds one of:
 
-| Architecture | Role |
+| Architecture | Pipeline |
 | --- | --- |
-| Single-Agent RAG | Retriever → LLM |
-| Multi-Agent RAG | Retriever → LLM → verifier |
-| Multi-Agent RAG + UQ | Retriever → LLM → verifier → confidence → ANSWER / ABSTAIN |
+| Single-Agent RAG | Retriever → Qwen3-8B |
+| Multi-Agent RAG | Retriever → Qwen3-8B draft → verification |
+| Multi-Agent RAG + UQ | Retriever → draft → verification → confidence → ANSWER or ABSTAIN |
 
-Controlled constants (where scientifically appropriate): corpus, knowledge base, embeddings, retrieval configuration, top-k, LLM, generation settings, and evaluation configuration. The experimental variable is **RAG architecture**.
+UQ confidence is the mean of the retrieval score and the verification score. The locked abstention threshold is **T = 0.65**, selected on 40 separate DEV questions and not tuned on the frozen TEST set.
 
-### Frozen evaluation set
+Official generation used Qwen3-8B (Q4_K_M) with `llama_cpp` on a Google Colab Tesla T4. The Streamlit app runs the same three pipelines; it does not look up frozen benchmark answers for new questions.
 
-| Item | Value |
-| --- | --- |
-| Final TEST set | 140 questions (`V2/data/final/selected_140_questions.csv`) |
-| DEV calibration | 40 questions (`V2/data/calibration/calibration_questions.csv`) |
-| Benchmark size | 140 questions × 3 architectures = **420** architecture-question cases |
-| Locked abstention threshold | **T = 0.65** (`V2/results/config/threshold.lock.json`) |
-| LLM | Qwen3-8B, Q4_K_M, `llama_cpp` |
-| Official compute | Google Colab Tesla T4 |
-
-The threshold was locked on DEV calibration data. It was not tuned on the frozen 140-question TEST set.
-
-Results must be read from saved V2 artefacts. This README does not claim that Multi-Agent RAG significantly improved accuracy, or that uncertainty quantification universally improves accuracy. Answer-quality scoring uses a **custom, RAGAS-inspired judge**, not official RAGAS.
-
-## Repository layout
+## Repository structure
 
 ```text
-.cursor/rules/     project constraints (read-only reference for V2 work)
-V2/                canonical project
-.gitignore
+V2/
+  app/                 Streamlit live artefact
+  src/                 RAG, retrieval, evaluation, statistics
+  config/              Experiment and prompt configuration
+  scripts/             CLI entrypoints
+  data/                Frozen 140 TEST and 40 DEV question files
+  results/             Canonical evaluation artefacts (Phases 15–18)
+  notebooks/           Colab launchers, including the final live demo
+  project_record/      Project record and validation evidence
+  tests/               Unit and static checks
+  requirements.txt
 README.md
+.gitignore
 ```
 
-Authoritative V2 locations:
+## Technologies
 
-| Purpose | Path |
-| --- | --- |
-| Source | `V2/src/` |
-| Config / prompts | `V2/config/` |
-| Dependencies | `V2/requirements.txt` |
-| Streamlit live artefact | `V2/app/streamlit_app.py` |
-| Final live-demo notebook | `V2/notebooks/colab_phase21_final_live_demo.ipynb` |
-| Project record | `V2/project_record/PROJECT_MASTER_RECORD.md` |
-| Frozen results | `V2/results/` (Phase 15–18 artefacts under raw / processed / metrics / analysis) |
+Python, Streamlit, Chroma, sentence-transformers (BAAI/bge-small-en-v1.5), Qwen3-8B via `llama_cpp` (official GPU path), pytest.
 
-## Setup
+## Launch the live artefact
 
 ```bash
 cd V2
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-Local CPU/UI checks can use the mock backend. Official Qwen3-8B inference is intended for a Colab GPU runtime (Tesla T4), not this Mac as the required compute path.
-
-## Live demonstration
-
-From `V2/`:
-
-```bash
 PYTHONPATH=. streamlit run app/streamlit_app.py
 ```
 
-GPU demo notebook: `V2/notebooks/colab_phase21_final_live_demo.ipynb`.
+Install dependencies first (`python -m venv .venv`, then `pip install -r requirements.txt` from `V2/`). A local mock backend can exercise the UI. Official Qwen3-8B answers require a CUDA GPU runtime and the GGUF weights; those weights are not stored in this repository.
 
 ## Reproducibility
 
-Install and run from `V2/`. Do not regenerate frozen datasets, lock files, or Phase 15–18 results unless you are explicitly starting a new experiment. Historical V1 implementations (root `app/`, `evaluation/`, `rag/`, Ollama/qwen3.5, RAGBench sampling) have been removed from this repository.
+1. Frozen TEST set: `V2/data/final/selected_140_questions.csv` (140 questions).
+2. DEV calibration set: `V2/data/calibration/calibration_questions.csv` (40 questions).
+3. Locked threshold: `V2/results/config/threshold.lock.json` (T = 0.65).
+4. Official Colab notebooks live under `V2/notebooks/` (full benchmark: `colab_phase15_full_benchmark.ipynb`; judge: `colab_phase16_judge.ipynb`; live demo: `colab_phase21_final_live_demo.ipynb`).
+5. Source PDFs and the Chroma index are large generated artefacts and are not committed. Rebuild locally with `V2/scripts/build_index.py` if reproducing retrieval from documents.
+
+Do not regenerate the frozen Phase 15–18 result files for inspection of the submitted experiment.
+
+## Canonical evaluation artefacts
+
+The official TEST evaluation is **140 questions × 3 architectures = 420** architecture–question cases, plus a separate **420-case** post-hoc LLM-as-judge faithfulness pass (custom / RAGAS-inspired; not the official RAGAS library).
+
+| Artefact | Path |
+| --- | --- |
+| Benchmark summary | `V2/results/config/phase15_benchmark_summary.json` |
+| CPU-scored cases | `V2/results/processed/phase16_cases.jsonl` |
+| Judge summary | `V2/results/metrics/phase16_judge_summary.csv` |
+| Statistics | `V2/results/metrics/phase17_tests.csv` |
+| Error analysis | `V2/results/final/phase18_error_analysis.md` |
+| Dissertation mapping | `V2/project_record/PROJECT_MASTER_RECORD.md` |
+
+## Mapping to the dissertation
+
+| Topic | Location |
+| --- | --- |
+| Single-Agent RAG | `V2/src/rag/single_agent.py` |
+| Multi-Agent RAG | `V2/src/rag/multi_agent.py`, `V2/src/rag/verification.py` |
+| Multi-Agent + UQ | `V2/src/rag/multi_agent_uq.py`, `V2/src/rag/uncertainty.py` |
+| Retrieval | `V2/src/retrieval/` |
+| Prompts | `V2/config/prompts.yaml`, `V2/src/rag/prompts.py` |
+| Streamlit artefact | `V2/app/streamlit_app.py` |
+| Evaluation / judge | `V2/src/evaluation/` |
+| Statistics | `V2/src/statistics/` |
+
+## Notes
+
+This repository contains the author’s submitted MSc project code and frozen evaluation artefacts.
+
+Model weights (Qwen GGUF), Hugging Face caches, and the built Chroma document index are not included. The custom judge is not official RAGAS. The repository does not claim that Multi-Agent RAG significantly improved numeric accuracy, that UQ universally improves accuracy, or that UQ confidence is a calibrated probability.
