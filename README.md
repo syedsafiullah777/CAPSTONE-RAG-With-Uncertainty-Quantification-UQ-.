@@ -28,7 +28,7 @@ V2/
   scripts/             CLI entrypoints
   data/                Frozen 140 TEST and 40 DEV question files
   results/             Canonical evaluation artefacts (Phases 15–18)
-  notebooks/           Colab launchers, including the final live demo
+  notebooks/           Final V2 Colab notebooks (see below)
   project_record/      Project record and validation evidence
   tests/               Unit and static checks
   requirements.txt
@@ -54,7 +54,7 @@ Install dependencies first (`python -m venv .venv`, then `pip install -r require
 1. Frozen TEST set: `V2/data/final/selected_140_questions.csv` (140 questions).
 2. DEV calibration set: `V2/data/calibration/calibration_questions.csv` (40 questions).
 3. Locked threshold: `V2/results/config/threshold.lock.json` (T = 0.65).
-4. Official Colab notebooks live under `V2/notebooks/` (full benchmark: `colab_phase15_full_benchmark.ipynb`; judge: `colab_phase16_judge.ipynb`; live demo: `colab_phase21_final_live_demo.ipynb`).
+4. Final notebooks and CPU scripts are listed under **Final V2 notebooks and analysis**.
 5. Source PDFs and the Chroma index are large generated artefacts and are not committed. Rebuild locally with `V2/scripts/build_index.py` if reproducing retrieval from documents.
 
 Do not regenerate the frozen Phase 15–18 result files for inspection of the submitted experiment.
@@ -71,6 +71,22 @@ The official TEST evaluation is **140 questions × 3 architectures = 420** archi
 | Statistics | `V2/results/metrics/phase17_tests.csv` |
 | Error analysis | `V2/results/final/phase18_error_analysis.md` |
 | Dissertation mapping | `V2/project_record/PROJECT_MASTER_RECORD.md` |
+
+## Final V2 notebooks and analysis
+
+Notebooks are stored in `V2/notebooks/` under their original phase names. Phases 17–19 were implemented as CPU scripts over frozen artefacts; they were never Colab notebooks, and none have been invented here.
+
+| Phase | Role | Location |
+| --- | --- | --- |
+| 15 | Official 420-case RAG benchmark (Colab T4) | `V2/notebooks/colab_phase15_full_benchmark.ipynb` |
+| 16 | Official 420-case post-hoc LLM-as-judge | `V2/notebooks/colab_phase16_judge.ipynb` |
+| 17 | Final statistics and canonical figures | `V2/scripts/run_statistics.py`, `V2/scripts/render_phase17_figures.py`, `V2/results/metrics/phase17_*` |
+| 18 | Final error analysis | `V2/scripts/run_error_analysis.py`, `V2/results/final/phase18_error_analysis.md` |
+| 19 | Final reproducibility audit | `V2/scripts/run_reproducibility_audit.py`, `V2/results/final/phase19_artefact_manifest.md` |
+| 20 | Live Streamlit artefact validation | `V2/app/streamlit_app.py`; GPU demo notebook `V2/notebooks/colab_phase11_live.ipynb` |
+| 21 | Canonical live-demo launcher | `V2/notebooks/colab_phase21_final_live_demo.ipynb` |
+
+The Phase 15 and 16 notebooks launched the official GPU jobs and do not replace the frozen result files. The Phase 21 notebook starts the Streamlit app on Colab; it does not rerun the benchmark, judge, or statistics. Inspection of Phases 17–19 uses the saved tables and reports, not a new experiment.
 
 ## Mapping to the dissertation
 
