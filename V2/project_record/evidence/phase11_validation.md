@@ -125,7 +125,7 @@
 
 **Runbook (user action required after this launch fix is on GitHub):**
 
-1. Push the launch-fix files to `cursor/empty-v2-workspace` (Colab clones this branch).
+1. Push the launch-fix files to the then-current development workspace (Colab clones that branch).
 2. Open `notebooks/colab_phase11_live.ipynb` on Google Colab with **GPU (T4)**.
 3. Run all cells. Section 5 runs frozen `finqa_test_1000` through all three architectures and must print `device=cuda` and a GPU name (not `mps_capable_host`).
 4. Section 8 starts Streamlit **inside Colab** and prints Colab `proxyPort` URL + an iframe. Do **not** open `http://127.0.0.1:8501` on the Mac.

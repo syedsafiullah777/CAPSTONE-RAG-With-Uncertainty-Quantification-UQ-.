@@ -1,7 +1,6 @@
 # Storage, Backup, Recovery and Monitoring
 
 Project-wide rules for the MSc RAG V2 rebuild.  
-Cursor rule: `.cursor/rules/06-storage-backup-recovery.mdc`  
 Config: `V2/config/experiment.yaml` → `storage`
 
 ---
@@ -169,7 +168,7 @@ No force-push. No secrets. No large raw dumps in git.
 ## 10. Workflow summary
 
 ```text
-Cursor / GitHub (source)
+GitHub (source)
     ↓
 Google Colab GPU notebook (compute)
     ↓

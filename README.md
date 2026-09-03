@@ -76,6 +76,15 @@ The official TEST evaluation is **140 questions × 3 architectures = 420** archi
 
 Notebooks are stored in `V2/notebooks/` under their original phase names. Phases 17–19 were implemented as CPU scripts over frozen artefacts; they were never Colab notebooks, and none have been invented here.
 
+Official final evaluation:
+
+- **Phase 15** = official 420-case RAG benchmark
+- **Phase 16** = official 420-case post-hoc LLM-as-judge
+
+Earlier notebooks (`colab_phase7–10_smoke.ipynb`, `colab_phase12_pilot.ipynb`, `colab_phase14_benchmark_validation.ipynb`) are **historical engineering**: smoke tests, a 6-question pilot, and a 9-case runner validation. They are retained as development evidence and are **not** the official 420-case evaluation.
+
+Large raw JSONL dumps, Qwen GGUF weights, and the built Chroma index are intentionally not tracked on GitHub. Inspect official summaries and scored tables instead of regenerating Phase 15–16.
+
 | Phase | Role | Location |
 | --- | --- | --- |
 | 15 | Official 420-case RAG benchmark (Colab T4) | `V2/notebooks/colab_phase15_full_benchmark.ipynb` |

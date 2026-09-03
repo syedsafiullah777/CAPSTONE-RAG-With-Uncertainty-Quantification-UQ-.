@@ -12,6 +12,8 @@
 
 This audit is read-only on frozen research artefacts. It does **not** rerun RAG, Qwen3-8B generation, LLM-as-judge, benchmark, calibration, or statistical tests. It does **not** modify the frozen 140, DEV 40, T=0.65, Phase 15–18 result files, RAG architectures, or V1.
 
+Examiner note: check 18 (`github_status`) records the git branch in use on 2026-08-28 (a previous development workspace / legacy launch configuration). The frozen machine-readable snapshot in `results/config/phase19_audit.json` is unchanged. That branch name is not the university submission branch (`main`).
+
 ## Research chain audited
 
 40 DEV calibration → locked T=0.65 → frozen 140 test set → 420 benchmark cases → Phase 16 CPU metrics → 420 LLM-judge faithfulness results → Phase 17 statistics → Phase 18 error analysis.
@@ -37,7 +39,7 @@ This audit is read-only on frozen research artefacts. It does **not** rerun RAG,
 | 15 | `metric_definitions` | **PASS** | Primary RQ2 label is `LLM-as-judge faithfulness (Qwen3-8B, custom/RAGAS-inspired)` — not official RAGAS. RQ1 = displayed numeric FinQA match. RQ3 = coverage/selective accuracy/unsupported_emitted at locked T. unsupported_emitted = ANSWER and displayed numeric incorrect (not a … |
 | 16 | `git_does_not_track_raw_jsonl_dumps` | **PASS** | tracked jsonl count=1; forbidden_raw=[]; forbidden_judge=[]; tracked=['V2/results/processed/phase16_cases.jsonl'] |
 | 17 | `google_drive_archive` | **NEEDS VERIFICATION** | No Google Drive MSc-RAG folder was listed from this Mac. Searched CloudStorage/GoogleDrive, ~/Google Drive, ~/My Drive. hits=none. Do not claim a Drive backup exists. |
-| 18 | `github_status` | **NEEDS VERIFICATION** | branch=cursor/empty-v2-workspace. Remote: origin	https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (fetch) origin	https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (push) Working tree (short, may inclu… |
+| 18 | `github_status` | **NEEDS VERIFICATION** | branch=[previous development workspace]. Remote: origin	https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (fetch) origin	https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (push) Working tree (short, may inclu… |
 | 19 | `required_local_artefacts` | **PASS** | All required local chain files are present. |
 | 20 | `documentation_chronology_pre_audit_write` | **PASS** | Historical Phase 15–18 remaining-issues lines that say a later phase was not started are dated history and were not rewritten. Current headers before this audit: headers already mention Phase 19 complete. |
 | 21 | `v1_unmodified_in_this_audit` | **PASS** | Phase 19 audit writes only under V2/. V1 is reference-only. Non-V2 status lines=none |
@@ -51,7 +53,7 @@ This audit is read-only on frozen research artefacts. It does **not** rerun RAG,
 - `judge_fingerprint_vs_jsonl_settings`: Judge JSONL is the source of truth for judge-call settings (observed temperature=0.0, max_new_tokens=32, n_ctx=4096, all_match=True). phase16_judge_runtime_fingerprint.json model_config has temperature=0.1 max_new_tokens=512 (RAG generation defaults). Documented in Phase 16 judge notes; not treated as a result rewrite.
 - `experiment_yaml_threshold_fields`: Official T is threshold.lock.json; yaml confidence_threshold is null by design (Phase 12 isolation). dataset.phase5_threshold_locked remains false as a leftover Phase 5 freeze flag — stale relative to Phase 13 lock; not treated as the scientific source of T.
 - `google_drive_archive`: No Google Drive MSc-RAG folder was listed from this Mac. Searched CloudStorage/GoogleDrive, ~/Google Drive, ~/My Drive. hits=none. Do not claim a Drive backup exists.
-- `github_status`: branch=cursor/empty-v2-workspace. Remote:
+- `github_status`: branch=[previous development workspace]. Remote:
 origin	https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (fetch)
 origin	https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git (push)
 Working tree (short, may include uncommitted V2 work):

@@ -87,28 +87,29 @@ The setup cell clones the repo to `/content/capstone-rag/` and uses `/content/ca
 ## GitHub repo layout
 
 ```text
-CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-/
-├── .cursor/rules/          ← Cursor rules (not used in Colab)
+repository-root/
 └── V2/                     ← clone target for all Colab work
 ```
 
-Branch: **`cursor/empty-v2-workspace`** (there is no `main` branch).
+Current submission branch: **`main`**. Historical Colab clones used a previous development workspace (legacy launch configuration).
 
 ## Workflow
 
-1. Push from Mac (repo root contains both `.cursor/` and `V2/`):
+1. Push V2 source from the repository root:
    ```bash
-   git add V2/ .cursor/
+   git add V2/
    git commit -m "your message"
-   git push origin cursor/empty-v2-workspace
+   git push
    ```
-2. Colab clones repo → enters **`V2/`** automatically
+2. Colab clones the repo → enters **`V2/`** automatically
 3. Run smoke cells
+
+These Phase 7–10, 12, and 14 notebooks are **historical engineering / smoke / pilot / 9-case validation** artefacts. They are **not** the official 420-case evaluation. Official evaluation: Phase 15 (benchmark) and Phase 16 (judge).
 
 ## Clone settings (in notebook)
 
 ```python
-BRANCH = 'cursor/empty-v2-workspace'
+BRANCH = 'main'
 V2_ROOT = /content/capstone-rag/V2
 ```
 

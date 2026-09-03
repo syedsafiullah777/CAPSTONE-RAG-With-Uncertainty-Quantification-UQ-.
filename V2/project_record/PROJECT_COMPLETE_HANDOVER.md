@@ -47,7 +47,7 @@ This document did **not** rerun RAG, Qwen3-8B, the LLM-as-judge, calibration, th
 | --- | --- |
 | `README.md` | “revised MSc AI capstone artefact” |
 | `IMPLEMENTATION_PLAN.md` | “MSc RAG V2 rebuild” |
-| `.cursor/rules/02-research-constraints.mdc` | “MSc controlled RAG research prototype” |
+| `PROJECT_CONTEXT.md` | “MSc controlled RAG research prototype” (working description) |
 | `config/experiment.yaml` | `project.name: msc-rag-v2` |
 
 **Exact programme name, module code, credits, supervisor:** **NEEDS VERIFICATION** — not stated in V2 files.
@@ -58,7 +58,7 @@ From `README.md`:
 
 > A controlled research prototype comparing three RAG architectures over a financial document corpus (T²-RAGBench FinQA), with uncertainty quantification and confidence-based abstention.
 
-From `.cursor/rules/02-research-constraints.mdc`: three locked RQs; 140 × 3 = 420 independent architecture–question evaluations; primary experimental variable = RAG architecture.
+From `PROJECT_CONTEXT.md` and `PROJECT_MASTER_RECORD.md`: three locked RQs; 140 × 3 = 420 independent architecture–question evaluations; primary experimental variable = RAG architecture.
 
 ### Problem statement
 
@@ -124,7 +124,7 @@ Per-phase engineering objectives exist in `PROJECT_MASTER_RECORD.md` (Phase 1–
 2. **RQ2:** Does uncertainty quantification reduce hallucinated/unsupported responses in Multi-Agent RAG?
 3. **RQ3:** Does confidence-based abstention improve reliability when supporting evidence is insufficient?
 
-**B. `.cursor/rules/02-research-constraints.mdc` (longest form)**
+**B. `PROJECT_MASTER_RECORD.md` (longest locked form)**
 
 1. **RQ1:** Does a Multi-Agent Retrieval-Augmented Generation architecture improve answer accuracy compared with a traditional Single-Agent RAG system over a financial document corpus?
 2. **RQ2:** Does uncertainty quantification reduce hallucinated or unsupported responses in a Multi-Agent RAG system?
@@ -555,7 +555,7 @@ Note shown on UQ panels: “Warning is a user-facing confidence indicator and do
 | Notebook | `notebooks/colab_phase15_full_benchmark.ipynb` | master record |
 | Entrypoint | `scripts/run_full_benchmark.py` (mock refused) | same |
 
-**Stale docs:** `README.md` still says Phase 15 “Execution **not launched** during notebook creation.” **Authoritative:** summary JSON 420/420 PASS. `PROJECT_CONTEXT.md` still says “No Phase 21 started.” **Authoritative:** master record Phase 21 complete (static checks).
+**Stale docs (as recorded 2026-08-29; several items later corrected in the final submission documentation pass):** `README.md` still says Phase 15 “Execution **not launched** during notebook creation.” **Authoritative:** summary JSON 420/420 PASS. `PROJECT_CONTEXT.md` previously said “No Phase 21 started.” **Authoritative:** master record Phase 21 complete (static checks).
 
 ---
 
@@ -796,7 +796,7 @@ Official Colab T4 Qwen live answers: **NEEDS VERIFICATION** (local mock plumbing
 | Browser | Colab `proxyPort(8501)` only — not Mac `127.0.0.1:8501` |
 | Official T4 viva launch | **NEEDS VERIFICATION** |
 
-Git remote observed 2026-08-29: `https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git`, branch `cursor/empty-v2-workspace`. Whether all V2 phases are pushed: **NEEDS VERIFICATION**.
+Git remote observed 2026-08-29: historical development remote `https://github.com/syedsafiullah777/CAPSTONE--RAG-WITH-UNCERTAINITY-QUANTIFICATION-.git`, previous development workspace (legacy launch configuration). Whether all V2 phases were pushed at that date: **NEEDS VERIFICATION**. The university submission repository is a separate remote on `main`.
 
 ---
 
@@ -1103,7 +1103,7 @@ Do not present mock backend outputs as Qwen3-8B results. Do not open Mac `127.0.
 7. **GitHub** — remote exists; whether all phases are committed/pushed **NEEDS VERIFICATION**.
 8. **Official Colab T4 live demo (Phase 20/21)** — **NEEDS VERIFICATION**.
 9. **Which KB copy is viva runtime** — local vs Drive restore.
-10. **Stale documentation:** `README.md` Phase 15 “not launched”; `PROJECT_CONTEXT.md` “No Phase 21 started”; `phase18_error_analysis.md` / `phase19_artefact_manifest.md` “Phase 20 not started”; `IMPLEMENTATION_PLAN.md` Phase 18 labelled as dissertation pack; yaml `phase5_threshold_locked: false`; master-record snapshot “Arch3 reuse NEEDS VERIFICATION”.
+10. **Stale documentation (as recorded 2026-08-29):** `README.md` Phase 15 “not launched”; `PROJECT_CONTEXT.md` then said “No Phase 21 started”; `phase18_error_analysis.md` / `phase19_artefact_manifest.md` “Phase 20 not started”; `IMPLEMENTATION_PLAN.md` Phase 18 labelled as dissertation pack; yaml `phase5_threshold_locked: false`; master-record snapshot “Arch3 reuse NEEDS VERIFICATION”. The Phase 21 / live-artefact chronology in examiner-facing docs was corrected in the final submission documentation pass; frozen Phase 19 JSON was not rewritten.
 11. **Judge fingerprint vs judge-call hyperparameters** — documented mismatch.
 12. **Embedding revision pin** — null in yaml.
 13. **Hugging Face dataset licence text** — not copied in V2.

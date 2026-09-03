@@ -216,7 +216,7 @@ logging:
   console: true
   file: true
 
-# Storage, backup, recovery — see docs/storage_backup_recovery.md and .cursor/rules/06-storage-backup-recovery.mdc
+# Storage, backup, recovery — see docs/storage_backup_recovery.md
 storage:
   roles:
     github: source_version_control

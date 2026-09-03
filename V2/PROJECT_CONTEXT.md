@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT
 
-Concise persistent context for V2 Cursor sessions. Update when major decisions change.
+Concise persistent context for the V2 project. Update when major decisions change.
 
 ## Title
 
@@ -56,14 +56,14 @@ Notes: `V2/docs/phase20_live_artefact.md`. Evidence: `V2/project_record/evidence
 
 ## Phase status
 
-**Phase 20 live-artefact validation complete** (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` **NEEDS VERIFICATION**). Phases 15–19 remain **PASS** on their recorded criteria. **No Phase 21 started.**
+**Phase 20 live-artefact validation complete** (local plumbing **PASS**; official Colab T4 + Qwen3-8B + `llama_cpp` **NEEDS VERIFICATION**). Phases 15–19 remain **PASS** on their recorded criteria. **Phase 21** canonical live-demo launcher notebook is present (`notebooks/colab_phase21_final_live_demo.ipynb`); it does not rerun the 420-case benchmark or judge.
 
 ## Storage / backup / recovery
 
 - Spec: `V2/docs/storage_backup_recovery.md`
 - Plan section: `V2/docs/IMPLEMENTATION_PLAN.md` → Storage, Backup, Recovery and Monitoring
 - Config: `V2/config/experiment.yaml` → `storage`
-- Cursor rule: `.cursor/rules/06-storage-backup-recovery.mdc`
+- Storage specification: `V2/docs/storage_backup_recovery.md`
 - Phase backup template: `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
 - Validation evidence: `V2/project_record/evidence/phaseN_validation.md`
 - Phase 8 notes: `V2/docs/phase8_single_agent.md`

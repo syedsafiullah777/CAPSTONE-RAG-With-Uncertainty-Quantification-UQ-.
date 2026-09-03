@@ -10,6 +10,4 @@ Outputs:
 - `results/final/phase19_artefact_manifest.md`
 - `results/config/phase19_audit.json`
 
-Phase 20 (dissertation evidence pack) is **not started**.
-
-Correction (2026-08-28): numbered Phase 20 was implemented as **live-artefact validation**, not a dissertation pack. See `docs/phase20_live_artefact.md`. No Phase 21 started.
+This note records the earlier project state. Numbered Phase 20 was implemented as **live-artefact validation**, not a dissertation pack. See `docs/phase20_live_artefact.md`. Phase 21 was completed subsequently as the canonical live-demo launcher (`notebooks/colab_phase21_final_live_demo.ipynb`); it does not rerun the 420-case benchmark or judge.

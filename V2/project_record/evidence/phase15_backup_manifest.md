@@ -96,4 +96,4 @@ Legend: Local = exists on this Mac now. Drive verified = listed from this machin
 
 ## GitHub
 
-Branch `cursor/empty-v2-workspace` was **clean** at inspection (`d1a4aaa` on origin). Phase 15 **source** is already pushed. Local raw/config/log files were gitignored / untracked. After this verification, commit the new evidence + allowlisted config snapshots (not the JSONL).
+The previous development workspace was **clean** at inspection (`d1a4aaa` on the then-current remote). Phase 15 **source** is already pushed. Local raw/config/log files were gitignored / untracked. After this verification, commit the new evidence + allowlisted config snapshots (not the JSONL).

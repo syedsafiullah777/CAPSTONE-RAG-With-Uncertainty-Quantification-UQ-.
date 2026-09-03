@@ -8,7 +8,7 @@ Historical live notebooks (`notebooks/colab_phase11_live.ipynb` and earlier) rem
 
 ## What this notebook does
 
-1. Clone or pull V2 from GitHub (`cursor/empty-v2-workspace`).
+1. Clone or pull V2 from GitHub (`main`; historical Colab clones used a previous development workspace).
 2. Mount Google Drive and restore `MyDrive/MSc-RAG/artifacts/knowledge_base/` into `V2/knowledge_base/`.
 3. Verify the Chroma collection is non-empty and matches the Phase 6 manifest chunk count.
 4. Verify CUDA, Tesla T4, Qwen3-8B Q4_K_M, and `llama_cpp`. Refuse Darwin/CPU/mock/Ollama.

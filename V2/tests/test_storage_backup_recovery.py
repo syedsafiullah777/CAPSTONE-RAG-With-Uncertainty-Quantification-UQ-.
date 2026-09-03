@@ -37,8 +37,6 @@ def test_storage_docs_and_rules_exist() -> None:
     assert (root / "project_record" / "PHASE_COMPLETION_BACKUP_TEMPLATE.md").is_file()
     assert (root / "project_record" / "evidence" / "README.md").is_file()
     assert (root / "project_record" / "evidence" / "phase7_validation.md").is_file()
-    repo_root = root.parent
-    assert (repo_root / ".cursor" / "rules" / "06-storage-backup-recovery.mdc").is_file()
 
 
 def test_validation_evidence_config() -> None:

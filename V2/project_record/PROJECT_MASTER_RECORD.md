@@ -90,7 +90,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Phase 14 Colab T4 9-case | **PASS** (2026-08-26T20:11:45Z); Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `20ee91e` | `phase14_smoke_test.json` |
 | Phase 14 Colab run ID | `phase14_20260826T200828Z_e91e588d` | 9/9; T=0.65 LOCKED |
 | Colab Phase 14 Drive sync (from summary) | reported `MyDrive/MSc-RAG/results/raw/phase14_benchmark/phase14_20260826T200828Z_e91e588d` | JSON artefact; Drive folder not re-checked locally |
-| Phase 15 notebook | `notebooks/colab_phase15_full_benchmark.ipynb` | on GitHub (`cursor/empty-v2-workspace`) |
+| Phase 15 notebook | `notebooks/colab_phase15_full_benchmark.ipynb` | on GitHub (current submission: `main`; historical clones used a previous development workspace) |
 | Phase 15 entrypoint | `scripts/run_full_benchmark.py` | mock refused; n=140 |
 | Phase 15 Colab T4 420-case | **PASS** (local inspect 2026-08-27); Tesla T4; `llama_cpp`; Qwen3-8B Q4_K_M; git `e3c6094` | `phase15_smoke_test.json` |
 | Phase 15 Colab run ID | `phase15_20260826T203744Z_dae9c3a4` | 420/420; T=0.65 LOCKED |
@@ -128,7 +128,7 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 | Item | Status |
 | --- | --- |
 | Storage model documented | GitHub / Colab / Drive / Local Mac |
-| Cursor rule | `.cursor/rules/06-storage-backup-recovery.mdc` |
+| Storage specification | `docs/storage_backup_recovery.md` |
 | Implementation plan | `docs/IMPLEMENTATION_PLAN.md` |
 | Config | `config/experiment.yaml` → `storage` |
 | Drive root | `Google Drive/MSc-RAG/` — **NEEDS VERIFICATION** (not yet confirmed on user's Drive) |
@@ -142,12 +142,12 @@ Plan intent is secondary to actual code, configuration, artefacts, and test resu
 
 Append-only. Historical phase sections below are not rewritten when assumptions change.
 
-1. **V1 is reference-only.** All implementation under `V2/` (and Cursor rules under `.cursor/rules/`).
+1. **V1 is reference-only.** All implementation under `V2/` (project documentation under `V2/docs/` and `V2/project_record/`).
 2. **FinQA test** = frozen evaluation 140; **FinQA dev** = calibration only; never tune threshold on test.
 3. **Gold `context` is evaluation-only**, not the retrieval corpus. KB must use source PDFs.
 4. **Sampling seeds frozen:** test seed 42; calibration seed 42. Do not change freezes for result-driven reasons.
 5. **Threshold not locked in Phase 5.** Lock before final test evaluation (later phase).
-6. **Master record rule added 2026-08-21:** `.cursor/rules/05-project-master-record.mdc` — update this file after every completed phase.
+6. **Master record rule added 2026-08-21:** update this file after every completed phase.
 7. **Phase 6 KB:** Source PDFs only (not gold context); Chroma + bge-small-en-v1.5; 230 docs / 1239 chunks verified.
 8. **Phase 7 backends:** Final 420-case benchmark must use Colab GPU (`llama_cpp` or `transformers`). `ollama_dev` is optional local smoke only and is not the official benchmark path.
 9. **Phase 7 remote strategy (2026-08-21 correction):** Use **standard Google Colab GPU notebooks** (`notebooks/colab_phase7_smoke.ipynb`). Do **not** use Colab CLI / `gcloud`. Architecture (Qwen3-8B, model abstraction, fingerprinting, checkpoint/resume design) unchanged. Next validation: Colab GPU verification.
@@ -182,8 +182,8 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 38. **Phase 17 figure refresh (2026-08-28):** Presentation-only redraw of six dissertation figures from saved Phase 17 tables. No RAG/Qwen/judge rerun. No statistical tests recomputed. Result-file SHA-256 unchanged. Primary: RQ1 Wilson-CI correctness (%); RQ2 UQ confidence vs custom/RAGAS-inspired LLM-as-judge faithfulness; RQ3 coverage vs selective accuracy at locked T=0.65. Appendix: McNemar counts, faithfulness boxplot, UQ outcome counts. Phase 18 not started.
 39. **Phase 17 canonical figure cleanup (2026-08-28):** Six figures only, PNG+PDF each, in `results/metrics/phase17_figures/`. Overlapping RQ1 title fixed; RQ2 stacked points spread on x for display only. SVG and superseded stems removed. Statistics unchanged. Phase 18 not started on this date.
 40. **Phase 18 qualitative error analysis (2026-08-28):** Rule-based taxonomy on all 420 frozen cases plus stratified sample (seed 18; 81 cases / 42 questions). Both false abstentions included. No RAG/Qwen/judge/statistics rerun. Numeric error not labelled hallucination. Not official RAGAS. Phase 19 not started.
-41. **Phase 19 reproducibility audit (2026-08-28):** Read-only integrity audit of 40 DEV → T=0.65 → frozen 140 → 420 cases → Phase 16/17/18. No RAG/Qwen/judge/stats rerun. Frozen SHA-256 unchanged. Scientific chain **PASS**. Google Drive archive, GitHub commit, judge fingerprint vs JSONL settings, and leftover yaml `phase5_threshold_locked: false` remain **NEEDS VERIFICATION**. Dissertation evidence pack is **Phase 20** (not started). Do not commit Phase 15 raw JSONL or judge JSONL.
-42. **Phase 20 live artefact (2026-08-28):** Final numbered phase is live-artefact validation at locked T=0.65 — not a dissertation write-up pack (that earlier Phase 19 assumption is superseded here). Streamlit always loads `threshold.lock.json`; smoke 0.55 control removed. Live path calls Phase 8–10 pipelines on the shared Phase 6 KB; it does not look up Phase 15 JSONL. Local mock three-question demo + tests **PASS** (plumbing). Official Colab T4 + Qwen3-8B + `llama_cpp` answers remain **NEEDS VERIFICATION**. Frozen 140/40, T, and Phase 15–18 results unchanged. No Phase 21 started.
+41. **Phase 19 reproducibility audit (2026-08-28):** Read-only integrity audit of 40 DEV → T=0.65 → frozen 140 → 420 cases → Phase 16/17/18. No RAG/Qwen/judge/stats rerun. Frozen SHA-256 unchanged. Scientific chain **PASS**. Google Drive archive, GitHub commit, judge fingerprint vs JSONL settings, and leftover yaml `phase5_threshold_locked: false` remain **NEEDS VERIFICATION**. At the time of this earlier entry, numbered Phase 20 had not yet started (the then-current plan still called it a dissertation pack). Do not commit Phase 15 raw JSONL or judge JSONL.
+42. **Phase 20 live artefact (2026-08-28):** Final numbered phase is live-artefact validation at locked T=0.65 — not a dissertation write-up pack (that earlier Phase 19 assumption is superseded here). Streamlit always loads `threshold.lock.json`; smoke 0.55 control removed. Live path calls Phase 8–10 pipelines on the shared Phase 6 KB; it does not look up Phase 15 JSONL. Local mock three-question demo + tests **PASS** (plumbing). Official Colab T4 + Qwen3-8B + `llama_cpp` answers remain **NEEDS VERIFICATION**. Frozen 140/40, T, and Phase 15–18 results unchanged. At the time of this earlier entry, Phase 21 had not yet started; Phase 21 was completed subsequently as the canonical live-demo launcher.
 43. **Phase 20 UI-only UQ confidence warning (2026-08-29):** Streamlit Multi-Agent + UQ panel gained a **display-only** confidence warning. Research decision rule unchanged: confidence < 0.65 → ABSTAIN; confidence ≥ 0.65 → ANSWER. Locked **T = 0.65** unchanged. The 0.66 display band is **not** a research threshold, not calibrated, and not stored in `threshold.lock.json` or experiment config. The warning does **not** alter stored decisions, confidence values, benchmark results, Phase 15/16/17/18 results, or statistics. User-facing safety/usability indicator only. No 420-case benchmark, calibration, LLM-judge, or statistical analysis was rerun.
 44. **Phase 21 canonical final live-demo launcher (2026-08-29):** Dedicated Colab notebook `notebooks/colab_phase21_final_live_demo.ipynb` is the viva launch vehicle for the existing Streamlit app. Not a new research experiment. Does not rerun 420, calibration, judge, or statistics. Does not modify T=0.65, frozen 140/40, Phase 15–18 results, V1, or RAG architectures. Previous live notebooks (including `colab_phase11_live.ipynb`) are historical development/validation evidence. Official Colab T4 execution **NEEDS VERIFICATION**.
 
@@ -435,7 +435,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
 - **Objective:** Establish project-wide storage, backup, recovery, progress-tracking rules and integrate into the approved V2 plan (no new RAG functionality).
 - **Why required:** 420-case Colab benchmark must survive interruption; dissertation needs verified artefact trails; prevent data loss from ephemeral Colab storage.
 - **Work completed:**
-  - Cursor rule `.cursor/rules/06-storage-backup-recovery.mdc`
+  - Storage specification `docs/storage_backup_recovery.md`
   - `docs/storage_backup_recovery.md`, `docs/IMPLEMENTATION_PLAN.md` (with dedicated Storage section)
   - `config/experiment.yaml` → `storage` (Drive layout, benchmark recovery, raw fields, live artefact rules)
   - `project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
@@ -447,7 +447,6 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - No full V2 repo mirror on Drive; no Colab CLI/gcloud
   - Same RAG pipelines for benchmark and live Streamlit (when built)
 - **Files created/modified:**
-  - `.cursor/rules/06-storage-backup-recovery.mdc`, `.cursor/rules/05-project-master-record.mdc`
   - `V2/docs/storage_backup_recovery.md`, `V2/docs/IMPLEMENTATION_PLAN.md`
   - `V2/project_record/PHASE_COMPLETION_BACKUP_TEMPLATE.md`
   - `V2/config/experiment.yaml`, `V2/DECISIONS.md`, `V2/PROJECT_CONTEXT.md`
@@ -718,7 +717,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Colab: **not re-run** after this fix — previous observed result was Mac mock/MPS
   - Google Drive: **NEEDS VERIFICATION** — no new Colab `phase11_*.json` from a T4 live demo
   - Local: verified — guard, notebook, tests, evidence, master record updated 2026-08-24
-  - GitHub: connection-fix files **uncommitted** at the time of this record; Colab clone will not see the fix until they are pushed to `cursor/empty-v2-workspace`
+  - GitHub: connection-fix files **uncommitted** at the time of this record; Colab clone will not see the fix until they are pushed to the then-current development workspace
 
 ---
 
@@ -759,7 +758,7 @@ Append-only. Historical phase sections below are not rewritten when assumptions 
   - Colab: **not re-run** after this launch fix
   - Google Drive: **NEEDS VERIFICATION** — no T4 `phase11_colab_live_demo.json`
   - Local: verified — notebook, Streamlit lock, tests, evidence, master record updated 2026-08-24
-  - GitHub: launch-fix files **uncommitted**; Colab clone will not see them until push to `cursor/empty-v2-workspace`
+  - GitHub: launch-fix files **uncommitted**; Colab clone will not see them until push to the then-current development workspace
 
 ---
 
@@ -1491,9 +1490,9 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
   - `V2/results/config/phase19_audit.json`
 - **Tests/validation:** `tests/test_phase19_audit.py` **3 passed**. Full suite excluding `analyse()`: **137 passed**, 1 deselected. Source SHA-256 unchanged by the audit.
 - **Actual outcome:** Scientific chain **PASS** (0 FAIL). Completeness 420/420. Hashes match pins. Figure-to-table counts match. Phase 18 counts match Phase 17 (including 2 false abstentions).
-- **Problems encountered:** `phase16_judge_runtime_fingerprint.json` still stores generation defaults (0.1 / 512). `experiment.yaml` still has `phase5_threshold_locked: false`. Google Drive `MSc-RAG` was not listed from this Mac. GitHub working tree is uncommitted on branch `cursor/empty-v2-workspace`.
-- **Problems resolved:** None of those items were “fixed” by changing results; they are recorded as **NEEDS VERIFICATION**. Current-status headers were updated to Phase 19 complete / Phase 20 not started. Historical Phase 15–18 remaining-issues lines were **not** rewritten.
-- **Remaining issues:** Google Drive archive **NEEDS VERIFICATION**. GitHub commit **not done**. Phase 20 **not started**. Do not commit Phase 15 `cases.jsonl` or Phase 16 `judge.jsonl`.
+- **Problems encountered:** `phase16_judge_runtime_fingerprint.json` still stores generation defaults (0.1 / 512). `experiment.yaml` still has `phase5_threshold_locked: false`. Google Drive `MSc-RAG` was not listed from this Mac. GitHub working tree is uncommitted on the previous development workspace (contemporaneous git snapshot; not the university submission branch).
+- **Problems resolved:** None of those items were “fixed” by changing results; they are recorded as **NEEDS VERIFICATION**. Current-status headers were updated to Phase 19 complete. At the time of this earlier entry, Phase 20 had not yet started. Historical Phase 15–18 remaining-issues lines were **not** rewritten.
+- **Remaining issues:** Google Drive archive **NEEDS VERIFICATION**. GitHub commit **not done** at the time of this earlier entry. Phase 20 **had not yet started** (completed subsequently as live-artefact validation). Do not commit Phase 15 `cases.jsonl` or Phase 16 `judge.jsonl`.
 - **Dissertation relevance:** Supplies a frozen artefact manifest and an integrity log that an examiner can audit without re-running GPU jobs.
 - **Evidence/source file paths:**
   - `V2/project_record/evidence/phase19_reproducibility_audit.md`
@@ -1521,7 +1520,7 @@ Historical section (2026-08-27). Official 420-case Colab run was **not launched*
   - Local mock demo on the existing Phase 6 KB (1239 chunks). Streamlit HTTP 200 on port 8502.
   - Tests `tests/test_phase20_live_artefact.py` (7 passed). Full suite excluding `analyse()`: **144 passed**.
   - Read-only Streamlit pages: **Benchmark Questions** (frozen 140 catalogue) and **Benchmark Results** (frozen metric tables). **Use this question in Live Demo** copies question text only. Did **not** modify the 140 CSV or Phase 15–18 results.
-  - Did **not** rerun 420, calibration, judge, or statistics. Did **not** modify frozen 140/40, T, Phase 15–18 results, V1, or RAG retrieve/generate/verify internals (live threshold wiring only). Did **not** create a new benchmark notebook. Did **not** start a Phase 21.
+  - Did **not** rerun 420, calibration, judge, or statistics. Did **not** modify frozen 140/40, T, Phase 15–18 results, V1, or RAG retrieve/generate/verify internals (live threshold wiring only). Did **not** create a new benchmark notebook. At the time of this earlier entry, Phase 21 had not yet started; Phase 21 was completed subsequently as the canonical live-demo launcher.
 - **Technical decisions:** Official Colab T4 PASS is not claimed from a Mac mock run. Mock UQ ABSTAIN on known-good/fresh is plumbing, not a Qwen result. Insufficient-evidence ABSTAIN at 0.5351 < 0.65 is the locked rule on mock confidence. Live artefact remains `app/streamlit_app.py` via `PYTHONPATH=. streamlit run app/streamlit_app.py`. GPU demo remains `notebooks/colab_phase11_live.ipynb`.
 - **Files created/modified:**
   - `V2/src/rag/live.py`, `V2/src/rag/benchmark_catalogue.py`

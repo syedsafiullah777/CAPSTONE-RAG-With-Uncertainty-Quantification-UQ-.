@@ -36,4 +36,4 @@ Locked threshold: **T = 0.65** from the separate 40-question FinQA DEV calibrati
 
 Phase 17 statistical tables, p-values, CIs, effect sizes, T=0.65, frozen 140/40, Phase 15/16 JSONL, RAG code, and V1.
 
-Phase 18 is **not started**.
+At the time of this earlier entry, Phase 18 had not yet started. Phase 18 error analysis was completed subsequently on the same frozen artefacts.

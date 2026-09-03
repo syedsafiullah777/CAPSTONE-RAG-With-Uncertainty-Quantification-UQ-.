@@ -36,7 +36,6 @@ This requirement applies to **all** phases — especially benchmark, evaluation,
 | **Local Mac** | Main dev copy + secondary offline backup after milestones |
 
 Full specification: `V2/docs/storage_backup_recovery.md`  
-Cursor rule: `.cursor/rules/06-storage-backup-recovery.mdc`  
 Config: `V2/config/experiment.yaml` → `storage`
 
 ### Drive layout (logical)
@@ -275,7 +274,7 @@ Entrypoint: `PYTHONPATH=. streamlit run app/streamlit_app.py`. GPU demo: `notebo
 
 Local mock three-question demo (`scripts/run_live_demo.py --backend mock`) recorded insufficient-evidence UQ **ABSTAIN** at 0.5351 < 0.65. Official Qwen/T4 answers **NEEDS VERIFICATION**. Frozen 140/40, lock, and Phase 15–18 results unchanged.
 
-**Do not start Phase 21. Do not rerun the 420-case benchmark, calibration, judge, or statistics.**
+At the time of this Phase 20 entry, Phase 21 had not yet started. Phase 21 was completed subsequently as a live-demo launcher only. Do not rerun the 420-case benchmark, calibration, judge, or statistics.
 
 ## Phase 21 — Canonical final live-demo launcher (complete; static PASS; Colab T4 NV)
 
